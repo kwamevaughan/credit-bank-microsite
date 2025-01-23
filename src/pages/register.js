@@ -49,7 +49,6 @@ const Register = ({ closeRegister }) => {
         }
     };
 
-
     useEffect(() => {
         // Fetch country list from the JSON file
         const fetchCountries = async () => {
@@ -59,8 +58,8 @@ const Register = ({ closeRegister }) => {
 
                 // Map countries to the format required by react-select
                 const countryOptions = data.map((item) => ({
-                    label: item.country,
-                    value: item.country,
+                    label: item.name, // Use country name for display
+                    value: item.name, // Use country name as the value
                 }));
                 setCountries(countryOptions);
             } catch (error) {
