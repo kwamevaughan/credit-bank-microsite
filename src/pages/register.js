@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { supabase } from '/lib/supabase';
 import { toast } from 'react-toastify'; // Import toast here
 import Select from 'react-select';
+import { TrophyIcon } from '@heroicons/react/24/outline'; // Use the outline style from version 24
+import { useRouter } from 'next/router'; // Import useRouter for redirection
 
 const Register = ({ closeRegister }) => {
     const [name, setName] = useState('');
@@ -10,6 +12,7 @@ const Register = ({ closeRegister }) => {
     const [country, setCountry] = useState('');
     const [countries, setCountries] = useState([]);
 
+    const router = useRouter(); // Initialize router
     const notify = (message) => toast(message);
 
     const generateUniqueCode = () => {
@@ -33,21 +36,53 @@ const Register = ({ closeRegister }) => {
 
         const uniqueCode = generateUniqueCode();
 
+        // Insert the user data along with the initial 5 points
         const { error } = await supabase
             .from('users')
-            .insert([{ name, email, phone_number: phoneNumber, country, referral_code: uniqueCode }]);
+            .insert([{ name, email, phone_number: phoneNumber, country, referral_code: uniqueCode, points: 5 }]);
 
         if (error) {
             toast.error('Error: ' + error.message);
         } else {
             toast.success('User registered successfully! Your referral code: ' + uniqueCode);
+
+            // Show another toast for redeeming points with the trophy icon
+            toast.success(
+                <div className="flex items-center">
+                    <TrophyIcon className="h-5 w-5 text-yellow-500 mr-2" />
+                    You have redeemed 5 points!
+                </div>
+            );
+
+            // Clear form fields
             setName('');
             setEmail('');
             setPhoneNumber('');
             setCountry('');
+
+            // Fetch the newly created user to get the ID for redirection
+            const { data: newUser, error: userFetchError } = await supabase
+                .from('users')
+                .select('*')
+                .eq('email', email)
+                .single(); // Fetch the newly created user data to retrieve the ID
+
+            if (userFetchError || !newUser) {
+                console.error('Error fetching user after registration:', userFetchError);
+                toast.error('Failed to fetch user information after registration.');
+                return;
+            }
+
+            // Store the token (if the ID is your token)
+            localStorage.setItem('token', newUser.id); // Assuming newUser.id is what you use as token
+
             closeRegister(); // Close the registration form
+
+            // Redirect to /dashboard after successful registration
+            router.push('/dashboard'); // Use router.push to navigate to the dashboard
         }
     };
+
 
     useEffect(() => {
         // Fetch country list from the JSON file

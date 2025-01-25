@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '/lib/supabase'; // Make sure this is correctly initialized
 import Image from 'next/image';
-import Header from "@/layouts/header";
+import NavHeader from "@/layouts/nav-header";
 
 // Fetch the countries.json file from the public directory
 const countryFlagData = require('/public/assets/misc/countries.json');
@@ -100,7 +100,7 @@ const Leaderboard = () => {
 
     return (
         <div>
-            <Header />
+            <NavHeader />
 
         <div className="shadow-md rounded px-8 pt-6 pb-8 mb-4"
              style={{
@@ -115,7 +115,7 @@ const Leaderboard = () => {
             <div className="max-w-4xl mx-auto"> {/* Main container for centering the table, search, and pagination */}
 
                 {/* Search input */}
-                <div className="px-4 mb-4">
+                <div className="mb-4">
                     <input
                         type="search"
                         className="block w-full p-2 border border-gray-300 rounded-lg"
@@ -146,47 +146,63 @@ const Leaderboard = () => {
                             {leaders.length > 0 ? (
                                 leaders.map((leader, index) => {
                                     const countryFlag = countryCodeMapping[leader.country] || {};
+                                    // Define button styles based on rank
+                                    let buttonClass = "bg-gray-200 hover:bg-gray-500 text-teal-600 hover:text-white px-6 py-2 rounded-lg"; // Default for others
+                                    let buttonText = "Keep Going!";
+
+                                    if (index === 0) {
+                                        buttonClass = "bg-yellow-400 hover:bg-yellow-600 text-teal-600 hover:text-white px-6 py-2 rounded-lg"; // Champion in the Lead
+                                        buttonText = "Top Performer";
+                                    } else if (index === 1) {
+                                        buttonClass = "bg-green-400 hover:bg-green-600 text-teal-600 hover:text-white px-6 py-2 rounded-lg"; // Steady Climber
+                                        buttonText = "Steady Climber";
+                                    } else if (index === 2) {
+                                        buttonClass = "bg-orange-400 hover:bg-orange-600 text-teal-600 hover:text-white px-6 py-2 rounded-lg"; // Rising Star
+                                        buttonText = "Rising Star";
+                                    }
+
                                     return (
                                         <tr
                                             key={leader.id}
                                             className="shadow-md hover:shadow-sm transition-all duration-300 ease-in-out bg-white rounded-md"
                                             style={{ transform: `translateY(${(index - 1) * 10}px)` }} // Added smooth animation
                                         >
-                                            <td className="px-4 py-2 border-r flex items-center">
-                                                #{(page - 1) * pageSize + index + 1}.
+                                            <td className="text-gray-400 px-4 py-2 border-r flex items-center">
+                                                {(page - 1) * pageSize + index + 1}.
                                                 {countryFlag.code && (
-                                                    <img
+                                                    <Image
                                                         src={countryFlag.image}
                                                         alt={leader.country}
-                                                        className="w-6 h-6 ml-2"
+                                                        width={40} // Or adjust size as needed
+                                                        height={40} // Or adjust size as needed
+                                                        className="ml-2"
                                                     />
                                                 )}
                                             </td>
-                                            <td className="px-4 py-2 border-r">
-                                                <div className="sm:block md:flex items-center justify-between"> {/* Block on mobile, flex on desktop */}
-                                                    <span className="flex items-center gap-4">
-                                                    <Image
-                                                        src="/assets/images/placeholder.png"
-                                                        alt="Placeholder Image"
-                                                        width={50}
-                                                        height={50}
-                                                    />
-                                                    <span className="text-teal-600 font-bold text-lg">
-                                                        {leader.name}
-                                                    </span>
-                                                </span>
 
-                                                    {/* On small screens (mobile), points appear below the name */}
+                                            <td className="px-4 py-2 border-r">
+                                                <div className="sm:block md:flex items-center justify-between">
+                            <span className="flex items-center gap-4">
+                                <Image
+                                    src="/assets/images/placeholder.png"
+                                    alt="Placeholder Image"
+                                    width={50}
+                                    height={50}
+                                />
+                                <span className="text-teal-600 font-bold text-lg">
+                                    {leader.name}
+                                </span>
+                            </span>
                                                     <span className="text-orange-600 mt-2 md:ml-4 md:mt-0">
-                                                    {leader.points} Points
-                                                </span>
+                                {leader.points} Points
+                            </span>
                                                 </div>
                                             </td>
                                             <td className="px-4 py-2">
                                                 <div className="flex justify-between items-center">
-                                                    <span className="text-orange-600">0 Actions Completed</span>
-                                                    <button className="bg-yellow-400 hover:bg-yellow-600 text-teal-600 hover:text-white px-6 py-2 rounded-lg">
-                                                        Top Performer
+                                                    <span className="text-orange-600">NaN Actions Completed</span>
+                                                    <button className={buttonClass}>
+                                                        {buttonText}
                                                     </button>
                                                 </div>
                                             </td>
@@ -201,6 +217,7 @@ const Leaderboard = () => {
                                 </tr>
                             )}
                             </tbody>
+
                         </table>
                     </div>
                 )}

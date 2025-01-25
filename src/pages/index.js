@@ -5,7 +5,8 @@ import Register from './register'; // Importing the Register component
 import { FaRegEnvelope, FaEye, FaEyeSlash } from 'react-icons/fa'; // Add FaEye and FaEyeSlash
 import { IoKeyOutline } from 'react-icons/io5';
 import Image from 'next/image'; // Import Next.js Image component
-import Header from '../layouts/header'; // Import Header Component
+import NavHeader from '../layouts/nav-header'; // Import Header Component
+import { useRouter } from 'next/router'; // Import useRouter for redirection
 
 export default function Home() {
     const [isRegistering, setIsRegistering] = useState(false); // State to toggle between login and register
@@ -14,6 +15,7 @@ export default function Home() {
     const [rememberMe, setRememberMe] = useState(false);
     const [error, setError] = useState('');
 
+    const router = useRouter(); // Initialize router
     const notify = (message) => toast(message);
 
     useEffect(() => {
@@ -60,6 +62,9 @@ export default function Home() {
         if (data && data.length === 1) {
             toast.success(`Login successful! Welcome, ${data[0].name}`);
 
+            // Store token in localStorage or sessionStorage
+            localStorage.setItem('token', data[0].id); // assuming data[0].id is the token
+
             if (rememberMe) {
                 localStorage.setItem('loginEmail', loginEmail);
                 localStorage.setItem('loginReferralCode', loginReferralCode);
@@ -67,6 +72,9 @@ export default function Home() {
                 localStorage.removeItem('loginEmail');
                 localStorage.removeItem('loginReferralCode');
             }
+
+            // Redirect to /dashboard after successful login
+            router.push('/dashboard');
         }
     };
 
@@ -83,7 +91,7 @@ export default function Home() {
 
             {/* Container with Flexbox to center content below the header */}
             <div className=" flex-col items-center justify-center min-h-screen">
-                <Header />
+                <NavHeader />
 
                 {/* Login Form Container centered below the header */}
                 <div className="flex flex-col items-center justify-center w-full mt-20">
@@ -130,9 +138,9 @@ export default function Home() {
                                                 Email Address
                                             </label>
                                             <div className="flex items-center border border-gray-300 rounded focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out">
-                                        <span className="px-2">
-                                            <FaRegEnvelope className="h-5 w-5 text-gray-500" />
-                                        </span>
+                                                <span className="px-2">
+                                                    <FaRegEnvelope className="h-5 w-5 text-gray-500" />
+                                                </span>
                                                 <input
                                                     className="text-gray-700 py-2 px-4 block w-full rounded"
                                                     type="text"
@@ -149,9 +157,9 @@ export default function Home() {
                                                 Referral Code
                                             </label>
                                             <div className="relative">
-                                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                                            <IoKeyOutline className="text-gray-500 h-5 w-5" />
-                                        </span>
+                                                <span className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                                                    <IoKeyOutline className="text-gray-500 h-5 w-5" />
+                                                </span>
                                                 <input
                                                     className="text-gray-700 border border-gray-300 rounded py-2 pl-10 pr-10 block w-full focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out"
                                                     type={"text"}
@@ -222,7 +230,5 @@ export default function Home() {
                 </div>
             </div>
         </div>
-
-
     );
 }

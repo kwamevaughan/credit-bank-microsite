@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Header from "@/layouts/header";
+import NavHeader from "@/layouts/nav-header";
 
 export default function Faqs() {
     // Initialize the active state for each accordion tab
@@ -24,7 +24,7 @@ export default function Faqs() {
                 backgroundRepeat: 'no-repeat',
             }}
         >
-            <Header />
+            <NavHeader />
 
             <section className="py-24">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
