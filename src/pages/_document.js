@@ -7,9 +7,9 @@ class MyDocument extends Document {
         return (
             <Html lang="en">
                 <Head>
-                    {/* Add Google Fonts for Nunito */}
+                    {/* Add Google Fonts for Questrial */}
                     <link
-                        href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap"
+                        href="https://fonts.googleapis.com/css2?family=Questrial&display=swap"
                         rel="stylesheet"
                     />
                 </Head>

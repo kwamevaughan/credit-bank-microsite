@@ -9,7 +9,7 @@ import {
     CogIcon,
     DocumentTextIcon,
     BellIcon,
-    ArrowTrendingUpIcon
+    ArrowTrendingUpIcon, ArrowDownTrayIcon
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import Link from "next/link";
@@ -46,39 +46,29 @@ const Sidebar = ({ isOpen, toggleSidebar, mode, onLogout }) => {
                         </Link>
                     </li>
                     <li className="py-2">
-                        <Link href="/keyword-manager" className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
+                        <Link href="/leaderboard" className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
                             <ArrowTrendingUpIcon className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition" />
-                            Keyword Manager
+                            Leaderboard
                         </Link>
                     </li>
                     <li className="py-2">
-                        <Link href="/upload-website" className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
-                            <ArrowUpOnSquareIcon className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition" />
-                            Upload
-                        </Link>
-                    </li>
-                    <li className="py-2">
-                        <Link href="/run-query" className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
-                            <MagnifyingGlassIcon className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition" />
-                            Run Query
-                        </Link>
-                    </li>
-                    <li className="py-2">
-                        <Link href="/automation" className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
-                            <CogIcon className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition" />
-                            Automation
-                        </Link>
-                    </li>
-                    <li className="py-2">
-                        <Link href="/scraping-log" className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
+                        <Link href="/quiz" className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
                             <DocumentTextIcon className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition" />
-                            Scraping Logs
+                            Quiz
                         </Link>
                     </li>
+
                     <li className="py-2">
-                        <Link href="/notification-settings" className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
+                        <Link href="#" className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
+                            <ArrowDownTrayIcon className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition" />
+                            Download Mobile App
+                        </Link>
+                    </li>
+
+                    <li className="py-2">
+                        <Link href="#" className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
                             <BellIcon className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition" />
-                            Notification Settings
+                            Account Settings
                         </Link>
                     </li>
                 </ul>

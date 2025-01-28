@@ -101,7 +101,7 @@ const Dashboard = () => {
                 <main
                     className={`flex-1 p-6 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-0'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-[#fafafa] text-black'}`}>
                     <h2 className="text-4xl font-bold text-teal-600 mb-4 text-center">Welcome, {userName}!</h2>
-                    <p className="mb-4 text-center">You have {userPoints} points.</p>
+                    <p className="mb-4 text-center">Dashboard under construction...</p>
 
                 </main>
 
