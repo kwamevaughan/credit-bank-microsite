@@ -9,8 +9,8 @@ export default function NavHeader() {
     const toggleMenu = () => setMenuOpen(!menuOpen);
 
     return (
-        <header className="sm:sticky top-0 py-2 px-6 md:px-40 bg-[#f7f1eb] tracking-wide z-[100]">
-            <div className="flex flex-wrap items-center justify-between gap-5 w-full mb-8 md:mb-0">
+        <header className="sm:sticky top-0 py-2 px-8 md:px-40 bg-[#f7f1eb] tracking-wide z-[100]">
+            <div className="flex flex-wrap items-center justify-between gap-5 md:gap-0 w-full mb-8 md:mb-0">
                 {/* Logo with responsive width */}
                 <Link href="/">
                     <Image
