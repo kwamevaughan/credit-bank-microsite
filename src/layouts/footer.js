@@ -8,13 +8,14 @@ const Footer = ({ mode }) => {
         <div className="bg-[#212529] px-6 sm:px-10 md:px-20 pt-8 pb-28">
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 pt-10 gap-2">
-                <div className="flex flex-col justify-center">
+                <div className="flex flex-col justify-center pb-8 md:pb-0">
                     <Link href="/">
                         <Image
                             src="/assets/images/logo.svg"
                             alt="Logo"
                             width={300}
                             height={50}
+                            className="pb-4"
                         />
                     </Link>
                     <div className="flex flex-col gap-2 text-white">
@@ -23,7 +24,7 @@ const Footer = ({ mode }) => {
                         <span>Regulated and licensed by the Central Bank of Kenya.</span>
                     </div>
                 </div>
-                <div className="flex flex-col justify-center gap-6">
+                <div className="flex flex-col justify-center gap-6 pb-8 md:pb-0">
                     <div className="flex flex-col gap-2 text-white">
                         <Link href="tel:+254709072000" className="text-lg sm:text-xl md:text-2xl font-bold">
                             +254 70 907 2000

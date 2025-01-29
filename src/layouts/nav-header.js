@@ -10,7 +10,7 @@ export default function NavHeader() {
 
     return (
         <header className="sm:sticky top-0 py-2 px-10 md:px-40 bg-[#f7f1eb] tracking-wide z-[100]">
-            <div className="flex flex-wrap items-center justify-between gap-5 w-full">
+            <div className="flex flex-wrap items-center justify-between gap-5 w-full mb-8 md:mb-0">
                 {/* Logo with responsive width */}
                 <Link href="/">
                     <Image
@@ -74,10 +74,17 @@ export default function NavHeader() {
                             </Link>
                         </li>
                     </ul>
+                    <div className="flex md:hidden sm:ml-auto space-x-4 px-5">
+                        <Link href="/participate">
+                            <button className="px-20 py-2 text-md rounded-lg font-bold text-white border-2 border-teal-400 bg-teal-400 transition-all ease-in-out duration-300 hover:bg-transparent hover:text-teal-400">
+                                Join Now
+                            </button>
+                        </Link>
+                    </div>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex sm:ml-auto space-x-4">
+                <div className="hidden md:flex sm:ml-auto space-x-4">
                     <Link href="/participate">
                         <button className="px-6 py-2 text-md rounded-lg font-bold text-white border-2 border-teal-400 bg-teal-400 transition-all ease-in-out duration-300 hover:bg-transparent hover:text-teal-400">
                             Join Now

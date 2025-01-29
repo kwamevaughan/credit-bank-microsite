@@ -9,7 +9,7 @@ import {
     CogIcon,
     DocumentTextIcon,
     BellIcon,
-    ArrowTrendingUpIcon, ArrowDownTrayIcon
+    ArrowTrendingUpIcon, ArrowDownTrayIcon, QuestionMarkCircleIcon, BanknotesIcon, UserPlusIcon
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import Link from "next/link";
@@ -53,8 +53,20 @@ const Sidebar = ({ isOpen, toggleSidebar, mode, onLogout }) => {
                     </li>
                     <li className="py-2">
                         <Link href="/quiz" className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
-                            <DocumentTextIcon className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition" />
+                            <QuestionMarkCircleIcon className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition" />
                             Quiz
+                        </Link>
+                    </li>
+                    <li className="py-2">
+                        <Link href="#" className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
+                            <DocumentTextIcon className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition" />
+                            Open An Account
+                        </Link>
+                    </li>
+                    <li className="py-2">
+                        <Link href="#" className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
+                            <BanknotesIcon className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition" />
+                            Send Money
                         </Link>
                     </li>
 
@@ -67,7 +79,7 @@ const Sidebar = ({ isOpen, toggleSidebar, mode, onLogout }) => {
 
                     <li className="py-2">
                         <Link href="#" className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
-                            <BellIcon className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition" />
+                            <UserPlusIcon className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition" />
                             Account Settings
                         </Link>
                     </li>

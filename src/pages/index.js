@@ -7,6 +7,7 @@ import Sidebar from "@/layouts/sidebar"; // Import Header Component
 import {CheckIcon, GiftIcon, ListBulletIcon, PencilSquareIcon} from '@heroicons/react/24/outline';
 import {StarIcon} from "@heroicons/react/24/solid";
 import Footer from "@/layouts/footer";
+import Link from "next/link";
 
 export default function Home() {
     const [mode, setMode] = useState('light');
@@ -53,14 +54,18 @@ export default function Home() {
                                     action brings you closer to amazing rewards!</p>
 
                                 <div className="inline-flex pt-6 gap-x-4">
+                                    <Link href="/participate">
                                     <button
                                         className="bg-[#ff930a] hover:bg-gray-400 text-white font-bold py-2 px-4 rounded-lg">
                                         Get Started
                                     </button>
-                                    <button
+                                    </Link>
+
+                                    <Link href="#about-the-campaign">                                    <button
                                         className="bg-[#212529] hover:bg-gray-400 text-white font-bold py-2 px-4 rounded-lg">
                                         Learn More
                                     </button>
+                                    </Link>
                                 </div>
                             </div>
 
@@ -100,7 +105,7 @@ export default function Home() {
                                 />
                             </div>
 
-                            <div className="flex flex-col justify-center">
+                            <div className="flex flex-col justify-center pb-8">
                                 <p className="text-sm sm:text-base md:text-lg">
                                     This challenge is your chance to engage in rewarding actions, from opening accounts to taking quizzes, and earn points that push you closer to exciting prizes. It's simple, fun, and rewarding—just like banking with Credit Bank!
                                 </p>
@@ -152,12 +157,12 @@ export default function Home() {
 
                             <div className="flex flex-col justify-center px-6 sm:px-10 md:px-20" id="how-it-works">
                                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-teal-600 mb-4">
-                                    <span className="font-orange">How to</span> Earn You Points
+                                    <span className="font-orange">How to</span> Earn Points
                                 </h2>
 
                                 <div className="flex flex-col md:flex-row relative space-y-8 md:space-y-0 md:space-x-8">
                                     <ul className="flex flex-col space-y-8 w-full md:w-[35em] z-20">
-                                        <li className="flex items-start space-x-4 md:space-x-6">
+                                        <li className="flex items-start space-x-4 md:space-x-6 hover:translate-y-[-10px] transition-transform duration-300 ">
                                             <div className="flex-shrink-0 w-12 h-12 bg-[#ff930a] text-white rounded-full flex items-center justify-center">
                                                 <PencilSquareIcon className="w-6 h-6" />
                                             </div>
@@ -166,7 +171,7 @@ export default function Home() {
                                                 <span className="text-sm sm:text-base">Provide your details to join and start tracking your progress.</span>
                                             </div>
                                         </li>
-                                        <li className="flex items-start space-x-4 md:space-x-6">
+                                        <li className="flex items-start space-x-4 md:space-x-6 hover:translate-y-[-10px] transition-transform duration-300 ">
                                             <div className="flex-shrink-0 w-12 h-12 bg-[#ff930a] text-white rounded-full flex items-center justify-center">
                                                 <ListBulletIcon className="w-6 h-6" />
                                             </div>
@@ -175,16 +180,18 @@ export default function Home() {
                                                 <span className="text-sm sm:text-base">Complete tasks like signing up, sending money, or taking quizzes.</span>
                                             </div>
                                         </li>
-                                        <li className="flex items-start space-x-4 md:space-x-6">
+                                        <li className="flex items-start space-x-4 md:space-x-6 hover:translate-y-[-10px] transition-transform duration-300 hover:cursor-pointer group">
                                             <div className="flex-shrink-0 w-12 h-12 bg-[#ff930a] text-white rounded-full flex items-center justify-center">
-                                                <StarIcon className="w-6 h-6" />
+                                                <StarIcon className="w-6 h-6 transition-transform duration-500 ease-in-out group-hover:rotate-[360deg]" />
                                             </div>
                                             <div>
                                                 <p className="text-lg sm:text-xl md:text-2xl font-bold">Earn Points</p>
                                                 <span className="text-sm sm:text-base">Instantly gain points for every completed action and climb the leaderboard.</span>
                                             </div>
                                         </li>
-                                        <li className="flex items-start space-x-4 md:space-x-6">
+
+
+                                        <li className="flex items-start space-x-4 md:space-x-6 hover:translate-y-[-10px] transition-transform duration-300 ">
                                             <div className="flex-shrink-0 w-12 h-12 bg-[#ff930a] text-white rounded-full flex items-center justify-center">
                                                 <GiftIcon className="w-6 h-6" />
                                             </div>
@@ -215,16 +222,29 @@ export default function Home() {
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 pt-10 gap-2">
                             <div className="flex justify-center">
-                                <Image src="/assets/images/open-account.png" width={280} height={50} alt="open account image" />
+                                <Image
+                                    src="/assets/images/open-account.png"
+                                    width={280}
+                                    height={50}
+                                    alt="open account image"
+                                    className="hover:translate-y-[-10px] transition-transform duration-300"
+                                />
                             </div>
+
                             <div className="flex justify-center relative top-0 md:top-16">
-                                <Image src="/assets/images/send-money.png" width={280} height={50} alt="send money image" />
+                                <Image src="/assets/images/send-money.png" width={280} height={50} alt="send money image"
+                                       className="hover:translate-y-[-10px] transition-transform duration-300"
+                                />
                             </div>
                             <div className="flex justify-center">
-                                <Image src="/assets/images/download-app.png" width={280} height={50} alt="download app image" />
+                                <Image src="/assets/images/download-app.png" width={280} height={50} alt="download app image"
+                                       className="hover:translate-y-[-10px] transition-transform duration-300"
+                                />
                             </div>
                             <div className="flex justify-center relative top:0 md:top-16">
-                                <Image src="/assets/images/send-money.png" width={280} height={50} alt="send money image" />
+                                <Image src="/assets/images/quiz.png" width={280} height={50} alt="complete quiz image"
+                                       className="hover:translate-y-[-10px] transition-transform duration-300"
+                                />
                             </div>
                         </div>
                     </div>
@@ -257,7 +277,7 @@ export default function Home() {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10">
 
-                            <div className="flex flex-col justify-center">
+                            <div className="flex flex-col justify-center z-10">
                                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4">
                                     Exciting Rewards Await!
                                 </h2>
@@ -278,10 +298,12 @@ export default function Home() {
                                     </li>
                                 </ul>
                                 <div className="mt-8">
+                                    <Link href="/participate">
                                 <button
                                     className="bg-[#0cb4ab] hover:bg-gray-400 text-white font-bold py-2 px-4 rounded-lg">
                                     Start Earning Points Today!
                                 </button>
+                                    </Link>
                                 </div>
                             </div>
 
@@ -291,7 +313,7 @@ export default function Home() {
                                     width={500}
                                     height={300}
                                     alt="hand-with-phone-img"
-                                    className="relative mt-[-10em] top-[40%] md:top-0 z-10"
+                                    className="relative mt-[-10em] md:top-0 z-5 opacity-50 md:opacity-100"
                                 />
                             </div>
 
@@ -323,10 +345,13 @@ export default function Home() {
                                 <span className="p-4"></span>
 
                                 <div className="">
+                                    <Link href="/participate">
                                     <button
                                         className="bg-[#0cb4ab] hover:bg-gray-400 text-white font-bold py-2 px-10 rounded-lg">
                                         Take the Quiz Now
                                     </button>
+                                    </Link>
+
                                 </div>
                             </div>
 
