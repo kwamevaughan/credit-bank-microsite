@@ -7,6 +7,7 @@ import { useRouter } from 'next/router'; // Import useRouter for redirection
 import Link from 'next/link';
 import Image from 'next/image';
 
+
 const Register = ({ closeRegister }) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -82,11 +83,27 @@ const Register = ({ closeRegister }) => {
 
             // Redirect to /dashboard after successful registration
             router.push('/dashboard'); // Use router.push to navigate to the dashboard
+            // Call the sendEmail API to send the welcome email
+            try {
+                const response = await fetch('/api/sendEmail', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, name, uniqueCode })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to send email');
+                }
+
+                console.log('Welcome email sent successfully!');
+            } catch (error) {
+                console.error('Error sending welcome email:', error);
+                toast.error('Failed to send welcome email.');
+            }
         }
     };
-
-
-
 
     useEffect(() => {
         // Fetch country list from the JSON file
