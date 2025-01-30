@@ -4,6 +4,8 @@ import { toast } from 'react-toastify'; // Import toast here
 import Select from 'react-select';
 import { TrophyIcon } from '@heroicons/react/24/outline'; // Use the outline style from version 24
 import { useRouter } from 'next/router'; // Import useRouter for redirection
+import Link from 'next/link';
+import Image from 'next/image';
 
 const Register = ({ closeRegister }) => {
     const [name, setName] = useState('');
@@ -84,6 +86,8 @@ const Register = ({ closeRegister }) => {
     };
 
 
+
+
     useEffect(() => {
         // Fetch country list from the JSON file
         const fetchCountries = async () => {
@@ -107,67 +111,103 @@ const Register = ({ closeRegister }) => {
 
     return (
         <div className="">
-            <h1 className="text-2xl font-bold mb-4">User Registration</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            <div className="pb-10">
+                <Link href="/">
+                    <Image
+                        src="/assets/images/logo.svg"
+                        alt="Logo"
+                        width={300}
+                        height={50}
+                    />
+                </Link>
+            </div>
+
+            <div className="pb-2">
+            <h1 className="text-2xl font-bold pb-2">User Registration</h1>
+            <p>Register to track your progress, earn points, and stand a chance to win the Diaspora Champions
+                Challenge.</p>
+            </div>
             <form onSubmit={handleSubmit}>
                 {/* Name Field */}
-                <div className="mb-4">
+                <div className="mt-4">
+                    <label className="text-gray-700 text-sm font-bold mb-2">Name</label>
+                    <div
+                        className="flex items-center border border-[#FF930A] rounded focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out">
+
                     <input
                         type="text"
-                        placeholder="Name"
+                        placeholder="John Doe"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         required
-                        className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="bg-transparent text-gray-700 py-2 px-4 block w-full rounded"
                     />
+                </div>
                 </div>
 
                 {/* Email Field */}
-                <div className="mb-4">
-                    <input
-                        type="email"
-                        placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    />
+                <div className="mt-4">
+                    <label className="text-gray-700 text-sm font-bold mb-2">E-mail</label>
+                    <div
+                        className="flex items-center border border-[#FF930A] rounded focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out">
+                        <input
+                            type="email"
+                            placeholder="example@gmail.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            className="bg-transparent text-gray-700 py-2 px-4 block w-full rounded"
+                        />
+                    </div>
                 </div>
 
-                {/* Phone Number Field */}
-                <div className="mb-4">
+                    {/* Phone Number Field */}
+                <div className="mt-4">
+                    <label className="text-gray-700 text-sm font-bold mb-2">Phone Number</label>
+                    <div
+                        className="flex items-center border border-[#FF930A] rounded focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out">
+
                     <input
-                        type="text"
-                        placeholder="Phone Number"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                        required
-                        className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    />
+                            type="text"
+                            placeholder="+254(012)-345-6789"
+                            value={phoneNumber}
+                            onChange={(e) => setPhoneNumber(e.target.value)}
+                            required
+                            className="bg-transparent text-gray-700 py-2 px-4 block w-full rounded"
+                        />
+                    </div>
                 </div>
 
-                {/* Country Dropdown */}
-                <div className="mb-4">
+                    {/* Country Dropdown */}
+                <div className="mt-4">
+                    <label className="text-gray-700 text-sm font-bold mb-2">Country</label>
+                    <div
+                        className="flex items-center border border-[#FF930A] rounded focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out">
+
                     <Select
-                        value={country ? { label: country, value: country } : null}
-                        onChange={(selectedOption) => setCountry(selectedOption ? selectedOption.value : '')}
-                        options={countries}
-                        placeholder="Select your country"
-                        isSearchable
-                        isClearable
-                    />
-                </div>
+                            value={country ? {label: country, value: country} : null}
+                            onChange={(selectedOption) => setCountry(selectedOption ? selectedOption.value : '')}
+                            options={countries}
+                            placeholder="Select your country"
+                            isSearchable
+                            isClearable
+                            className="bg-transparent block w-full rounded"
+                        />
+                    </div>
+                    </div>
 
-                {/* Submit Button */}
-                <button
-                    type="submit"
-                    className="bg-orange-600 text-white font-bold py-2 px-4 w-full rounded-2xl transform transition-transform duration-700 ease-in-out hover:scale-105"
-                >
-                    Register
-                </button>
+                    {/* Submit Button */}
+                    <div className="mt-8">
+                        <button
+                            type="submit"
+                            className="bg-[#0CB4AB] text-white font-bold py-4 px-4 w-full rounded-lg transform transition-transform duration-700 ease-in-out hover:scale-105"
+                        >
+                            Register
+                        </button>
+                    </div>
             </form>
         </div>
-    );
+);
 };
 
 export default Register;

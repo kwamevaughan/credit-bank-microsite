@@ -28,6 +28,10 @@ html {
 .opacity-100 {
     opacity: 1;
 }
+
+.css-13cymwt-control{
+    background-color: transparent !important;
+}
 /* Custom Scrollbar Styles */
 
 /* For both vertical and horizontal scrollbars */

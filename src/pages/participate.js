@@ -5,18 +5,27 @@ import Register from './register'; // Importing the Register component
 import { FaRegEnvelope, FaEye, FaEyeSlash } from 'react-icons/fa'; // Add FaEye and FaEyeSlash
 import { IoKeyOutline } from 'react-icons/io5';
 import Image from 'next/image'; // Import Next.js Image component
+import Link from 'next/link';
 import NavHeader from '../layouts/nav-header'; // Import Header Component
+import Footer from '../layouts/footer';
+
 import { useRouter } from 'next/router'; // Import useRouter for redirection
 
 export default function Participate() {
     const [isRegistering, setIsRegistering] = useState(false); // State to toggle between login and register
     const [loginEmail, setLoginEmail] = useState('');
     const [loginReferralCode, setLoginReferralCode] = useState('');
+    const [showPassword, setShowPassword] = useState(false); // State to track visibility of password
     const [rememberMe, setRememberMe] = useState(false);
     const [error, setError] = useState('');
 
     const router = useRouter(); // Initialize router
     const notify = (message) => toast(message);
+
+    const handleFormSwitch = (e) => {
+        e.preventDefault();
+        setIsRegistering(!isRegistering); // Toggle between Register and Login
+    };
 
     useEffect(() => {
         // Check if 'Remember me' credentials are stored in localStorage on initial load
@@ -78,157 +87,155 @@ export default function Participate() {
         }
     };
 
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
+
+
     return (
-        <div
-            className="w-full"
-            style={{
-                backgroundImage: `url('/assets/images/main-login-bg.jpg')`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-            }}
-        >
+        <div className="w-full bg-[#f7f1eb]">
 
             {/* Container with Flexbox to center content below the header */}
-            <div className=" flex-col items-center justify-center min-h-screen">
-                <NavHeader />
 
                 {/* Login Form Container centered below the header */}
-                <div className="flex flex-col items-center justify-center w-full mt-20">
+            <div className="flex flex-col items-center justify-center w-full py-20">
 
-                    {/* Login or Register Form */}
-                    <div className="flex flex-col md:flex-row bg-white rounded-xl shadow-2xl border-white border-4 overflow-hidden max-w-sm lg:max-w-4xl w-full lg:w-3/4">
-                        {/* Left Side - Form Content */}
-                        <div className="w-full md:w-1/2 p-8 px-10">
-                            {/* Conditional Rendering of Login or Register Form */}
-                            {isRegistering ? (
-                                <>
-                                    <Register closeRegister={() => setIsRegistering(false)} />
-                                    <div className="mt-4 text-center">
-                                        <button
-                                            onClick={() => setIsRegistering(false)}
-                                            className="text-blue-500 hover:text-blue-700 text-sm"
-                                        >
-                                            Return to Login
-                                        </button>
-                                    </div>
-                                </>
-                            ) : (
-                                <>
-                                    <p className="text-center text-3xl font-bold leading-10 mobile:text-2xl">Welcome back!</p>
+                {/* Login or Register Form */}
+                <div
+                    className="flex flex-col md:flex-row rounded-xl shadow-2xl overflow-hidden max-w-sm lg:max-w-full w-full lg:w-3/4">
+                    {/* Left Side - Background Image */}
+                    <div
+                        className="hidden md:block lg:w-1/2 bg-cover bg-center transition-all duration-700 ease-in-out"
+                        style={{
+                            backgroundImage: `url('/assets/images/form-bg.png')`,
+                        }}
+                    ></div>
+
+                    {/* Right Side Form Container */}
+                    <div className="w-full md:w-1/2 p-8 px-10">
+                        {/* Conditional Rendering of Login or Register Form */}
+                        {isRegistering ? (
+                            <>
+                                <Register closeRegister={() => setIsRegistering(false)}/>
+
+                            </>
+                        ) : (
+                            <>
+                                <div className="pb-10">
+                                    <Link href="/">
+                                        <Image
+                                            src="/assets/images/logo.svg"
+                                            alt="Logo"
+                                            width={300}
+                                            height={50}
+                                        />
+                                    </Link>
+                                </div>
+                                <div className="pb-2">
+                                    <p className="text-3xl leading-10 mobile:text-2xl pb-2">Welcome back!</p>
                                     <p>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                                        Log in to track your progress, earn points, and stand a chance to win the
+                                        Diaspora Champions Challenge.
+                                    </p>
+                                </div>
+
+                                {error && <p style={{color: 'red'}}>{error}</p>}
+                                <form>
+                                    {/* Email Field */}
+                                    <div className="mt-4">
+                                        <label className="text-gray-700 text-sm font-bold mb-2">E-mail</label>
+                                        <div
+                                            className="flex items-center border border-[#FF930A] rounded focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out">
+                                            <input
+                                                className="bg-transparent text-gray-700 py-2 px-4 block w-full rounded"
+                                                type="text"
+                                                value={loginEmail}
+                                                onChange={(e) => setLoginEmail(e.target.value)}
+                                                placeholder="example@gmail.com"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Referral Code / Password Field */}
+                                    <div className="mt-4">
+                                        <label className="text-gray-700 text-sm font-bold mb-2">Password</label>
+                                        <div className="relative">
+                                    <span
+                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
+                                        onClick={togglePasswordVisibility}
+                                    >
+                                        {showPassword ? (
+                                            <FaEyeSlash className="text-gray-500 h-5 w-5"/>
+                                        ) : (
+                                            <FaEye className="text-gray-500 h-5 w-5"/>
+                                        )}
+                                    </span>
+                                            <input
+                                                className="bg-transparent text-gray-700 border border-[#FF930A] rounded py-2 px-4 block w-full focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out"
+                                                type={showPassword ? 'text' : 'password'}
+                                                value={loginReferralCode}
+                                                onChange={(e) => setLoginReferralCode(e.target.value)}
+                                                placeholder="Enter Referral Code"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Remember Me and Register Link */}
+                                    <div className="flex items-center justify-between mt-2">
+                                        <label className="flex items-center text-xs text-gray-500">
+                                            <input
+                                                type="checkbox"
+                                                className="mr-2"
+                                                checked={rememberMe}
+                                                onChange={() => setRememberMe(!rememberMe)}
+                                            />
+                                            Remember me
+                                        </label>
                                         <a
                                             href="#"
-                                            className="px-2 text-xs font-bold hover:text-gray-900 underline"
+                                            className="text-gray-400 font-bold hover:text-gray-900 underline"
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 setIsRegistering(true); // Toggle to registration form
                                             }}
                                         >
-                                            Register to participate
+                                            Forgot my password?
                                         </a>
-                                    </p>
+                                    </div>
 
-                                    {error && <p style={{ color: 'red' }}>{error}</p>}
-                                    <form onSubmit={handleLogin}>
-                                        {/* Email Field */}
-                                        <div className="mt-4">
-                                            <label className="hidden text-gray-700 text-sm font-bold mb-2">
-                                                Email Address
-                                            </label>
-                                            <div className="flex items-center border border-gray-300 rounded focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out">
-                                                <span className="px-2">
-                                                    <FaRegEnvelope className="h-5 w-5 text-gray-500" />
-                                                </span>
-                                                <input
-                                                    className="text-gray-700 py-2 px-4 block w-full rounded"
-                                                    type="text"
-                                                    value={loginEmail}
-                                                    onChange={(e) => setLoginEmail(e.target.value)}
-                                                    placeholder="Email"
-                                                    required
-                                                />
-                                            </div>
-                                        </div>
-                                        {/* Referral Field */}
-                                        <div className="mt-4">
-                                            <label className="hidden text-gray-700 text-sm font-bold mb-2">
-                                                Referral Code
-                                            </label>
-                                            <div className="relative">
-                                                <span className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                                                    <IoKeyOutline className="text-gray-500 h-5 w-5" />
-                                                </span>
-                                                <input
-                                                    className="text-gray-700 border border-gray-300 rounded py-2 pl-10 pr-10 block w-full focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out"
-                                                    type={"text"}
-                                                    value={loginReferralCode}
-                                                    onChange={(e) => setLoginReferralCode(e.target.value)}
-                                                    placeholder="Referral Code"
-                                                    required
-                                                />
-                                            </div>
-                                        </div>
-                                        {/* Remember Me and Register Link */}
-                                        <div className="flex items-center justify-between mt-2">
-                                            <label className="flex items-center text-xs text-gray-500">
-                                                <input
-                                                    type="checkbox"
-                                                    className="mr-2"
-                                                    checked={rememberMe}
-                                                    onChange={() => setRememberMe(!rememberMe)}
-                                                />
-                                                Remember me
-                                            </label>
-                                            <a
-                                                href="#"
-                                                className="text-xs font-bold hover:text-gray-900 underline"
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    setIsRegistering(true); // Toggle to registration form
-                                                }}
-                                            >
-                                                Register?
-                                            </a>
-                                        </div>
+                                    {/* Submit Button */}
+                                    <div className="mt-8">
+                                        <button
+                                            type="submit"
+                                            className="bg-[#0CB4AB] text-white font-bold py-4 px-4 w-full rounded-lg transform transition-transform duration-700 ease-in-out hover:scale-105"
+                                        >
+                                            Access Dashboard
+                                        </button>
+                                    </div>
+                                </form>
+                            </>
+                        )}
 
-                                        {/* Submit Button */}
-                                        <div className="mt-8">
-                                            <button
-                                                type="submit"
-                                                className="bg-orange-600 text-white font-bold py-2 px-4 w-full rounded-2xl transform transition-transform duration-700 ease-in-out hover:scale-105"
-                                            >
-                                                Login
-                                            </button>
-                                        </div>
-                                    </form>
-                                </>
-                            )}
-
-                            <div className="mt-4 flex items-center w-full text-center">
-                                <a
-                                    href="https://growthpad.co.ke"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-xs text-gray-500 capitalize text-center w-full"
-                                >
-                                    Powered by
-                                    <span className="text-violet-700"> Growthpad Consulting Group</span>
-                                </a>
-                            </div>
+                        <div className="mt-6 flex items-center w-full space-x-2">
+                    <span className="text-gray-400">
+                        {isRegistering ? "Already have an account?" : "Don't have an account yet?"}{' '}
+                    </span>
+                            <a
+                                href="#"
+                                className="font-bold hover:text-gray-900 underline"
+                                onClick={handleFormSwitch}
+                            >
+                        <span className="text-[#FF930A] underline font-bold hover:text-gray-900">
+                            {isRegistering ? "Back to Login" : "Sign Up Here"}
+                        </span>
+                            </a>
                         </div>
-
-                        {/* Right Side Background Image */}
-                        <div
-                            className="hidden md:block lg:w-1/2 bg-cover bg-center transition-all duration-700 ease-in-out"
-                            style={{
-                                backgroundImage: `url('/assets/images/login-bg-diaspora.jpg')`,
-                            }}
-                        ></div>
                     </div>
                 </div>
             </div>
+            <Footer/>
         </div>
     );
 }
