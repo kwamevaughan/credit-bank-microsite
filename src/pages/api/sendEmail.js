@@ -25,9 +25,10 @@ export default async function handler(req, res) {
                 <p>Your referral code is: <strong>${uniqueCode}</strong>.</p>
                 <p>You will log in to the platform with your email: <strong>${email}</strong> and password: <strong>${uniqueCode}</strong>.</p>
                 <p>This referral code will also be used to refer others to join, which will earn you points.</p>
+                <p>Please <a href="https://credit-bank-microsite.vercel.app/participate" target="_blank">click here to log in</a>.</p>
                 <p>We look forward to seeing you on the platform and wish you the best of luck!</p>
                 <p>Best regards,<br/>Credit Bank, Kenya</p>
-            ` // updated message using HTML format
+            ` // updated message using HTML format with login link
         };
 
         try {
