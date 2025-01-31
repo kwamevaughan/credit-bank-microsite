@@ -140,7 +140,7 @@ export default function Participate() {
                                 </div>
 
                                 {error && <p style={{color: 'red'}}>{error}</p>}
-                                <form>
+                                <form onSubmit={handleLogin}>
                                     {/* Email Field */}
                                     <div className="mt-4">
                                         <label className="text-gray-700 text-sm font-bold mb-2">E-mail</label>
