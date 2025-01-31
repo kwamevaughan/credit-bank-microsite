@@ -9,9 +9,6 @@ import { supabase } from '/lib/supabase';
 const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, userName }) => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [user, setUser] = useState(null);
-    const [points, setPoints] = useState(0);
-    const [referralCode, setReferralCode] = useState('');
-    const [tooltipVisible, setTooltipVisible] = useState(false);
     const router = useRouter();
     const dropdownRef = useRef(null);
 
@@ -31,9 +28,7 @@ const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, userNam
 
         if (error) {
             console.error('Error fetching user data:', error);
-        } else {
-            setPoints(data.points);
-            setReferralCode(data.referral_code);
+        return; // Don't proceed if there's an error
         }
     };
 
@@ -129,30 +124,9 @@ const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, userNam
                             </div>
                         </>
                     )}
-                    <div
-                        className="flex items-center px-3 py-1 gap-x-2 ">
-                        <ArrowTrendingUpIcon className="h-5 w-5" />
-                        <p className="flex text-lg gap-x-1">Points Achieved:
-                            <span className="font-bold">{points} Points</span>
-                        </p>
-                    </div>
 
-                    <div
-                        className="flex items-center px-3 py-1 gap-x-2 cursor-pointer"
-                        onClick={copyToClipboard}
-                        onMouseEnter={() => setTooltipVisible(true)}
-                        onMouseLeave={() => setTooltipVisible(false)}>
-                        <ClipboardDocumentIcon className="h-5 w-5" />
-                        <p className="flex text-lg gap-x-1">Referral Code:
-                            <span className="font-bold">{referralCode}</span>
-                        </p>
-                        {/* Tooltip */}
-                        {tooltipVisible && (
-                            <span className="absolute bg-gray-800 text-white text-xs rounded p-1 mt-2">
-                                Click to copy
-                            </span>
-                        )}
-                    </div>
+
+
                 </div>
 
                 {/* Icons with top padding on mobile */}
