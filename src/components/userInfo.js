@@ -180,8 +180,7 @@ const UserInfo = ({token, mode, toggleMode, notify}) => {
                                     className="w-[120px] h-[120px] rounded-full overflow-hidden relative flex justify-center items-center transition-all duration-300 ease-in-out"
                                 >
                                     <div
-                                        className={`absolute inset-0 bg-black rounded-full transition-opacity duration-500 ease-in-out ${hovering ? 'opacity-60' : 'opacity-0'}`}
-                                        style={{zIndex: 1}} // Ensuring the dark overlay is in front of the profile picture
+                                        className={`absolute inset-0 bg-black rounded-full transition-opacity duration-500 ease-in-out z-10 ${hovering ? 'opacity-60' : 'opacity-0'}`}
                                     ></div>
 
                                     <Image
