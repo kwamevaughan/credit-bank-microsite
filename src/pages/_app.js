@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';  // Ensure this is imported
 import 'react-toastify/dist/ReactToastify.css'; // Ensure Toastify CSS is loaded
 import '../styles/globals.css';
+import Head from 'next/head'; // Import the Head component
 
 function MyApp({ Component, pageProps }) {
     const [mode, setMode] = useState('light');
@@ -41,11 +42,20 @@ function MyApp({ Component, pageProps }) {
     }, [mode]);
 
     return (
-        <div className={mode === 'dark' ? 'dark' : ''}>
-            <Component {...pageProps} mode={mode} toggleMode={toggleMode} />
-            {/* Global Toast Container */}
-            <ToastContainer position="top-right" />
-        </div>
+        <>
+            <Head>
+                <link rel="icon" href="/favicon.png" />
+                <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+                <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+                <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+                <title>Credit Bank Diaspora Campaign</title>
+            </Head>
+            <div className={mode === 'dark' ? 'dark' : ''}>
+                <Component {...pageProps} mode={mode} toggleMode={toggleMode} />
+                {/* Global Toast Container */}
+                <ToastContainer position="top-right" />
+            </div>
+        </>
     );
 }
 
