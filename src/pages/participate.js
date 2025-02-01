@@ -8,6 +8,7 @@ import Image from 'next/image'; // Import Next.js Image component
 import Link from 'next/link';
 import NavHeader from '../layouts/nav-header'; // Import Header Component
 import Footer from '../layouts/footer';
+import ForgotPasswordModal from '../components/forgotPassword';
 
 import { useRouter } from 'next/router'; // Import useRouter for redirection
 
@@ -18,6 +19,7 @@ export default function Participate() {
     const [showPassword, setShowPassword] = useState(false); // State to track visibility of password
     const [rememberMe, setRememberMe] = useState(false);
     const [error, setError] = useState('');
+    const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] = useState(false);
 
     const router = useRouter(); // Initialize router
     const notify = (message) => toast(message);
@@ -91,44 +93,23 @@ export default function Participate() {
         setShowPassword(!showPassword);
     };
 
-
     return (
         <div className="w-full bg-[#f7f1eb]">
-
-            {/* Container with Flexbox to center content below the header */}
-
-                {/* Login Form Container centered below the header */}
             <div className="flex flex-col items-center justify-center w-full py-20">
-
-                {/* Login or Register Form */}
-                <div
-                    className="flex flex-col md:flex-row rounded-xl shadow-2xl overflow-hidden max-w-sm lg:max-w-full w-full lg:w-3/4">
-                    {/* Left Side - Background Image */}
+                <div className="flex flex-col md:flex-row rounded-xl shadow-2xl overflow-hidden max-w-sm lg:max-w-full w-full lg:w-3/4">
                     <div
                         className="hidden md:block lg:w-1/2 bg-cover bg-center transition-all duration-700 ease-in-out"
-                        style={{
-                            backgroundImage: `url('/assets/images/form-bg.png')`,
-                        }}
+                        style={{ backgroundImage: `url('/assets/images/form-bg.png')` }}
                     ></div>
 
-                    {/* Right Side Form Container */}
                     <div className="w-full md:w-1/2 p-8 px-10">
-                        {/* Conditional Rendering of Login or Register Form */}
                         {isRegistering ? (
-                            <>
-                                <Register closeRegister={() => setIsRegistering(false)}/>
-
-                            </>
+                            <Register closeRegister={() => setIsRegistering(false)} />
                         ) : (
                             <>
                                 <div className="pb-10">
                                     <Link href="/">
-                                        <Image
-                                            src="/assets/images/logo.svg"
-                                            alt="Logo"
-                                            width={300}
-                                            height={50}
-                                        />
+                                        <Image src="/assets/images/logo.svg" alt="Logo" width={300} height={50} />
                                     </Link>
                                 </div>
                                 <div className="pb-2">
@@ -139,13 +120,11 @@ export default function Participate() {
                                     </p>
                                 </div>
 
-                                {error && <p style={{color: 'red'}}>{error}</p>}
+                                {error && <p style={{ color: 'red' }}>{error}</p>}
                                 <form onSubmit={handleLogin}>
-                                    {/* Email Field */}
                                     <div className="mt-4">
                                         <label className="text-gray-700 text-sm font-bold mb-2">E-mail</label>
-                                        <div
-                                            className="flex items-center border border-[#FF930A] rounded focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out">
+                                        <div className="flex items-center border border-[#FF930A] rounded focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out">
                                             <input
                                                 className="bg-transparent text-gray-700 py-2 px-4 block w-full rounded"
                                                 type="text"
@@ -157,20 +136,19 @@ export default function Participate() {
                                         </div>
                                     </div>
 
-                                    {/* Referral Code / Password Field */}
                                     <div className="mt-4">
                                         <label className="text-gray-700 text-sm font-bold mb-2">Password</label>
                                         <div className="relative">
-                                    <span
-                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-                                        onClick={togglePasswordVisibility}
-                                    >
-                                        {showPassword ? (
-                                            <FaEyeSlash className="text-gray-500 h-5 w-5"/>
-                                        ) : (
-                                            <FaEye className="text-gray-500 h-5 w-5"/>
-                                        )}
-                                    </span>
+                                            <span
+                                                className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
+                                                onClick={togglePasswordVisibility}
+                                            >
+                                                {showPassword ? (
+                                                    <FaEyeSlash className="text-gray-500 h-5 w-5" />
+                                                ) : (
+                                                    <FaEye className="text-gray-500 h-5 w-5" />
+                                                )}
+                                            </span>
                                             <input
                                                 className="bg-transparent text-gray-700 border border-[#FF930A] rounded py-2 px-4 block w-full focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out"
                                                 type={showPassword ? 'text' : 'password'}
@@ -182,7 +160,6 @@ export default function Participate() {
                                         </div>
                                     </div>
 
-                                    {/* Remember Me and Register Link */}
                                     <div className="flex items-center justify-between mt-2">
                                         <label className="flex items-center text-xs text-gray-500">
                                             <input
@@ -197,15 +174,14 @@ export default function Participate() {
                                             href="#"
                                             className="text-gray-400 font-bold hover:text-gray-900 underline"
                                             onClick={(e) => {
-                                                e.preventDefault();
-                                                setIsRegistering(true); // Toggle to registration form
+                                                e.preventDefault(); // Prevent default anchor behavior
+                                                setIsForgotPasswordModalOpen(true); // Open the modal
                                             }}
                                         >
                                             Forgot my password?
                                         </a>
                                     </div>
 
-                                    {/* Submit Button */}
                                     <div className="mt-8">
                                         <button
                                             type="submit"
@@ -219,23 +195,30 @@ export default function Participate() {
                         )}
 
                         <div className="mt-6 flex items-center w-full space-x-2">
-                    <span className="text-gray-400">
-                        {isRegistering ? "Already have an account?" : "Don't have an account yet?"}{' '}
-                    </span>
+                            <span className="text-gray-400">
+                                {isRegistering ? "Already have an account?" : "Don't have an account yet?"}{' '}
+                            </span>
                             <a
                                 href="#"
                                 className="font-bold hover:text-gray-900 underline"
                                 onClick={handleFormSwitch}
                             >
-                        <span className="text-[#FF930A] underline font-bold hover:text-gray-900">
-                            {isRegistering ? "Back to Login" : "Sign Up Here"}
-                        </span>
+                                <span className="text-[#FF930A] underline font-bold hover:text-gray-900">
+                                    {isRegistering ? "Back to Login" : "Sign Up Here"}
+                                </span>
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
-            <Footer/>
+            <Footer />
+
+            {/* Modal for Forgot Password */}
+            <ForgotPasswordModal
+                isOpen={isForgotPasswordModalOpen}
+                closeModal={() => setIsForgotPasswordModalOpen(false)}
+                notify={notify}
+            />
         </div>
     );
 }
