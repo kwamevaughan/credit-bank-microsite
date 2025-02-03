@@ -5,124 +5,57 @@ import { CloudArrowUpIcon } from '@heroicons/react/24/outline';
 import { imagekit } from '../utils/imageKitService';
 import { uploadImage } from '../utils/imageKitService';
 import countriesData from '../../public/assets/misc/countries.json';
+import useUserData from '../hooks/useUserData';
 
-const UserInfo = ({ token, mode, toggleMode, notify }) => {
-    const [imageUrl, setImageUrl] = useState('');
-    const [userName, setUserName] = useState('');
-    const [userPoints, setUserPoints] = useState(0);
+
+const UserInfo = ({ userData, token, mode, toggleMode, notify }) => {
+    const {
+        userName,
+        userPoints,
+        actionsCompleted,
+        imageUrl,
+        rankImage,
+        userId,
+    } = userData; // Use userData from props
+
+    useEffect(() => {
+        console.log('User Points Updated:', userPoints);
+    }, [userPoints]);
+
+    useEffect(() => {
+        console.log('UserData:', userData);
+    }, [userData]);
+
     const [countryCode, setCountryCode] = useState('');
-    const [userId, setUserId] = useState('');
     const [uploading, setUploading] = useState(false);
     const [hovering, setHovering] = useState(false);
-    const [rankImage, setRankImage] = useState('/assets/images/position-default.png'); // Default rank image
 
-    // Ensure that token exists before fetching user data
+
+    // Ensure that token exists before fetching country code
     useEffect(() => {
         if (!token) {
             return; // Do nothing if token is not set
         }
 
-        const fetchUserData = async () => {
+        const fetchUserCountryCode = async () => {
             const { data, error } = await supabase
                 .from('users')
-                .select('id, name, points, country')
+                .select('country')
                 .eq('id', token)
                 .single();
 
             if (error) {
                 console.error('Error fetching user data:', error);
             } else {
-                setUserName(data.name);
-                setUserPoints(data.points);
-
-                // Map country name to code
-                const foundCountry = countriesData.find((item) => item.name === data.country);
-                const countryCode = foundCountry ? foundCountry.code : 'XX';
-
-                setUserId(`CB${data.id}${countryCode}`);
+                const foundCountry = countriesData.find(item => item.name === data.country);
+                const code = foundCountry ? foundCountry.code : 'XX';
+                setCountryCode(code); // Store country code
             }
         };
 
-        fetchUserData();
+        fetchUserCountryCode();
     }, [token]);
 
-    // Ensure that token exists before fetching user profile
-    useEffect(() => {
-        if (!token) {
-            return; // Do nothing if token is not set
-        }
-
-        const fetchUserProfile = async () => {
-            const { data, error } = await supabase
-                .from('users')
-                .select('profile_image')
-                .eq('id', token)
-                .single();
-
-            if (error) {
-                console.error('Error fetching user profile:', error);
-            } else {
-                setImageUrl(data.profile_image || '/assets/images/placeholder.png');
-            }
-        };
-
-        fetchUserProfile();
-    }, [token]);
-
-    // Fetch all users and determine rank
-    useEffect(() => {
-        if (!token) {
-            console.error('No token found');
-            return; // Do nothing if token is not set
-        }
-
-        const fetchLeaderboard = async () => {
-            const { data, error } = await supabase
-                .from('users')
-                .select('id, points')
-                .order('points', { ascending: false });
-
-            if (error) {
-                console.error('Error fetching leaderboard:', error);
-                return;
-            }
-
-            console.log('Leaderboard data:', data);  // Log all leaderboard data
-            console.log('Logged-in user token:', token); // Log the token
-            const highestPoints = data[0]?.points;
-            console.log('Highest points in leaderboard:', highestPoints);
-
-            // Check for possible type mismatch between token and user id
-            const user = data.find(user => user.id === parseInt(token)); // Ensure matching types
-            console.log('Logged-in user data:', user); // Log the user data to confirm matching
-
-            if (!user) {
-                console.error('Logged-in user not found in leaderboard');
-                return; // Exit if no user is found
-            }
-
-            // Proceed to rank calculation
-            const userRank = data.findIndex((u) => u.points === user.points);
-            console.log('User Rank:', userRank);
-
-            // Set rank image based on the rank position
-            if (userRank === 0) {
-                console.log('User is ranked 1st');
-                setRankImage('/assets/images/position-1.png');
-            } else if (userRank === 1) {
-                console.log('User is ranked 2nd');
-                setRankImage('/assets/images/position-2.png');
-            } else if (userRank === 2) {
-                console.log('User is ranked 3rd');
-                setRankImage('/assets/images/position-3.png');
-            } else {
-                console.log('User is not in top 3');
-                setRankImage('/assets/images/position-default.png');
-            }
-        };
-
-        fetchLeaderboard();
-    }, [token]);
 
 
     // Handle file changes for profile image upload
@@ -298,7 +231,7 @@ const UserInfo = ({ token, mode, toggleMode, notify }) => {
       duration-500 ease-in-out`}
                     >
                         <p>Actions Completed</p>
-                        <span className="text-2xl font-extrabold">120</span>
+                        <span className="text-2xl font-extrabold">{actionsCompleted}</span>
                     </div>
                 </div>
             </div>
