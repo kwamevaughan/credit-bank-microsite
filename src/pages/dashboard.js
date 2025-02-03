@@ -11,6 +11,7 @@ import MyActivity from "@/components/myActivity";
 import Referral from "@/components/referFriend";
 import { ArrowRightOnRectangleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import DeleteAccountModal from "@/components/DeleteAccountModal"; // Import your DeleteAccountModal
+import AppDownloadModal from "@/components/AppDownloadModal";
 
 const Dashboard = () => {
     const router = useRouter();
@@ -130,7 +131,15 @@ const Dashboard = () => {
         }
     };
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
 
     return (
         <div className={`flex flex-col bg-[#f7f1eb] h-screen ${mode === 'dark' ? 'dark' : ''}`}>
@@ -147,7 +156,9 @@ const Dashboard = () => {
                     isOpen={isSidebarOpen}
                     toggleSidebar={toggleSidebar}
                     mode={mode}
-                    onLogout={handleSignOut} // Pass sign out handler to Sidebar as well
+                    onLogout={handleSignOut}
+                    openModal={openModal}
+
                 />
 
                 <main className={`flex-1 p-8 pt-14 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-0'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-[#f7f1eb] text-black'}`}>
@@ -217,6 +228,8 @@ const Dashboard = () => {
                             onClose={() => setShowDeleteModal(false)} // Close modal
                             handleDeleteAccount={handleDeleteAccount}                        />
                     </div>
+                    <AppDownloadModal isOpen={isModalOpen} onClose={closeModal} />
+
                 </main>
             </div>
         </div>

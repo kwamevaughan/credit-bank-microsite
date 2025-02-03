@@ -13,8 +13,14 @@ import {
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import Link from "next/link";
+import AppDownloadModal from "@/components/AppDownloadModal";
+import {useState} from "react";
 
-const Sidebar = ({ isOpen, toggleSidebar, mode, onLogout }) => {
+const Sidebar = ({ isOpen, toggleSidebar, mode, onLogout, openModal }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+
+
+
     return (
         <div
             className={`fixed left-0 top-0 h-full shadow-md transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-white text-black'}`}
@@ -71,7 +77,10 @@ const Sidebar = ({ isOpen, toggleSidebar, mode, onLogout }) => {
                     </li>
 
                     <li className="py-2">
-                        <Link href="#" className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
+                        <Link href="#"
+                              className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3"
+                              onClick={openModal} // Open modal on click
+                        >
                             <ArrowDownTrayIcon className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition" />
                             Download Mobile App
                         </Link>
