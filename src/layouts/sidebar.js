@@ -69,12 +69,6 @@ const Sidebar = ({ isOpen, toggleSidebar, mode, onLogout, openModal }) => {
                             Open An Account
                         </Link>
                     </li>
-                    <li className="py-2">
-                        <Link href="#" className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
-                            <BanknotesIcon className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition" />
-                            Send Money
-                        </Link>
-                    </li>
 
                     <li className="py-2">
                         <Link href="#"
