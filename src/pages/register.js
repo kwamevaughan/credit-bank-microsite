@@ -19,6 +19,18 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
     const router = useRouter();
     const notify = (message) => toast(message);
 
+    useEffect(() => {
+        const storedSession = localStorage.getItem('supabase_session');
+
+        // Redirect if session exists
+        if (storedSession) {
+            const session = JSON.parse(storedSession);
+            if (session && session.user) {
+                router.push('/dashboard');
+            }
+        }
+    }, [router.query]);
+
     // Automatically check referral code validity when it changes
     useEffect(() => {
         if (referralCode) {
@@ -55,7 +67,6 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
         const pleaseWaitToast = toast.loading("Please wait...", { autoClose: false });
 
         try {
-            // Check if email exists
             const { data: existingUser } = await supabase
                 .from('users')
                 .select('*')
@@ -72,22 +83,19 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
                 return;
             }
 
-            // Generate a new referral code for the new user
             const uniqueCode = generateUniqueCode();
-            let referredUserPoints = 0; // Points to add to the referrer
+            let referredUserPoints = 0;
 
             if (referralCodeValid === true) {
-                // Update the referrer's points
                 const { data: referredUser } = await supabase
                     .from('users')
                     .select('points')
                     .eq('referral_code', referralCode)
                     .single();
 
-                referredUserPoints = referredUser?.points + 15 || 0; // Adding points to the referrer
+                referredUserPoints = referredUser?.points + 15 || 0;
             }
 
-            // Insert the new user data
             const { error: insertError } = await supabase
                 .from('users')
                 .insert([{
@@ -96,7 +104,7 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
                     phone_number: phoneNumber,
                     country,
                     referral_code: uniqueCode,
-                    points: 0 // New user gets 0 points
+                    points: 0
                 }]);
 
             if (insertError) {
@@ -109,7 +117,6 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
                 return;
             }
 
-            // Update the referrer’s points if there is a valid referral code
             if (referredUserPoints > 0) {
                 const { error: updateError } = await supabase
                     .from('users')
@@ -140,14 +147,12 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
                 autoClose: 5000,
             });
 
-            // Clear form fields
             setName('');
             setEmail('');
             setPhoneNumber('');
             setCountry('');
-            setReferralCode(''); // Clear referral code
+            setReferralCode('');
 
-            // Fetch the newly created user
             const { data: newUser, error: userFetchError } = await supabase
                 .from('users')
                 .select('*')
@@ -160,22 +165,18 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
                 return;
             }
 
-            // Create session object
             const session = {
                 user: {
                     id: newUser.id,
                     email: newUser.email,
                     name: newUser.name,
                 },
-                access_token: newUser.id,  // If you have an actual access token, use that
+                access_token: newUser.id,
             };
 
-            // Store the session object in localStorage
             localStorage.setItem('supabase_session', JSON.stringify(session));
 
-            closeRegister(); // Close the registration form
-
-            // Redirect to /dashboard after successful registration
+            closeRegister();
             router.push('/dashboard');
 
         } catch (error) {
@@ -187,6 +188,7 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
             });
         }
     };
+
 
     useEffect(() => {
         // Fetch country list from the JSON file
