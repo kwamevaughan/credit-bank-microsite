@@ -160,8 +160,18 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
                 return;
             }
 
-            // Store the token
-            localStorage.setItem('token', newUser.id); // Assuming newUser.id is your token
+            // Create session object
+            const session = {
+                user: {
+                    id: newUser.id,
+                    email: newUser.email,
+                    name: newUser.name,
+                },
+                access_token: newUser.id,  // If you have an actual access token, use that
+            };
+
+            // Store the session object in localStorage
+            localStorage.setItem('supabase_session', JSON.stringify(session));
 
             closeRegister(); // Close the registration form
 
