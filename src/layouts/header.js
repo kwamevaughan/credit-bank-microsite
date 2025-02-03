@@ -60,9 +60,10 @@ const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, userNam
     }, []);
 
     const handleLogout = () => {
-        localStorage.removeItem('token');
-        sessionStorage.removeItem('token');
-        router.push('/');
+        localStorage.removeItem('supabase_session');  // Remove session now
+        localStorage.removeItem('loginEmail');        // Clear email
+        localStorage.removeItem('loginReferralCode'); // Clear referral code
+        router.push('/'); // Redirect to home/login page
     };
 
     const toggleFullScreen = () => {
