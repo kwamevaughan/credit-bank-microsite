@@ -66,7 +66,7 @@ const useUserActivities = (userId) => {
 
         // Cleanup function
         return () => {
-            supabase.removeSubscription(subscription); // Unsubscribe on cleanup
+            subscription.unsubscribe(); // Unsubscribe on cleanup
         };
     }, [userId]);
 
