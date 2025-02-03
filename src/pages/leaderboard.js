@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import NavHeader from "@/layouts/nav-header";
+import Header from "@/layouts/header";
+import Sidebar from "@/layouts/sidebar";
 import LeaderboardTable from "@/components/leaderboardTable";
 
-export default function Leaderboard() {
-
+const Leaderboard = ({  }) => {
 
     return (
         <div
@@ -15,6 +15,12 @@ export default function Leaderboard() {
                 backgroundRepeat: 'no-repeat',
             }}
         >
+            <Header
+
+            />
+            <Sidebar
+
+            />
 
             <main className="py-24">
                 <LeaderboardTable />
@@ -24,3 +30,5 @@ export default function Leaderboard() {
         </div>
     );
 }
+
+export default Leaderboard;

@@ -192,6 +192,8 @@ const Dashboard = () => {
                             toggleMode={toggleMode}
                             token={token}
                             notify={notify}
+                            toggleSidebar={toggleSidebar}
+                            isSidebarOpen={isSidebarOpen}
                         />
 
                         <div className="flex justify-center gap-x-4 pt-4">
