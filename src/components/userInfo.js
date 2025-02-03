@@ -207,7 +207,7 @@ const UserInfo = ({ token, mode, toggleMode, notify }) => {
 
     return (
         <div
-            className={`${mode === 'dark' ? 'bg-[#101720] text-white' : 'bg-white text-black'} rounded-lg py-14 px-4 md:px-8`}>
+            className={`${mode === 'dark' ? 'bg-[#101720] text-white' : 'bg-white text-black'} rounded-lg py-14 px-4 md:px-8 hover:shadow-md transition-all duration-300 ease-in-out`}>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[2fr_1fr]">
                 <div className="flex flex-col md:flex-row items-center gap-y-6 md:gap-y-0 pb-6 md:pb-0">
                     <div className="px-4 space-y-4">
@@ -287,7 +287,7 @@ const UserInfo = ({ token, mode, toggleMode, notify }) => {
                             />
                             <p>Points</p>
                         </div>
-                        <span className="text-2xl font-extrabold">{userPoints || 'Loading...'}</span>
+                        <span className="text-2xl font-extrabold">{userPoints !== undefined && userPoints !== null ? userPoints : 'Loading...'}</span>
                     </div>
 
                     <div

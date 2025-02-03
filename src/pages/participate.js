@@ -29,7 +29,10 @@ export default function Participate() {
         setIsRegistering(!isRegistering); // Toggle between Register and Login
     };
 
+
     useEffect(() => {
+        const { referralCode } = router.query;
+
         // Check if 'Remember me' credentials are stored in localStorage on initial load
         const storedEmail = localStorage.getItem('loginEmail');
         const storedReferralCode = localStorage.getItem('loginReferralCode');
@@ -39,43 +42,91 @@ export default function Participate() {
             setLoginReferralCode(storedReferralCode);
             setRememberMe(true);
         }
-    }, []);
+
+        // If there is a referral code in the URL, set it to the state and open the registration form
+        if (referralCode) {
+            setLoginReferralCode(referralCode); // Set the code from the URL
+            setIsRegistering(true); // Automatically open registration
+        }
+    }, [router.query]);
+
 
     const handleLogin = async (e) => {
         e.preventDefault();
 
+        // Start the authentication toast
+        const toastId = toast.info('Authenticating... Please wait.', {
+            autoClose: false, // Keep this toast open indefinitely until updated
+            position: "top-center",
+            closeButton: false, // Hide close button
+            hideProgressBar: false, // Show progress bar while loading
+            draggable: false
+        });
+
+        // Proceed with the login logic
         const { data, error, count } = await supabase
             .from('users')
-            .select('*', { count: 'exact' }) // Get the count of rows
+            .select('*', { count: 'exact' })
             .eq('email', loginEmail)
             .eq('referral_code', loginReferralCode);
 
         // Check if there is an error
         if (error) {
-            console.log('Error message:', error.message); // Optional logging
-            toast.error('An error occurred while trying to log in. Please try again.');
+            console.log('Error message:', error.message);
+            toast.update(toastId, {
+                render: 'An error occurred while trying to log in. Please try again.',
+                type: "error", // Use "error" string instead of toast.TYPE.ERROR
+                autoClose: 5000
+            });
             return;
         }
 
         // Handle no data case (invalid credentials)
         if (count === 0) {
-            toast.error('Invalid email or referral code. Please check your credentials.');
+            toast.update(toastId, {
+                render: 'Invalid email or referral code. Please check your credentials.',
+                type: "error", // Use "error" string instead of toast.TYPE.ERROR
+                autoClose: 5000
+            });
             return;
         }
 
         // Handle multiple rows (this shouldn't happen if data is unique)
         if (count > 1) {
-            toast.error('Multiple accounts found with the same credentials. Please contact support.');
+            toast.update(toastId, {
+                render: 'Multiple accounts found with the same credentials. Please contact support.',
+                type: "error", // Use "error" string instead of toast.TYPE.ERROR
+                autoClose: 5000
+            });
             return;
         }
 
-        // If login is successful, store credentials in localStorage if "Remember me" is checked
+        // If login is successful, update the toast to show success
         if (data && data.length === 1) {
-            toast.success(`Login successful! Welcome, ${data[0].name}`);
+            const user = data[0]; // User data from the database
 
-            // Store token in localStorage or sessionStorage
-            localStorage.setItem('token', data[0].id); // assuming data[0].id is the token
+            toast.update(toastId, {
+                render: `Authenticated! Welcome, ${user.name}`, // Just the success message
+                type: "success",  // Use "success" string
+                autoClose: 3000, // Auto close after a few seconds
+                className: 'shadow-lg rounded-lg p-4', // Tailwind for success styling
+                closeButton: true, // Show close button
+            });
 
+            // Manually create a session-like object and store it in localStorage
+            const session = {
+                user: {
+                    id: user.id,
+                    email: user.email,
+                    name: user.name,
+                },
+                access_token: user.id,  // You could also store an actual token here if needed
+            };
+
+            // Store the session object in localStorage
+            localStorage.setItem('supabase_session', JSON.stringify(session));
+
+            // Optionally store the user email and referral code if "Remember me" is checked
             if (rememberMe) {
                 localStorage.setItem('loginEmail', loginEmail);
                 localStorage.setItem('loginReferralCode', loginReferralCode);
@@ -88,6 +139,9 @@ export default function Participate() {
             router.push('/dashboard');
         }
     };
+
+
+
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -104,7 +158,7 @@ export default function Participate() {
 
                     <div className="w-full md:w-1/2 p-8 px-10">
                         {isRegistering ? (
-                            <Register closeRegister={() => setIsRegistering(false)} />
+                            <Register closeRegister={() => setIsRegistering(false)} referralCode={loginReferralCode} />
                         ) : (
                             <>
                                 <div className="pb-10">

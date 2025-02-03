@@ -18,7 +18,7 @@ const LeaderboardTable = () => {
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState('');
     const [totalCount, setTotalCount] = useState(0);
-    const [pageSize] = useState(10);
+    const [pageSize] = useState(5);
 
     const fetchLeaderboard = useCallback(async () => {
         setIsFetching(true);
@@ -100,15 +100,10 @@ const LeaderboardTable = () => {
     return (
         <div>
 
-            <div className="shadow-md rounded px-8 pt-6 pb-8 mb-4"
-                 style={{
-                     backgroundImage: `url('/assets/images/main-login-bg.jpg')`,
-                     backgroundSize: 'cover',
-                     backgroundPosition: 'center',
-                     backgroundRepeat: 'no-repeat',
-                 }}>
+            <div className="px-8 pt-6 pb-8 mb-4"
+                 >
                 <h2 className="text-4xl font-bold text-teal-600 mb-4 text-center">Leaderboard</h2>
-                <h3 className="text-2xl font-bold text-orange-600 mb-4 text-center">See Who's Leading the Pack!</h3>
+                <h3 className="text-2xl font-bold text-[#ff9409] mb-4 text-center">See Who's Leading the Pack!</h3>
                 <p className="mb-4 text-center">Stay competitive! Check the live leaderboard to see who's winning.</p>
                 <div
                     className="max-w-4xl mx-auto"> {/* Main container for centering the table, search, and pagination */}
@@ -145,13 +140,13 @@ const LeaderboardTable = () => {
                                 {leaders.length > 0 ? (
                                     leaders.map((leader, index) => {
                                         // Determine rank image based on the index
-                                        let rankImageSrc = '/assets/images/rank-default.png'; // Default for others
+                                        let rankImageSrc = '/assets/images/position-default.png'; // Default for others
                                         if (index === 0) {
-                                            rankImageSrc = '/assets/images/rank-1.png';
+                                            rankImageSrc = '/assets/images/position-1.png';
                                         } else if (index === 1) {
-                                            rankImageSrc = '/assets/images/rank-2.png';
+                                            rankImageSrc = '/assets/images/position-2.png';
                                         } else if (index === 2) {
-                                            rankImageSrc = '/assets/images/rank-3.png';
+                                            rankImageSrc = '/assets/images/position-3.png';
                                         }
 
                                         // Define button styles based on rank
@@ -200,14 +195,14 @@ const LeaderboardTable = () => {
                                     {leader.name}
                                 </span>
                             </span>
-                                                        <span className="text-orange-600 mt-2 md:ml-4 md:mt-0">
+                                                        <span className="text-[#ff9409] mt-2 md:ml-4 md:mt-0">
                                 {leader.points} Points
                             </span>
                                                     </div>
                                                 </td>
                                                 <td className="px-4 py-2">
                                                     <div className="flex justify-between items-center">
-                                                        <span className="text-orange-600">NaN Actions Completed</span>
+                                                        <span className="text-[#ff9409]">0 Actions Completed</span>
                                                         <button className={buttonClass}>
                                                             {buttonText}
                                                         </button>
@@ -230,7 +225,7 @@ const LeaderboardTable = () => {
                     )}
 
                     {/* Pagination */}
-                    <div className="flex justify-between mt-4 px-4">
+                    <div className="flex justify-center items-center gap-4 mt-4 px-4">
                         <button
                             className={`bg-gray-300 text-gray-600 py-1 px-2 rounded ${page <= 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
                             onClick={() => handlePageChange(page - 1)}

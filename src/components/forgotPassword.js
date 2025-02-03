@@ -84,7 +84,7 @@ const ForgotPasswordModal = ({ isOpen, closeModal, notify }) => {
                     <button
                         type="submit"
                         className={`w-full py-2 rounded focus:outline-none transition ${
-                            loading ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
+                            loading ? 'bg-gray-300 cursor-not-allowed' : 'bg-[#0CB4AB] hover:bg-teal-600'
                         } text-white`} // Always white text
                         disabled={loading}
                     >
