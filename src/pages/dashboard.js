@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '/lib/supabase';
+import useUserData from '../hooks/useUserData'; // Correctly imported as default
+import useUserActivities from '../hooks/useUserActivities'; // Correctly imported as default
 import Header from "@/layouts/header";
 import Sidebar from "@/layouts/sidebar";
 import { toast } from 'react-toastify';
@@ -18,9 +20,40 @@ const Dashboard = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [mode, setMode] = useState('light');
     const [token, setToken] = useState(null);
+
     const [showDeleteModal, setShowDeleteModal] = useState(false); // Manage modal visibility
 
     const notify = (message) => toast(message);
+    const userData = useUserData(token);
+    const activities = useUserActivities(token);
+
+    // Check if user is logged in (update for v2.x)
+    useEffect(() => {
+        const fetchSession = () => {
+            const session = JSON.parse(localStorage.getItem('supabase_session'));
+            if (session) {
+                setToken(session.access_token);
+            } else {
+                router.push('/');
+            }
+        };
+
+        fetchSession();
+
+        // You may want to add an event listener here if tokens are updated:
+        window.addEventListener('storage', fetchSession);
+
+        return () => {
+            window.removeEventListener('storage', fetchSession);
+        };
+    }, [router]);
+
+    // Ensure userData is properly loaded and update as needed
+    useEffect(() => {
+        console.log("User Data in Dashboard:", userData); // Log to track updates
+    }, [userData]);
+
+    const handleDownloadApp = (message) => notify(message, 'success');
 
     // Check if user is logged in (update for v2.x)
     useEffect(() => {
@@ -141,6 +174,8 @@ const Dashboard = () => {
         setIsModalOpen(false);
     };
 
+
+
     return (
         <div className={`flex flex-col bg-[#f7f1eb] h-screen ${mode === 'dark' ? 'dark' : ''}`}>
             <Header
@@ -168,6 +203,7 @@ const Dashboard = () => {
                             toggleMode={toggleMode}
                             token={token}
                             notify={notify}
+                            userData={userData}
                         />
 
                         <DashboardOverview
@@ -175,6 +211,7 @@ const Dashboard = () => {
                             toggleMode={toggleMode}
                             token={token}
                             notify={notify}
+                            userData={userData}
                         />
 
                         <div>
@@ -228,7 +265,11 @@ const Dashboard = () => {
                             onClose={() => setShowDeleteModal(false)} // Close modal
                             handleDeleteAccount={handleDeleteAccount}                        />
                     </div>
-                    <AppDownloadModal isOpen={isModalOpen} onClose={closeModal} />
+                    <AppDownloadModal
+                        isOpen={isModalOpen}
+                        onClose={closeModal}
+                        token={token}
+                    />
 
                 </main>
             </div>
