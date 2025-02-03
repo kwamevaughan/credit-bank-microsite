@@ -1,9 +1,132 @@
-import React from 'react';
-import Modal from './Modal'; // Import the Modal component
+import React, { useEffect, useState } from 'react';
+import { supabase } from '/lib/supabase';
+import Modal from './Modal';
 import Image from 'next/image';
-import Link from 'next/link'; // Import Link from nextjs
+import { toast } from 'react-toastify';
 
 const AppDownloadModal = ({ isOpen, onClose }) => {
+    const [userId, setUserId] = useState(null);
+    const [isAppDownloaded, setIsAppDownloaded] = useState(false);
+
+    useEffect(() => {
+        const storedSession = localStorage.getItem('supabase_session');
+        if (storedSession) {
+            const session = JSON.parse(storedSession);
+            setUserId(session.user?.id);
+            console.log("Logged in User ID:", session.user?.id); // Log the user ID
+        }
+    }, [isOpen]);
+
+    useEffect(() => {
+        const checkUserDownloadStatus = async () => {
+            if (!userId) return;
+
+            const { data, error } = await supabase
+                .from('user_activities')
+                .select('*') // Select all columns to have full detail
+                .eq('user_id', userId)
+                .ilike('activity_type', 'Downloaded the Mobile App%');
+
+            // Log the fetched activity log
+            console.log("Fetched Activity Log:", data, error); // Log fetched activities
+
+            if (data && data.length > 0) {
+                setIsAppDownloaded(true);
+            }
+        };
+
+        checkUserDownloadStatus();
+    }, [userId]);
+
+    const handleDownloadApp = async (platform, url) => {
+        if (!userId) {
+            toast.error('User ID is not defined. Please log in again.');
+            return;
+        }
+
+        // Show a "Please Wait" toast
+        const waitToastId = toast.loading('Please wait while we check your download status...');
+
+        // Check if user has already downloaded an app
+        const { data, error } = await supabase
+            .from('user_activities')
+            .select('activity_id') // Select the correct primary key
+            .eq('user_id', userId)
+            .ilike('activity_type', 'Downloaded the Mobile App%');
+
+        // Dismiss the "Please wait" toast
+        toast.dismiss(waitToastId);
+
+        // Log the check result
+        console.log("Download Check Result:", data, error); // Log the result of the download check
+
+        if (data && data.length > 0) {
+            // If there's a matching entry, inform the user
+            toast.info(`You have already downloaded the ${platform} app.`);
+            setIsAppDownloaded(true);
+            return;
+        }
+
+        // Proceed with the download process
+        const { data: user, error: getUserError } = await supabase
+            .from('users')
+            .select('points, actions_completed')
+            .eq('id', userId)
+            .single();
+
+        if (getUserError) {
+            console.error('Error getting user:', getUserError);
+            toast.error('Failed to get user. Please try again.');
+            return;
+        }
+
+        const pointsToUpdate = user.points + 15;
+        const actionsCompleted = user.actions_completed + 1;
+
+        const { error: updateUserError } = await supabase
+            .from('users')
+            .update({
+                points: pointsToUpdate, // Add points to the user's points
+                actions_completed: actionsCompleted, // Increment the actions_completed column
+            })
+            .eq('id', userId);
+
+        if (updateUserError) {
+            console.error('Error updating user:', updateUserError);
+            toast.error('Failed to update user. Please try again.');
+            return;
+        }
+
+        const { error: logError } = await supabase
+            .from('user_activities')
+            .insert({
+                user_id: userId,
+                activity_type: `Downloaded the Mobile App (${platform})`,
+                points: 15,
+            });
+
+        if (logError) {
+            console.error('Error logging activity:', logError);
+            toast.error('Failed to log activity. Please try again.');
+            return;
+        }
+
+        setIsAppDownloaded(true);
+
+        // Open the download link in a new tab
+        window.open(url, '_blank');
+
+        toast.success(
+            <div className="flex items-center">
+                <span>{`${platform} App Downloaded. You have earned 15 points.`}</span>
+            </div>,
+            {
+                autoClose: 3000,
+                position: "bottom-center",
+            }
+        );
+    };
+
     return (
         <Modal isOpen={isOpen} onClose={onClose} title="Download Mobile App">
             <p className="text-center mb-4">
@@ -11,35 +134,41 @@ const AppDownloadModal = ({ isOpen, onClose }) => {
             </p>
             <div className="flex justify-center gap-x-14">
                 <div>
-                    <Link
-                        href="https://play.google.com/store/apps/details?id=co.ke.ekenya.creditbank"
-                        passHref
+                    <a
+                        href="#"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            handleDownloadApp('Android', 'https://play.google.com/store/apps/details?id=co.ke.ekenya.creditbank');
+                        }}
                     >
                         <Image
                             src="/assets/images/android.svg"
                             alt="Android"
                             width={75}
                             height={75}
-                            className="transition-transform transform hover:translate-y-[-5px] duration-500 ease-in-out"
+                            className={`transition-transform transform hover:translate-y-[-5px] duration-500 ease-in-out ${isAppDownloaded ? 'opacity-50 cursor-not-allowed' : ''}`}
                         />
-                        <span>Android users</span>
-                    </Link>
+                        <span>{isAppDownloaded ? 'Downloaded!' : 'Android users'}</span>
+                    </a>
                 </div>
 
                 <div>
-                    <Link
-                        href="https://apps.apple.com/us/app/credit-bank-cb-konnect/id1469515952"
-                        passHref
+                    <a
+                        href="#"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            handleDownloadApp('Apple', 'https://apps.apple.com/us/app/credit-bank-cb-konnect/id1469515952');
+                        }}
                     >
                         <Image
                             src="/assets/images/apple.svg"
                             alt="Apple"
                             width={75}
                             height={75}
-                            className="transition-transform transform hover:translate-y-[-5px] duration-500 ease-in-out"
+                            className={`transition-transform transform hover:translate-y-[-5px] duration-500 ease-in-out ${isAppDownloaded ? 'opacity-50 cursor-not-allowed' : ''}`}
                         />
-                        <span>Apple users</span>
-                    </Link>
+                        <span>{isAppDownloaded ? 'Downloaded!' : 'Apple users'}</span>
+                    </a>
                 </div>
             </div>
         </Modal>
