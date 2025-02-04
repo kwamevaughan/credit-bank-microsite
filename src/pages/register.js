@@ -104,7 +104,7 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
                     phone_number: phoneNumber,
                     country,
                     referral_code: uniqueCode,
-                    points: 0
+                    points: 20
                 }]);
 
             if (insertError) {
