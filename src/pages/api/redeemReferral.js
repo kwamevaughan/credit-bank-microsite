@@ -7,9 +7,9 @@ export default async function handler(req, res) {
     if (req.method === 'POST') {
         const { name, phoneNumber, email, referredBy } = req.body;
 
-        // Validate input
-        if (!name || !phoneNumber || !email || !referredBy) {
-            return res.status(400).json({ error: 'All fields are required' });
+        // Validate input — only referredBy is mandatory
+        if (!referredBy) {
+            return res.status(400).json({ error: 'The referredBy field is required.' });
         }
 
         try {
@@ -46,8 +46,30 @@ export default async function handler(req, res) {
                 return res.status(500).json({ error: 'Error updating referral count: ' + updateReferralCountError.message });
             }
 
-            // Successful response
-            return res.status(200).json({ message: 'Points awarded and referral count incremented successfully!' });
+            // Get the referer URL
+            const refererUrl = req.headers['referer'] || 'Unknown Referer';
+
+            // Log activity in the user_activities table with the referrer's name and URL
+            const referrerName = name || "Unknown Referrer"; // fallback if name not provided
+            const activityType = `Referred User by name, ${referrerName} from ${refererUrl}`; // Include the referrer's name and URL in the activity type
+
+            const { error: logActivityError } = await supabase
+                .from('user_activities')
+                .insert({
+                    user_id: user.id, // Assuming the user table has an 'id' field
+                    points: 50, // Points awarded
+                    activity_type: activityType, // Activity description with the referrer's name and URL
+                    created_at: new Date().toISOString() // Current timestamp
+                });
+
+            if (logActivityError) {
+                return res.status(500).json({ error: 'Error logging user activity: ' + logActivityError.message });
+            }
+
+            // Successful response with specific message
+            return res.status(200).json({
+                message: `Points awarded to ${user.name} and referral count incremented successfully! Referrer: ${referrerName} from ${refererUrl}`
+            });
 
         } catch (error) {
             return res.status(500).json({ error: 'An unexpected error occurred: ' + error.message });
