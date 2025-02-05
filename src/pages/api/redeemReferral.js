@@ -68,7 +68,7 @@ export default async function handler(req, res) {
 
             // Successful response with specific message
             return res.status(200).json({
-                message: `Points awarded to ${user.name} and referral count incremented successfully! Referrer: ${referrerName} from ${refererUrl}`
+                message: `Points awarded to ${user.name} and referral count added successfully! Referrer: ${referrerName} from ${refererUrl}`
             });
 
         } catch (error) {
