@@ -66,9 +66,12 @@ export default async function handler(req, res) {
                 return res.status(500).json({ error: 'Error logging user activity: ' + logActivityError.message });
             }
 
-            // Successful response with specific message
+            // Successful response with structured information
             return res.status(200).json({
-                message: `Points awarded to ${user.name} and referral count added successfully! Referrer: ${referrerName} from ${refererUrl}`
+                "Points Awarded": 50,
+                "Recipient": user.name,        // Recipient's name from the user object
+                "Referee": referrerName,       // Referring user's name, or "Unknown Referrer"
+                "URL/Platform": refererUrl      // The URL where the referral came from
             });
 
         } catch (error) {
