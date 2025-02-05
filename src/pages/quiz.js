@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '/lib/supabase';
 import Header from "@/layouts/header";
 import Sidebar from "@/layouts/sidebar";
@@ -6,12 +6,11 @@ import { quizzes } from '../data/questions';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
 
-
 const Quiz = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [mode, setMode] = useState('light');
     const notify = (message) => toast(message);
-    const [activeTopicIndex, setActiveTopicIndex] = useState(0); // to track the current topic
+    const [activeTopicIndex, setActiveTopicIndex] = useState(0);
     const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
     const [selectedAnswerIndex, setSelectedAnswerIndex] = useState(null);
     const [showResult, setShowResult] = useState(false);
@@ -21,7 +20,11 @@ const Quiz = () => {
         wrongAnswers: 0,
     });
 
-    const { questions } = quizzes[activeTopicIndex]; // get questions based on the active topic
+    const totalQuestions = quizzes.reduce((acc, quiz) => acc + quiz.totalQuestions, 0);
+    const answeredQuestions = activeTopicIndex * quizzes[activeTopicIndex].totalQuestions + activeQuestionIndex + 1;
+    const progress = (answeredQuestions / totalQuestions) * 100;
+
+    const { questions } = quizzes[activeTopicIndex];
     const { question, choices, correctAnswer } = questions[activeQuestionIndex];
 
     const onClickNext = () => {
@@ -34,12 +37,11 @@ const Quiz = () => {
             wrongAnswers: !isCorrect ? prev.wrongAnswers + 1 : prev.wrongAnswers,
         }));
 
-        // Move to the next question or the next topic if we finished the current one
         if (activeQuestionIndex < questions.length - 1) {
             setActiveQuestionIndex(prev => prev + 1);
         } else if (activeTopicIndex < quizzes.length - 1) {
             setActiveTopicIndex(prev => prev + 1);
-            setActiveQuestionIndex(0); // reset question index for new topic
+            setActiveQuestionIndex(0);
         } else {
             setShowResult(true);
         }
@@ -47,13 +49,11 @@ const Quiz = () => {
         setSelectedAnswerIndex(null);
     };
 
-
     useEffect(() => {
         if (typeof window !== 'undefined') {
             setSidebarOpen(window.innerWidth > 768);
         }
     }, []);
-
 
     const toggleSidebar = () => {
         setSidebarOpen(!isSidebarOpen);
@@ -77,7 +77,6 @@ const Quiz = () => {
         });
     };
 
-
     return (
         <div className="w-full">
             <Header
@@ -93,11 +92,7 @@ const Quiz = () => {
                 mode={mode}
             />
 
-            <main
-                className={`flex-1 pt-14 p-8 min-h-screen transition-all duration-300 ${
-                    isSidebarOpen ? 'ml-64' : 'ml-0'
-                } ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-[#f7f1eb] text-black'}`}
-            >
+            <main className={`flex-1 pt-14 p-8 min-h-screen transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-0'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-[#f7f1eb] text-black'}`}>
                 <div className="mb-12">
                     <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-teal-600 mb-4 text-center">
                         <span className="font-orange">Take Our</span> Fun Quiz{' '}
@@ -117,13 +112,13 @@ const Quiz = () => {
                             <h2 className="text-xl sm:text-2xl">Pillar: {activeTopicIndex + 1} {quizzes[activeTopicIndex].topic}</h2>
 
                             <span className="bg-[#cff0ed] p-2 rounded-lg">
-                            Time left: <span className="bg-black p-2 rounded-lg text-white font-bold">04:20</span>
-                        </span>
+                                Time left: <span className="bg-black p-2 rounded-lg text-white font-bold">04:20</span>
+                            </span>
                         </div>
                         <div className="bg-[#cff0ed] rounded-full h-2.5 dark:bg-gray-700 mb-6 overflow-hidden">
                             <div
                                 className="bg-[#0CB4AB] h-2.5 rounded-full transition-width duration-500 ease-in-out"
-                                style={{ width: `30%` }}
+                                style={{ width: `${progress}%` }}
                             ></div>
                         </div>
                         <h2 className="text-xl mb-4">{question}</h2>
@@ -149,7 +144,7 @@ const Quiz = () => {
                 ) : (
                     <div className="bg-white p-8 rounded shadow-md text-center">
                         <h3 className="text-xl mb-4">Result</h3>
-                        <p>Total Questions: {quizzes.reduce((acc, quiz) => acc + quiz.totalQuestions, 0)}</p>
+                        <p>Total Questions: {totalQuestions}</p>
                         <p>Total Score: {result.score}</p>
                         <p>Correct Answers: {result.correctAnswers}</p>
                         <p>Wrong Answers: {result.wrongAnswers}</p>
@@ -158,6 +153,6 @@ const Quiz = () => {
             </main>
         </div>
     );
-}
+};
 
 export default Quiz;
