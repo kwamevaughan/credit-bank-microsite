@@ -1,19 +1,19 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '/lib/supabase';
-import { toast } from 'react-toastify'; // Import toast here
+import { toast } from 'react-toastify';
 import Select from 'react-select';
-import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline'; // Import the checkmark and X icons
-import { useRouter } from 'next/router'; // Import useRouter for redirection
+import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // Accept referralCode as a prop
+const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [country, setCountry] = useState('');
-    const [referralCode, setReferralCode] = useState(initialReferralCode || ''); // Set initial state from prop
-    const [referralCodeValid, setReferralCodeValid] = useState(null); // Referral code validity state
+    const [referralCode, setReferralCode] = useState(initialReferralCode || '');
+    const [referralCodeValid, setReferralCodeValid] = useState(null);
     const [countries, setCountries] = useState([]);
 
     const router = useRouter();
@@ -22,7 +22,6 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
     useEffect(() => {
         const storedSession = localStorage.getItem('supabase_session');
 
-        // Redirect if session exists
         if (storedSession) {
             const session = JSON.parse(storedSession);
             if (session && session.user) {
@@ -31,12 +30,11 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
         }
     }, [router.query]);
 
-    // Automatically check referral code validity when it changes
     useEffect(() => {
         if (referralCode) {
-            checkReferralCode(referralCode); // Validate the pre-filled referral code
+            checkReferralCode(referralCode);
         }
-    }, [referralCode]); // Dependency on referralCode
+    }, [referralCode]);
 
     const generateUniqueCode = () => {
         return Math.random().toString(36).substr(2, 9);
@@ -48,7 +46,6 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
             return;
         }
 
-        // Check if the referral code exists in the database
         const { data: referredUser, error } = await supabase
             .from('users')
             .select('referral_code')
@@ -56,9 +53,9 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
             .single();
 
         if (error || !referredUser) {
-            setReferralCodeValid(false); // Invalid code
+            setReferralCodeValid(false);
         } else {
-            setReferralCodeValid(true); // Valid code
+            setReferralCodeValid(true);
         }
     };
 
@@ -67,7 +64,6 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
         const pleaseWaitToast = toast.loading("Please wait...", { autoClose: false });
 
         try {
-            // Check for existing user
             const { data: existingUser } = await supabase
                 .from('users')
                 .select('*')
@@ -87,22 +83,22 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
             const uniqueCode = generateUniqueCode();
             let referredUserPoints = 0;
             let referredUserId = null;
+            let referredUserActionsCompleted = 0;
 
-            // Handle referral points
             if (referralCodeValid === true) {
                 const { data: referredUser } = await supabase
                     .from('users')
-                    .select('id, points')
+                    .select('id, points, actions_completed')
                     .eq('referral_code', referralCode)
                     .single();
 
                 if (referredUser) {
                     referredUserPoints = referredUser.points + 15;
                     referredUserId = referredUser.id;
+                    referredUserActionsCompleted = referredUser.actions_completed + 1;
                 }
             }
 
-            // Insert new user
             const { data: newUserData, error: insertError } = await supabase
                 .from('users')
                 .insert([{
@@ -127,7 +123,6 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
                 return;
             }
 
-            // Add user activity record for the new user
             const { error: activityError } = await supabase
                 .from('user_activities')
                 .insert([{
@@ -139,14 +134,15 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
 
             if (activityError) {
                 console.error('Error recording activity:', activityError);
-                // Continue with registration even if activity logging fails
             }
 
-            // Update referrer's points if applicable
             if (referredUserPoints > 0 && referredUserId) {
                 const { error: updateError } = await supabase
                     .from('users')
-                    .update({ points: referredUserPoints })
+                    .update({
+                        points: referredUserPoints,
+                        actions_completed: referredUserActionsCompleted
+                    })
                     .eq('id', referredUserId);
 
                 if (updateError) {
@@ -157,19 +153,17 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
                         autoClose: 5000,
                     });
                 } else {
-                    // Log referral activity for the referrer
                     const { error: referralActivityError } = await supabase
                         .from('user_activities')
                         .insert([{
-                            user_id: referredUserId, // The referrer's user ID
-                            activity_type: `Referred user: ${newUserData.name}`, // Activity type including the new user's name
-                            points: 15, // Points earned for the referral
+                            user_id: referredUserId,
+                            activity_type: `Referred user: ${newUserData.name}`,
+                            points: 15,
                             created_at: new Date().toISOString(),
                         }]);
 
                     if (referralActivityError) {
                         console.error('Error recording referrer activity:', referralActivityError);
-                        // Continue with registration even if activity logging fails
                     } else {
                         toast.update(pleaseWaitToast, {
                             render: 'Referrer has been awarded 15 points!',
@@ -181,7 +175,6 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
                 }
             }
 
-            // Create session
             const session = {
                 user: {
                     id: newUserData.id,
@@ -192,7 +185,6 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
             };
             localStorage.setItem('supabase_session', JSON.stringify(session));
 
-            // Success message and cleanup
             toast.update(pleaseWaitToast, {
                 render: 'User registered successfully! Your referral code: ' + uniqueCode,
                 type: 'success',
@@ -219,17 +211,12 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
         }
     };
 
-
-
-
     useEffect(() => {
-        // Fetch country list from the JSON file
         const fetchCountries = async () => {
             try {
                 const response = await fetch('/assets/misc/countries.json');
                 const data = await response.json();
 
-                // Map countries to the format required by react-select
                 const countryOptions = data.map((item) => ({
                     label: item.name,
                     value: item.name,
@@ -261,7 +248,6 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
                 <p>Register to track your progress, earn points, and stand a chance to win the Diaspora Champions Challenge.</p>
             </div>
             <form onSubmit={handleSubmit}>
-                {/* Name Field */}
                 <div className="mt-4">
                     <label className="text-gray-700 text-sm font-bold mb-2">Name</label>
                     <input
@@ -274,7 +260,6 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
                     />
                 </div>
 
-                {/* Email Field */}
                 <div className="mt-4">
                     <label className="text-gray-700 text-sm font-bold mb-2">E-mail</label>
                     <input
@@ -287,7 +272,6 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
                     />
                 </div>
 
-                {/* Phone Number Field */}
                 <div className="mt-4">
                     <label className="text-gray-700 text-sm font-bold mb-2">Phone Number</label>
                     <input
@@ -300,7 +284,6 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
                     />
                 </div>
 
-                {/* Country Dropdown */}
                 <div className="mt-4">
                     <label className="text-gray-700 text-sm font-bold mb-2">Country</label>
                     <Select
@@ -314,7 +297,6 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
                     />
                 </div>
 
-                {/* Referral Code Field */}
                 <div className="mt-4 relative">
                     <label className="text-gray-700 text-sm font-bold mb-2">Referral Code (Optional)</label>
                     <input
@@ -327,7 +309,6 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
                         }}
                         className="bg-transparent text-gray-700 border border-[#FF930A] rounded py-2 px-4 block w-full pr-12"
                     />
-                    {/* Referral Code Validation Feedback */}
                     {referralCodeValid !== null && (
                         <div
                             className={`absolute right-3 top-2/3 transform -translate-y-1/2 text-sm ${referralCodeValid ? 'text-green-500' : 'text-red-500'}`}>
@@ -340,8 +321,6 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
                     )}
                 </div>
 
-
-                {/* Submit Button */}
                 <div className="mt-8">
                     <button
                         type="submit"
