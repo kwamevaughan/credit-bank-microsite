@@ -11,7 +11,7 @@ const countryCodeMapping = countryFlagData.reduce((acc, { name, code, image }) =
     return acc;
 }, {});
 
-const LeaderboardTable = ({ token }) => {
+const LeaderboardTable = ({ token, mode, toggleMode, toggleSidebar, isSidebarOpen }) => {
     const [leaders, setLeaders] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
     const [error, setError] = useState(null);
@@ -82,7 +82,9 @@ const LeaderboardTable = ({ token }) => {
     const totalPages = Math.ceil(totalCount / pageSize);
 
     return (
-        <div>
+        <main
+            className={`${mode === 'dark' ? 'bg-[#101720] text-white' : 'bg-transparent text-black'} rounded-lg px-4 md:px-0 transition-all duration-300 ease-in-out`}
+        >
 
             <div className="px-8 pt-6 pb-8 mb-4"
             >
@@ -230,7 +232,7 @@ const LeaderboardTable = ({ token }) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
     );
 };
 

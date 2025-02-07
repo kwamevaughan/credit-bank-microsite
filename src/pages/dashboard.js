@@ -235,6 +235,7 @@ const Dashboard = () => {
                             </div>
                         </div>
 
+
                         <LeaderboardTable
                             mode={mode}
                             toggleMode={toggleMode}
