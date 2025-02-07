@@ -77,7 +77,7 @@ const MyActivity = ({ token, mode }) => {
                                     <p className="font-bold text-[#ff9409]">+{activity.points} Points</p>
                                 </div>
                                 <div
-                                    className="absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 flex items-center mb-8 opacity-0 group-hover:opacity-75 transition-opacity duration-300 bg-gray-800 text-white text-sm rounded px-4 py-2 shadow-lg"
+                                    className="absolute left-1/2 transform -translate-x-1/2  bottom-0 flex items-center mb-2 opacity-0 group-hover:opacity-75 transition-opacity duration-300 bg-gray-800 text-white text-sm rounded px-4 py-2 shadow-lg"
                                 >
                                     {`Task completed on ${formatDate(activity.created_at)}`}
                                 </div>
