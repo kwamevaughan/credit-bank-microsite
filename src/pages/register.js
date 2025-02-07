@@ -67,6 +67,7 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
         const pleaseWaitToast = toast.loading("Please wait...", { autoClose: false });
 
         try {
+            // Check for existing user
             const { data: existingUser } = await supabase
                 .from('users')
                 .select('*')
@@ -85,18 +86,24 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
 
             const uniqueCode = generateUniqueCode();
             let referredUserPoints = 0;
+            let referredUserId = null;
 
+            // Handle referral points
             if (referralCodeValid === true) {
                 const { data: referredUser } = await supabase
                     .from('users')
-                    .select('points')
+                    .select('id, points')
                     .eq('referral_code', referralCode)
                     .single();
 
-                referredUserPoints = referredUser?.points + 15 || 0;
+                if (referredUser) {
+                    referredUserPoints = referredUser.points + 15;
+                    referredUserId = referredUser.id;
+                }
             }
 
-            const { error: insertError } = await supabase
+            // Insert new user
+            const { data: newUserData, error: insertError } = await supabase
                 .from('users')
                 .insert([{
                     name,
@@ -104,8 +111,11 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
                     phone_number: phoneNumber,
                     country,
                     referral_code: uniqueCode,
-                    points: 20
-                }]);
+                    points: 20,
+                    actions_completed: 1
+                }])
+                .select()
+                .single();
 
             if (insertError) {
                 toast.update(pleaseWaitToast, {
@@ -117,29 +127,72 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
                 return;
             }
 
-            if (referredUserPoints > 0) {
+            // Add user activity record for the new user
+            const { error: activityError } = await supabase
+                .from('user_activities')
+                .insert([{
+                    user_id: newUserData.id,
+                    activity_type: 'Joined the Challenge',
+                    points: 20,
+                    created_at: new Date().toISOString(),
+                }]);
+
+            if (activityError) {
+                console.error('Error recording activity:', activityError);
+                // Continue with registration even if activity logging fails
+            }
+
+            // Update referrer's points if applicable
+            if (referredUserPoints > 0 && referredUserId) {
                 const { error: updateError } = await supabase
                     .from('users')
                     .update({ points: referredUserPoints })
-                    .eq('referral_code', referralCode);
+                    .eq('id', referredUserId);
 
                 if (updateError) {
                     toast.update(pleaseWaitToast, {
-                        render: `Error updating referrer’s points: ${updateError.message}`,
+                        render: `Error updating referrer's points: ${updateError.message}`,
                         type: 'error',
                         isLoading: false,
                         autoClose: 5000,
                     });
                 } else {
-                    toast.update(pleaseWaitToast, {
-                        render: 'Referrer has been awarded 15 points!',
-                        type: 'success',
-                        isLoading: false,
-                        autoClose: 5000,
-                    });
+                    // Log referral activity for the referrer
+                    const { error: referralActivityError } = await supabase
+                        .from('user_activities')
+                        .insert([{
+                            user_id: referredUserId, // The referrer's user ID
+                            activity_type: `Referred user: ${newUserData.name}`, // Activity type including the new user's name
+                            points: 15, // Points earned for the referral
+                            created_at: new Date().toISOString(),
+                        }]);
+
+                    if (referralActivityError) {
+                        console.error('Error recording referrer activity:', referralActivityError);
+                        // Continue with registration even if activity logging fails
+                    } else {
+                        toast.update(pleaseWaitToast, {
+                            render: 'Referrer has been awarded 15 points!',
+                            type: 'success',
+                            isLoading: false,
+                            autoClose: 5000,
+                        });
+                    }
                 }
             }
 
+            // Create session
+            const session = {
+                user: {
+                    id: newUserData.id,
+                    email: newUserData.email,
+                    name: newUserData.name,
+                },
+                access_token: newUserData.id,
+            };
+            localStorage.setItem('supabase_session', JSON.stringify(session));
+
+            // Success message and cleanup
             toast.update(pleaseWaitToast, {
                 render: 'User registered successfully! Your referral code: ' + uniqueCode,
                 type: 'success',
@@ -153,29 +206,6 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
             setCountry('');
             setReferralCode('');
 
-            const { data: newUser, error: userFetchError } = await supabase
-                .from('users')
-                .select('*')
-                .eq('email', email)
-                .single();
-
-            if (userFetchError || !newUser) {
-                console.error('Error fetching user after registration:', userFetchError);
-                toast.error('Failed to fetch user information after registration.');
-                return;
-            }
-
-            const session = {
-                user: {
-                    id: newUser.id,
-                    email: newUser.email,
-                    name: newUser.name,
-                },
-                access_token: newUser.id,
-            };
-
-            localStorage.setItem('supabase_session', JSON.stringify(session));
-
             closeRegister();
             router.push('/dashboard');
 
@@ -188,6 +218,8 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => { // 
             });
         }
     };
+
+
 
 
     useEffect(() => {
