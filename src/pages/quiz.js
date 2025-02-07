@@ -321,7 +321,7 @@ const Quiz = () => {
                                 {quizzes[activeTopicIndex]?.questions[activeQuestionIndex] ? (
                                     <h2 className="text-xl mb-4">{quizzes[activeTopicIndex].questions[activeQuestionIndex].question}</h2>
                                 ) : (
-                                    <h4 className="text-lg mb-4">No Question Available. Check back tomorrow.</h4> // Fallback if no question is found
+                                    <h4 className="text-lg mb-4">No Question Available. Check back tomorrow!</h4> // Fallback if no question is found
                                 )}
                             </div>
                         )}
