@@ -3,11 +3,10 @@ import { supabase } from '/lib/supabase';
 import { EllipsisVerticalIcon } from '@heroicons/react/24/outline';
 import useUserActivities from '../hooks/useUserActivities'; // Adjust the import path accordingly
 
-const MyActivity = ({ token, mode }) => { // Removed useUserActivities from props
+const MyActivity = ({ token, mode }) => {
     const [userName, setUserName] = useState('');
     const [userId, setUserId] = useState('');
 
-    // Call the custom hook here
     const { activities, loading, error } = useUserActivities(userId); // Get activities from the custom hook
 
     useEffect(() => {
@@ -60,26 +59,32 @@ const MyActivity = ({ token, mode }) => { // Removed useUserActivities from prop
             )}
 
             {!loading && !error && activities.length > 0 ? (
-                activities.map((activity, index) => (
-                    <div
-                        key={activity.activity_id}
-                        className={`${
-                            index % 2 === 0
-                                ? 'bg-[#f4fbfb] hover:bg-[#cff0ed]'
-                                : 'bg-white hover:bg-[#cff0ed]'
-                        } py-6 transition-all duration-300 ease-in-out group relative`}
-                    >
-                        <div className="flex justify-between px-8">
-                            <p>{activity.activity_type}</p>
-                            <p className="font-bold text-[#ff9409]">+{activity.points} Points</p>
-                        </div>
-                        <div
-                            className="absolute left-1/2 transform -translate-x-1/2 bottom-0 mb-8 opacity-0 group-hover:opacity-75 transition-opacity duration-300 bg-gray-800 text-white text-sm rounded px-4 py-2 shadow-lg"
-                        >
-                            {`Task completed on ${formatDate(activity.created_at)}`}
-                        </div>
-                    </div>
-                ))
+                <div
+                    className=""
+                    style={{overflowY: 'auto', height: '300px'}}>
+                    {activities.slice(0, 5).map((activity, index) => { // Limit to 5 activities
+                        return (
+                            <div
+                                key={activity.activity_id}
+                                className={`${
+                                    index % 2 === 0
+                                        ? 'bg-[#f4fbfb] hover:bg-[#cff0ed]'
+                                        : 'bg-white hover:bg-[#cff0ed]'
+                                } py-6 transition-all duration-300 ease-in-out group relative`}
+                            >
+                                <div className="flex justify-between px-8">
+                                    <p>{activity.activity_type}</p>
+                                    <p className="font-bold text-[#ff9409]">+{activity.points} Points</p>
+                                </div>
+                                <div
+                                    className="absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 flex items-center mb-8 opacity-0 group-hover:opacity-75 transition-opacity duration-300 bg-gray-800 text-white text-sm rounded px-4 py-2 shadow-lg"
+                                >
+                                    {`Task completed on ${formatDate(activity.created_at)}`}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
             ) : (
                 <div className="text-center py-4">No activities yet!</div>
             )}
