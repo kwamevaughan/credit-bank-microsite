@@ -46,43 +46,57 @@ const Sidebar = ({ isOpen, toggleSidebar, mode, onLogout, openModal }) => {
                 </div>
                 <ul className="flex-grow px-4">
                     <li className="py-2">
-                        <Link href="/dashboard" className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
-                            <HomeIcon className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition" />
+                        <Link href="/dashboard"
+                              className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
+                            <HomeIcon className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition"/>
                             Dashboard
                         </Link>
                     </li>
                     <li className="py-2">
-                        <Link href="/leaderboard" className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
-                            <ArrowTrendingUpIcon className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition" />
+                        <Link href="/leaderboard"
+                              className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
+                            <ArrowTrendingUpIcon
+                                className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition"/>
                             Leaderboard
                         </Link>
                     </li>
                     <li className="py-2">
-                        <Link href="/quiz" className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
-                            <QuestionMarkCircleIcon className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition" />
+                        <Link href="/quiz"
+                              className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
+                            <QuestionMarkCircleIcon
+                                className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition"/>
                             Quiz
                         </Link>
                     </li>
                     <li className="py-2">
-                        <Link href="#" className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
-                            <DocumentTextIcon className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition" />
+                        <Link
+                            href="https://diaspora.creditbank.co.ke/apply/"
+                            className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3"
+                            target="_blank"
+                        >
+                            <DocumentTextIcon
+                                className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition"/>
                             Open An Account
                         </Link>
                     </li>
+
 
                     <li className="py-2">
                         <Link href="#"
                               className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3"
                               onClick={openModal} // Open modal on click
                         >
-                            <ArrowDownTrayIcon className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition" />
+                            <ArrowDownTrayIcon
+                                className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition"/>
                             Download Mobile App
                         </Link>
                     </li>
 
                     <li className="py-2">
-                        <Link href="#" className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
-                            <UserPlusIcon className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition" />
+                        <Link href="#"
+                              className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
+                            <UserPlusIcon
+                                className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition"/>
                             Account Settings
                         </Link>
                     </li>
@@ -92,7 +106,7 @@ const Sidebar = ({ isOpen, toggleSidebar, mode, onLogout, openModal }) => {
                     onClick={onLogout}
                     className="w-full bg-gray-100 text-black p-2 rounded-b-lg flex items-center justify-center hover:bg-gray-400 transition duration-200"
                 >
-                    <ArrowRightOnRectangleIcon className="h-5 w-5 mr-2" /> Sign Out
+                    <ArrowRightOnRectangleIcon className="h-5 w-5 mr-2"/> Sign Out
                 </button>
 
             </div>
