@@ -4,7 +4,7 @@ import Modal from './Modal';
 import Image from 'next/image';
 import { toast } from 'react-toastify';
 
-const AppDownloadModal = ({ isOpen, onClose }) => {
+const AppDownloadModal = ({ isOpen, onClose, mode }) => {
     const [userId, setUserId] = useState(null);
     const [isAppDownloaded, setIsAppDownloaded] = useState(false);
 
@@ -128,8 +128,8 @@ const AppDownloadModal = ({ isOpen, onClose }) => {
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Download Mobile App">
-            <p className="text-center mb-4">
+        <Modal isOpen={isOpen} onClose={onClose} title={<span className={mode === 'dark' ? 'text-white' : 'text-black'}>Download Mobile App</span>}>
+            <p className={`text-center mb-4 ${mode === 'dark' ? 'text-white' : 'text-black'}`}>
                 Download the Credit Bank mobile app to earn points.
             </p>
             <div className="flex justify-center gap-x-14">
@@ -148,7 +148,9 @@ const AppDownloadModal = ({ isOpen, onClose }) => {
                             height={75}
                             className={`transition-transform transform hover:translate-y-[-5px] duration-500 ease-in-out ${isAppDownloaded ? 'opacity-50 cursor-not-allowed' : ''}`}
                         />
-                        <span>{isAppDownloaded ? 'Downloaded!' : 'Android users'}</span>
+                        <span className={`${mode === 'dark' ? 'text-white' : 'text-black'}`}>
+                            {isAppDownloaded ? 'Downloaded!' : 'Android users'}
+                        </span>
                     </a>
                 </div>
 
@@ -167,7 +169,9 @@ const AppDownloadModal = ({ isOpen, onClose }) => {
                             height={75}
                             className={`transition-transform transform hover:translate-y-[-5px] duration-500 ease-in-out ${isAppDownloaded ? 'opacity-50 cursor-not-allowed' : ''}`}
                         />
-                        <span>{isAppDownloaded ? 'Downloaded!' : 'Apple users'}</span>
+                        <span className={`${mode === 'dark' ? 'text-white' : 'text-black'}`}>
+                            {isAppDownloaded ? 'Downloaded!' : 'Apple users'}
+                        </span>
                     </a>
                 </div>
             </div>

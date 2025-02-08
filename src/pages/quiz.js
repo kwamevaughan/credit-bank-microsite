@@ -5,10 +5,13 @@ import Sidebar from "@/layouts/sidebar";
 import { quizzes } from '../data/questions';
 import { toast } from 'react-toastify';
 import { useTimer } from 'react-timer-hook';
+import AppDownloadModal from "@/components/AppDownloadModal";
+
 
 const Quiz = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [mode, setMode] = useState("light");
+    const [isModalOpen, setIsModalOpen] = useState(false); // State for Modal
     const notify = (message) => toast(message);
     const [loading, setLoading] = useState(false);
     const [activeTopicIndex, setActiveTopicIndex] = useState(0);
@@ -242,7 +245,13 @@ const Quiz = () => {
     };
 
 
+    const openModal = () => {
+        setIsModalOpen(true); // Function to open the modal
+    };
 
+    const closeModal = () => {
+        setIsModalOpen(false); // Function to close the modal
+    };
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -285,28 +294,38 @@ const Quiz = () => {
                 isOpen={isSidebarOpen}
                 toggleSidebar={toggleSidebar}
                 mode={mode}
+                openModal={openModal} // Pass the openModal function down to Sidebar
             />
 
-            <main className={`flex-1 pt-14 p-8 min-h-screen transition-all duration-300 ${isSidebarOpen ? "ml-64" : "ml-0"} ${mode === "dark" ? "bg-[#0a0c1d] text-white" : "bg-[#f7f1eb] text-black"}`}>
+            <AppDownloadModal
+                isOpen={isModalOpen}
+                onClose={closeModal} // Pass close function
+            />
+
+
+            <main
+                className={`flex-1 pt-14 p-8 min-h-screen transition-all duration-300 ${isSidebarOpen ? "ml-64" : "ml-0"} ${mode === "dark" ? "bg-[#0a0c1d] text-white" : "bg-[#f7f1eb] text-black"}`}>
                 <div className="mb-12">
-                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-teal-600 mb-4 text-center">
+                    <h2 className={`text-3xl sm:text-4xl md:text-5xl font-extrabold ${mode === 'dark' ? 'text-teal-300' : 'text-teal-600'} mb-4 text-center`}>
                         <span className="font-orange">Take Our</span> Fun Quiz{" "}
                         <span className="font-orange">and</span> Earn Points!
                     </h2>
-                    <p className="text-sm sm:text-base md:text-lg text-center">
+                    <p className={`text-sm sm:text-base md:text-lg text-center ${mode === 'dark' ? 'text-white' : 'text-black'}`}>
                         Take our fun and interactive quiz to earn 20 points instantly.
-                        <br />
+                        <br/>
                         Test your knowledge, challenge yourself, and climb the leaderboard.
                         Every question gets you closer to exciting rewards!
                     </p>
                 </div>
 
                 {!showResult ? (
-                    <div className="bg-white p-8 rounded shadow-md max-w-4xl mx-auto">
+                    <div
+                        className={`p-8 rounded shadow-md max-w-4xl mx-auto ${mode === 'dark' ? 'bg-[#1f2a3d] text-white' : 'bg-white text-black'}`}>
                         <div className="flex justify-between mb-4">
-                            <h2 className="text-xl sm:text-2xl">{`Pillar: ${activeTopicIndex + 1} ${quizzes[activeTopicIndex]?.topic}`}</h2>
-                            <span className="bg-[#cff0ed] p-2 rounded-lg">Time left: <span
-                                className="bg-black p-2 rounded-lg text-white font-bold">{seconds} sec</span></span>
+                            <h2 className={`text-xl sm:text-2xl ${mode === 'dark' ? 'text-teal-300' : 'text-teal-600'}`}>{`Pillar: ${activeTopicIndex + 1} ${quizzes[activeTopicIndex]?.topic}`}</h2>
+                            <span
+                                className={`bg-[#cff0ed] p-2 rounded-lg ${mode === 'dark' ? 'text-black' : 'text-black'}`}>Time left: <span
+                                className={`bg-black p-2 rounded-lg text-white font-bold`}>{seconds} sec</span></span>
                         </div>
 
                         {questionsAnsweredToday === 7 ? (
@@ -319,9 +338,10 @@ const Quiz = () => {
                         ) : (
                             <div>
                                 {quizzes[activeTopicIndex]?.questions[activeQuestionIndex] ? (
-                                    <h2 className="text-xl mb-4">{quizzes[activeTopicIndex].questions[activeQuestionIndex].question}</h2>
+                                    <h2 className={`text-xl mb-4 ${mode === 'dark' ? 'text-white' : 'text-black'}`}>{quizzes[activeTopicIndex].questions[activeQuestionIndex].question}</h2>
                                 ) : (
-                                    <h4 className="text-lg mb-4">No Question Available. Check back tomorrow!</h4> // Fallback if no question is found
+                                    <h4 className={`text-lg mb-4 ${mode === 'dark' ? 'text-white' : 'text-black'}`}>No
+                                        Question Available. Check back tomorrow!</h4>
                                 )}
                             </div>
                         )}
@@ -359,7 +379,7 @@ const Quiz = () => {
                         <button
                             onClick={onClickNext}
                             disabled={selectedAnswerIndex === null}
-                            className={`mt-4 bg-[#ff9409] text-white py-2 px-4 rounded ${
+                            className={`mt-4 ${mode === 'dark' ? 'bg-[#ff9409]' : 'bg-[#ff9409]'} text-white py-2 px-4 rounded ${
                                 selectedAnswerIndex === null ? 'disabled:opacity-50' : ''
                             }`}
                         >
@@ -374,8 +394,9 @@ const Quiz = () => {
                         </div>
                     </div>
                 ) : (
-                    <div className="bg-white p-8 rounded shadow-md text-center">
-                        <h3 className="text-xl mb-4">Result</h3>
+                    <div
+                        className={`p-8 rounded shadow-md text-center ${mode === 'dark' ? 'bg-[#1f2a3d] text-white' : 'bg-white text-black'}`}>
+                        <h3 className={`text-xl mb-4 ${mode === 'dark' ? 'text-teal-300' : 'text-teal-600'}`}>Result</h3>
                         <p>Total Questions: {/* Total question count logic */}</p>
                         <p>Total Score: {result.score}</p>
                         <p>Correct Answers: {result.correctAnswers}</p>
@@ -384,6 +405,7 @@ const Quiz = () => {
                     </div>
                 )}
             </main>
+
         </div>
     );
 };

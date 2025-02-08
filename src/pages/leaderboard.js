@@ -2,10 +2,13 @@ import {useEffect, useState} from 'react';
 import Header from "@/layouts/header";
 import Sidebar from "@/layouts/sidebar";
 import LeaderboardTable from "@/components/leaderboardTable";
+import AppDownloadModal from "@/components/AppDownloadModal";
 
-const Leaderboard = ({  }) => {
+
+const Leaderboard = ({ }) => {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [mode, setMode] = useState('light');
+    const [isModalOpen, setIsModalOpen] = useState(false); // State for Modal
 
     useEffect(() => {
         const savedMode = localStorage.getItem('mode');
@@ -42,16 +45,18 @@ const Leaderboard = ({  }) => {
         router.push('/'); // Redirect to login page
     };
 
+    const openModal = () => {
+        setIsModalOpen(true); // Function to open the modal
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false); // Function to close the modal
+    };
 
     return (
         <div
-            className={`flex flex-col bg-[#f7f1eb] h-screen ${mode === 'dark' ? 'dark' : ''}`}
-            style={{
-                backgroundImage: `url('/assets/images/main-login-bg.jpg')`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-            }}
+            className={`flex flex-col h-screen ${mode === 'dark' ? 'dark' : ''}`}
+
         >
             <Header
                 toggleSidebar={toggleSidebar}
@@ -64,12 +69,22 @@ const Leaderboard = ({  }) => {
                 toggleSidebar={toggleSidebar}
                 mode={mode}
                 onLogout={handleSignOut}
+                openModal={openModal} // Pass the openModal function down to Sidebar
+
             />
 
-            <main className="py-24">
+            <main className="">
                 <LeaderboardTable
+                    mode={mode}
+                    isOpen={isSidebarOpen}
+                    toggleSidebar={toggleSidebar}
+
                 />
 
+                <AppDownloadModal
+                    isOpen={isModalOpen}
+                    onClose={closeModal} // Pass close function
+                />
 
             </main>
         </div>
