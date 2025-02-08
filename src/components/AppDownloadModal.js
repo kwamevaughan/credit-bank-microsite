@@ -113,8 +113,7 @@ const AppDownloadModal = ({ isOpen, onClose, mode }) => {
 
         setIsAppDownloaded(true);
 
-        // Open the download link in a new tab
-        window.open(url, '_blank');
+
 
         toast.success(
             <div className="flex items-center">
