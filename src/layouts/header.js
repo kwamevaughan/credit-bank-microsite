@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { toast } from "react-toastify";
 import { supabase } from '/lib/supabase';
 
-const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, userName }) => {
+const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, userName, toggleFullScreen, onLogout }) => {
     const [user, setUser] = useState(null);
     const [profileImage, setProfileImage] = useState(null);
     const router = useRouter();
@@ -59,28 +59,13 @@ const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, userNam
         };
     }, []);
 
-    const handleLogout = () => {
-        localStorage.removeItem('supabase_session');  // Remove session now
-        localStorage.removeItem('loginEmail');        // Clear email
-        localStorage.removeItem('loginReferralCode'); // Clear referral code
-        router.push('/'); // Redirect to home/login page
-    };
 
-    const toggleFullScreen = () => {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(err => {
-                console.error(`Error attempting to enable full-screen mode: ${err.message}`);
-            });
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            }
-        }
-    };
+
 
     return (
         <header
-            className={`p-4 transition-all duration-300 shadow-sm border-b border-gray-100 ${isSidebarOpen ? 'ml-64' : 'ml-0'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white shadow-lg' : 'bg-white text-black'}`}>
+            className={`p-4 transition-all duration-300 shadow-sm border-b ${mode === 'dark' ? 'border-[#ff9409]' : 'border-gray-300'} ${isSidebarOpen ? 'ml-64' : 'ml-0'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white shadow-lg' : 'bg-white text-black'}`}
+        >
             <div className="flex flex-col md:flex-row items-center justify-between">
                 {!isSidebarOpen && (
                     <div className="md:hidden mb-2">
@@ -182,7 +167,7 @@ const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, userNam
                                     </li>
                                     <li>
                                         <button
-                                            onClick={handleLogout}
+                                            onClick={onLogout}
                                             className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100">
                                             Logout
                                         </button>
