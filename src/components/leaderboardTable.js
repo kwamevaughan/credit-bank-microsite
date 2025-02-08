@@ -83,9 +83,10 @@ const LeaderboardTable = ({ token, mode, toggleMode, toggleSidebar, isSidebarOpe
 
     return (
         <main
-            className={`${mode === 'dark' ? 'bg-[#101720] text-white' : 'bg-transparent text-black'} rounded-lg px-4 md:px-0 transition-all duration-300 ease-in-out`}
+            className={`${mode === 'dark' ? ' text-white' : 'bg-transparent text-black'} rounded-lg px-4 md:px-0 transition-all duration-300 ease-in-out px-8  `}
         >
-            <div className="px-8 pt-6 pb-8 mb-4">
+            <div className={`block w-full pb-10 pt-6 rounded-lg ${mode === 'dark' ? 'bg-[#0a0c1d] text-white border-gray-600' : 'bg-transparent text-black border-gray-300'} transition-all duration-300 ease-in-out`}
+            >
                 <h2 className="text-4xl font-bold text-teal-600 mb-4 text-center">Leaderboard</h2>
                 <h3 className="text-2xl font-bold text-[#ff9409] mb-4 text-center">See Who's Leading the Pack!</h3>
                 <p className="mb-4 text-center">Stay competitive! Check the live leaderboard to see who's winning.</p>
