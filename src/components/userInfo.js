@@ -63,7 +63,7 @@ const UserInfo = ({ userData, token, mode, toggleMode, notify }) => {
         const file = event.target.files[0];
         if (!file) return;
 
-        const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'];
+        const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp', 'image/heic', 'image/heif'];
         if (!allowedImageTypes.includes(file.type)) {
             notify('Please upload a valid image file (jpg, jpeg, png, gif, webp)!');
             return;
