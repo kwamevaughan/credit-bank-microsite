@@ -72,25 +72,33 @@ const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, userNam
                         <Image
                             src="/assets/images/logo.svg"
                             alt="Logo"
-                            width={150}
+                            width={300}
                             height={75}
+                            className="w-[350px] md:w-auto"
                         />
                     </div>
+
                 )}
 
                 <div className="flex items-center space-x-4">
                     {!isSidebarOpen && (
                         <>
                             <div className="group relative">
-                                <button onClick={toggleSidebar} className="text-black focus:outline-none">
-                                    {isSidebarOpen ? <XMarkIcon className="h-6 w-6"/> :
-                                        <Bars3Icon className="h-6 w-6"/>}
+                                <button onClick={toggleSidebar} className="focus:outline-none">
+                                    {isSidebarOpen ? (
+                                        <XMarkIcon
+                                            className={`h-6 w-6 ${mode === 'dark' ? 'text-white' : 'text-black'}`}/>
+                                    ) : (
+                                        <Bars3Icon
+                                            className={`h-6 w-6 ${mode === 'dark' ? 'text-white' : 'text-black'}`}/>
+                                    )}
                                 </button>
                                 <span
                                     className="absolute top-10 left-1/2 transform -translate-x-1/2 text-sm text-white bg-black rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    {isSidebarOpen ? "Close Sidebar" : "Open Sidebar"}
-                                </span>
+        {isSidebarOpen ? "Close Sidebar" : "Open Sidebar"}
+    </span>
                             </div>
+
                             <div className="hidden md:flex items-center">
                                 <Link href="/">
                                     <Image
