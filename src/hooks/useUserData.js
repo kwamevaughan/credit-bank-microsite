@@ -1,5 +1,3 @@
-// useUserData.js - No changes needed as it already looks good. Just ensure the following changes in consuming components.
-
 import { useEffect, useState } from 'react';
 import { supabase } from '/lib/supabase';
 import countriesData from '../../public/assets/misc/countries.json';
@@ -32,8 +30,9 @@ const useUserData = (token) => {
 
             const foundCountry = countriesData.find(item => item.name === data.country);
             const countryCode = foundCountry ? foundCountry.code : 'XX';
+
             setUserData({
-                imageUrl: data.profile_image || '/assets/images/placeholder.png',
+                imageUrl: data.profile_image,
                 userName: data.name,
                 userPoints: data.points,
                 actionsCompleted: data.actions_completed,
@@ -56,13 +55,16 @@ const useUserData = (token) => {
                 const foundCountry = countriesData.find(item => item.name === payload.new.country);
                 const countryCode = foundCountry ? foundCountry.code : 'XX';
 
-                setUserData(prevUserData => ({
-                    ...prevUserData,
+                setUserData(prevData => ({
+                    ...prevData, // Preserve existing state
+                    // Update only the changed fields
+                    imageUrl: payload.new.profile_image,
                     userPoints: payload.new.points,
                     actionsCompleted: payload.new.actions_completed,
                     countryCode,
                     userName: payload.new.name,
-                    imageUrl: payload.new.profile_image || '/assets/images/placeholder.png', // Consider how to handle null image
+                    // Maintain the existing rankImage
+                    rankImage: prevData.rankImage
                 }));
             })
             .subscribe();

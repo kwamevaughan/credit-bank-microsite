@@ -13,8 +13,14 @@ const UserInfo = ({ userData, token, mode, toggleMode, notify }) => {
         userPoints,
         actionsCompleted,
         rankImage,
+        imageUrl,
         userId,
-    } = userData; // Use userData from props
+    } = userData;
+
+    const [countryCode, setCountryCode] = useState('');
+    const [uploading, setUploading] = useState(false);
+    const [hovering, setHovering] = useState(false);
+    const [previewImage, setPreviewImage] = useState(null);
 
     useEffect(() => {
         console.log('User Points Updated:', userPoints);
@@ -24,16 +30,14 @@ const UserInfo = ({ userData, token, mode, toggleMode, notify }) => {
         console.log('UserData:', userData);
     }, [userData]);
 
-    const [countryCode, setCountryCode] = useState('');
-    const [uploading, setUploading] = useState(false);
-    const [hovering, setHovering] = useState(false);
-    const [imageUrl, setImageUrl] = useState('/assets/images/placeholder.png'); // Define imageUrl state
+    // Set initial preview image when imageUrl changes
+    useEffect(() => {
+        setPreviewImage(imageUrl);
+    }, [imageUrl]);
 
     // Ensure that token exists before fetching country code
     useEffect(() => {
-        if (!token) {
-            return; // Do nothing if token is not set
-        }
+        if (!token) return;
 
         const fetchUserCountryCode = async () => {
             const { data, error } = await supabase
@@ -47,7 +51,7 @@ const UserInfo = ({ userData, token, mode, toggleMode, notify }) => {
             } else {
                 const foundCountry = countriesData.find(item => item.name === data.country);
                 const code = foundCountry ? foundCountry.code : 'XX';
-                setCountryCode(code); // Store country code
+                setCountryCode(code);
             }
         };
 
@@ -67,11 +71,11 @@ const UserInfo = ({ userData, token, mode, toggleMode, notify }) => {
 
         notify('Uploading your profile image...', { type: 'info' });
 
+        // Create preview
         const reader = new FileReader();
         reader.onloadend = () => {
-            setImageUrl(reader.result);
+            setPreviewImage(reader.result);
         };
-
         reader.readAsDataURL(file);
 
         setUploading(true);
@@ -119,6 +123,8 @@ const UserInfo = ({ userData, token, mode, toggleMode, notify }) => {
         } catch (error) {
             console.error('Unexpected error during image upload:', error);
             notify('An unexpected error occurred. Please try again.', { type: 'error' });
+            // Reset preview to original image on error
+            setPreviewImage(imageUrl);
         } finally {
             setUploading(false);
         }
@@ -161,7 +167,7 @@ const UserInfo = ({ userData, token, mode, toggleMode, notify }) => {
                                     ></div>
 
                                     <Image
-                                        src={imageUrl || '/assets/images/placeholder.png'}
+                                        src={previewImage || '/assets/images/placeholder.png'}
                                         alt="Profile Image"
                                         width={120}
                                         height={120}
