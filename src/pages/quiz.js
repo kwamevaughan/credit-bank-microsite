@@ -295,11 +295,14 @@ const Quiz = () => {
                 toggleSidebar={toggleSidebar}
                 mode={mode}
                 openModal={openModal} // Pass the openModal function down to Sidebar
+                toggleMode={toggleMode}
             />
 
             <AppDownloadModal
                 isOpen={isModalOpen}
-                onClose={closeModal} // Pass close function
+                onClose={closeModal}
+                mode={mode}
+                toggleMode={toggleMode}
             />
 
 

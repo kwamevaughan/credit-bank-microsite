@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 
-const Modal = ({ isOpen, onClose, title, children }) => {
+const Modal = ({ isOpen, onClose, title, children, mode }) => {
     if (!isOpen) return null;
 
     const handleOutsideClick = useCallback((e) => {
@@ -29,16 +29,23 @@ const Modal = ({ isOpen, onClose, title, children }) => {
             className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
             onClick={handleOutsideClick} // Close on overlay click
         >
-            <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full relative">
+            <div
+                className={`${
+                    mode === 'dark' ? '' : 'bg-black text-white'
+                }  rounded-lg shadow-lg max-w-md w-full relative`}
+            >
                 <button
                     onClick={onClose}
-                    className="absolute top-2 right-2 text-xl font-bold text-gray-600 hover:text-gray-900 focus:outline-none"
+                    className={`${
+                        mode === 'dark' ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+                    } absolute top-2 right-2 text-xl font-bold focus:outline-none`}
                 >
                     X
                 </button>
-                <h2 className="text-xl font-bold mb-4">{title}</h2>
+
                 {children}
             </div>
+
         </div>
     );
 };

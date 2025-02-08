@@ -149,7 +149,11 @@ const Referral = ({ token, mode, toggleMode, notify }) => {
                         Terms and Conditions
                     </p>
                 </div>
-                <TermsAndConditionsModal isOpen={isModalOpen} onClose={closeModal} />
+                <TermsAndConditionsModal
+                    isOpen={isModalOpen}
+                    onClose={closeModal}
+                    mode={mode}
+                />
             </div>
         </div>
     );

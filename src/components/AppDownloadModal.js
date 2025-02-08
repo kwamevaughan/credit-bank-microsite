@@ -128,55 +128,71 @@ const AppDownloadModal = ({ isOpen, onClose, mode }) => {
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title={<span className={mode === 'dark' ? 'text-white' : 'text-black'}>Download Mobile App</span>}>
-            <p className={`text-center mb-4 ${mode === 'dark' ? 'text-white' : 'text-black'}`}>
-                Download the Credit Bank mobile app to earn points.
-            </p>
-            <div className="flex justify-center gap-x-14">
+        <Modal isOpen={isOpen} onClose={onClose}>
+            <div
+                className={`p-6 ${
+                    mode === 'dark' ? 'bg-[#0f1720] text-white' : 'bg-white text-black'
+                } p-4 rounded-md text-center`}
+            >
                 <div>
-                    <a
-                        href="#"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            handleDownloadApp('Android', 'https://play.google.com/store/apps/details?id=co.ke.ekenya.creditbank');
-                        }}
+                    <h2
+                        className={`${
+                            mode === 'dark' ? 'text-white' : 'text-black'
+                        } text-xl font-semibold mb-4`}
                     >
-                        <Image
-                            src="/assets/images/android.svg"
-                            alt="Android"
-                            width={75}
-                            height={75}
-                            className={`transition-transform transform hover:translate-y-[-5px] duration-500 ease-in-out ${isAppDownloaded ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        />
-                        <span className={`${mode === 'dark' ? 'text-white' : 'text-black'}`}>
-                            {isAppDownloaded ? 'Downloaded!' : 'Android users'}
-                        </span>
-                    </a>
+                        Download Mobile App
+                    </h2>
                 </div>
 
-                <div>
-                    <a
-                        href="#"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            handleDownloadApp('Apple', 'https://apps.apple.com/us/app/credit-bank-cb-konnect/id1469515952');
-                        }}
-                    >
-                        <Image
-                            src="/assets/images/apple.svg"
-                            alt="Apple"
-                            width={75}
-                            height={75}
-                            className={`transition-transform transform hover:translate-y-[-5px] duration-500 ease-in-out ${isAppDownloaded ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        />
-                        <span className={`${mode === 'dark' ? 'text-white' : 'text-black'}`}>
+                <p className={`text-center mb-4 ${mode === 'dark' ? 'text-white' : 'text-black'}`}>
+                    Download the Credit Bank mobile app to earn points.
+                </p>
+                <div className="flex justify-center gap-x-14">
+                    <div>
+                        <a
+                            href="#"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                handleDownloadApp('Android', 'https://play.google.com/store/apps/details?id=co.ke.ekenya.creditbank');
+                            }}
+                        >
+                            <Image
+                                src="/assets/images/android.svg"
+                                alt="Android"
+                                width={75}
+                                height={75}
+                                className={`transition-transform transform hover:translate-y-[-5px] duration-500 ease-in-out ${isAppDownloaded ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            />
+                            <span className={`${mode === 'dark' ? 'text-white' : 'text-black'}`}>
+                            {isAppDownloaded ? 'Downloaded!' : 'Android users'}
+                        </span>
+                        </a>
+                    </div>
+
+                    <div>
+                        <a
+                            href="#"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                handleDownloadApp('Apple', 'https://apps.apple.com/us/app/credit-bank-cb-konnect/id1469515952');
+                            }}
+                        >
+                            <Image
+                                src="/assets/images/apple.svg"
+                                alt="Apple"
+                                width={75}
+                                height={75}
+                                className={`transition-transform transform hover:translate-y-[-5px] duration-500 ease-in-out ${isAppDownloaded ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            />
+                            <span className={`${mode === 'dark' ? 'text-white' : 'text-black'}`}>
                             {isAppDownloaded ? 'Downloaded!' : 'Apple users'}
                         </span>
-                    </a>
+                        </a>
+                    </div>
                 </div>
             </div>
         </Modal>
-    );
+);
 };
 
 export default AppDownloadModal;

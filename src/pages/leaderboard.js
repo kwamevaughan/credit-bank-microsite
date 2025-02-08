@@ -68,6 +68,7 @@ const Leaderboard = ({ }) => {
                 isOpen={isSidebarOpen}
                 toggleSidebar={toggleSidebar}
                 mode={mode}
+                toggleMode={toggleMode}
                 onLogout={handleSignOut}
                 openModal={openModal} // Pass the openModal function down to Sidebar
 
@@ -83,7 +84,9 @@ const Leaderboard = ({ }) => {
 
                 <AppDownloadModal
                     isOpen={isModalOpen}
-                    onClose={closeModal} // Pass close function
+                    onClose={closeModal}
+                    mode={mode}
+                    toggleMode={toggleMode}
                 />
 
             </main>

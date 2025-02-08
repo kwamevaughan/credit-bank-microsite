@@ -313,6 +313,9 @@ const Dashboard = () => {
                         isOpen={isModalOpen}
                         onClose={closeModal}
                         token={token}
+                        toggleMode={toggleMode}
+                        mode={mode}
+                        notify={notify}
                     />
 
                 </main>
