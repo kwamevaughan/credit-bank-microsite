@@ -83,9 +83,11 @@ const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, userNam
                         <>
                             <div className="group relative">
                                 <button onClick={toggleSidebar} className="text-black focus:outline-none">
-                                    {isSidebarOpen ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
+                                    {isSidebarOpen ? <XMarkIcon className="h-6 w-6"/> :
+                                        <Bars3Icon className="h-6 w-6"/>}
                                 </button>
-                                <span className="absolute top-10 left-1/2 transform -translate-x-1/2 text-sm text-white bg-black rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <span
+                                    className="absolute top-10 left-1/2 transform -translate-x-1/2 text-sm text-white bg-black rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                     {isSidebarOpen ? "Close Sidebar" : "Open Sidebar"}
                                 </span>
                             </div>
@@ -104,36 +106,68 @@ const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, userNam
                 </div>
 
                 <div className="relative flex items-center space-x-2 pt-4 md:pt-0">
+                    {/* Fullscreen Button */}
                     <div className="group relative">
                         <button
                             onClick={toggleFullScreen}
-                            className="flex items-center justify-center h-10 w-10 rounded-full bg-gray-200 transition">
-                            <FullScreenIcon className="h-6 w-6 text-gray-500 hover:text-blue-600 transition"/>
+                            className={`flex items-center justify-center h-10 w-10 rounded-full ${
+                                mode === 'dark' ? 'bg-black' : 'bg-gray-200'
+                            } transition`}
+                        >
+                            <FullScreenIcon
+                                className={`h-6 w-6 ${
+                                    mode === 'dark' ? 'text-white' : 'text-gray-500'
+                                } hover:text-blue-600 transition`}
+                            />
                         </button>
-                        <span className="absolute top-10 left-1/2 transform -translate-x-1/2 text-sm text-white bg-black rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            Toggle Fullscreen
-                        </span>
+                        <span
+                            className={`absolute top-10 left-1/2 transform -translate-x-1/2 text-sm ${
+                                mode === 'dark' ? 'text-black bg-white' : 'text-white bg-black'
+                            } rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity`}
+                        >
+            Toggle Fullscreen
+        </span>
                     </div>
 
+                    {/* Dark/Light Mode Toggle Button */}
                     <div className="group relative">
                         <button
                             onClick={toggleMode}
-                            className="flex items-center justify-center h-10 w-10 rounded-full bg-gray-200 transition">
+                            className={`flex items-center justify-center h-10 w-10 rounded-full ${
+                                mode === 'dark' ? 'bg-black' : 'bg-gray-200'
+                            } transition`}
+                        >
                             {mode === 'dark' ? (
-                                <SunIcon className="h-6 w-6 text-gray-500 hover:text-blue-600 transition"/>
+                                <SunIcon
+                                    className={`h-6 w-6 ${
+                                        mode === 'dark' ? 'text-white' : 'text-gray-500'
+                                    } hover:text-blue-600 transition`}
+                                />
                             ) : (
-                                <MoonIcon className="h-6 w-6 text-gray-500 hover:text-blue-600 transition"/>
+                                <MoonIcon
+                                    className={`h-6 w-6 ${
+                                        mode === 'dark' ? 'text-white' : 'text-gray-500'
+                                    } hover:text-blue-600 transition`}
+                                />
                             )}
                         </button>
-                        <span className="absolute top-10 left-1/2 transform -translate-x-1/2 text-sm text-white bg-black rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            {mode === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"}
-                        </span>
+                        <span
+                            className={`absolute top-10 left-1/2 transform -translate-x-1/2 text-sm ${
+                                mode === 'dark' ? 'text-black bg-white' : 'text-white bg-black'
+                            } rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity`}
+                        >
+            {mode === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+        </span>
                     </div>
 
+                    {/* Profile/Dropdown Button */}
                     <div className="relative group" ref={dropdownRef}>
                         <button
                             onClick={() => setDropdownOpen(!dropdownOpen)}
-                            className="flex items-center justify-center h-12 w-12 rounded-full bg-gray-200 transition">
+                            className={`flex items-center justify-center h-10 w-10 rounded-full ${
+                                mode === 'dark' ? 'bg-black' : 'bg-gray-200'
+                            } transition`}
+                        >
                             {profileImage ? (
                                 <div className="w-12 h-12 rounded-full overflow-hidden"> {/* Force square container */}
                                     <Image
@@ -145,39 +179,64 @@ const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, userNam
                                     />
                                 </div>
                             ) : (
-                                <UserCircleIcon className="h-6 w-6 text-gray-500 hover:text-blue-600 transition"/>
+                                <UserCircleIcon
+                                    className={`h-6 w-6 ${
+                                        mode === 'dark' ? 'text-white' : 'text-gray-500'
+                                    } hover:text-blue-600 transition`}
+                                />
                             )}
                         </button>
-                        <span className="absolute top-10 left-1/2 transform -translate-x-1/2 text-sm text-white bg-black rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            User Menu
-                        </span>
+                        <span
+                            className={`absolute top-10 left-1/2 transform -translate-x-1/2 text-sm ${
+                                mode === 'dark' ? 'text-black bg-white' : 'text-white bg-black'
+                            } rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity`}
+                        >
+            User Menu
+        </span>
                         {dropdownOpen && (
                             <div
-                                className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg">
+                                className={`absolute right-0 mt-2 w-48 ${
+                                    mode === 'dark' ? 'bg-gray-800' : 'bg-white'
+                                } border border-gray-300 rounded-md shadow-lg`}
+                            >
                                 <ul className="py-1">
                                     <li>
-                                        <Link href="#" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                                        <Link
+                                            href="#"
+                                            className={`block px-4 py-2 ${
+                                                mode === 'dark' ? 'text-white' : 'text-gray-800'
+                                            } hover:${mode === 'dark' ? 'bg-gray-400' : 'bg-gray-100'}`}
+                                        >
                                             Profile
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link href="#" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                                        <Link
+                                            href="#"
+                                            className={`block px-4 py-2 ${
+                                                mode === 'dark' ? 'text-white' : 'text-gray-800'
+                                            } hover:${mode === 'dark' ? 'bg-gray-400' : 'bg-gray-100'}`}
+                                        >
                                             Settings
                                         </Link>
                                     </li>
                                     <li>
                                         <button
                                             onClick={onLogout}
-                                            className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100">
+                                            className={`block w-full text-left px-4 py-2 ${
+                                                mode === 'dark' ? 'text-white' : 'text-gray-800'
+                                            } hover:${mode === 'dark' ? 'bg-gray-400' : 'bg-gray-100'}`}
+                                        >
                                             Logout
                                         </button>
                                     </li>
                                 </ul>
+
                             </div>
                         )}
                     </div>
-
                 </div>
+
             </div>
         </header>
     );

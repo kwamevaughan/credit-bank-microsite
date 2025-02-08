@@ -48,25 +48,41 @@ const Sidebar = ({ isOpen, toggleSidebar, mode, onLogout, openModal, toggleFullS
                 </div>
                 <ul className="flex-grow px-4">
                     <li className="py-2">
-                        <Link href="/dashboard"
-                              className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
-                            <HomeIcon className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition"/>
+                        <Link
+                            href="/dashboard"
+                            className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3"
+                        >
+                            <HomeIcon
+                                className={`h-8 w-8 mr-2 p-1 rounded-full ${
+                                    mode === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-500'
+                                } transition`}
+                            />
                             Dashboard
                         </Link>
                     </li>
                     <li className="py-2">
-                        <Link href="/leaderboard"
-                              className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
+                        <Link
+                            href="/leaderboard"
+                            className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3"
+                        >
                             <ArrowTrendingUpIcon
-                                className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition"/>
+                                className={`h-8 w-8 mr-2 p-1 rounded-full ${
+                                    mode === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-500'
+                                } transition`}
+                            />
                             Leaderboard
                         </Link>
                     </li>
                     <li className="py-2">
-                        <Link href="/quiz"
-                              className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
+                        <Link
+                            href="/quiz"
+                            className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3"
+                        >
                             <QuestionMarkCircleIcon
-                                className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition"/>
+                                className={`h-8 w-8 mr-2 p-1 rounded-full ${
+                                    mode === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-500'
+                                } transition`}
+                            />
                             Quiz
                         </Link>
                     </li>
@@ -77,32 +93,44 @@ const Sidebar = ({ isOpen, toggleSidebar, mode, onLogout, openModal, toggleFullS
                             target="_blank"
                         >
                             <DocumentTextIcon
-                                className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition"/>
+                                className={`h-8 w-8 mr-2 p-1 rounded-full ${
+                                    mode === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-500'
+                                } transition`}
+                            />
                             Open An Account
                         </Link>
                     </li>
 
-
                     <li className="py-2">
-                        <Link href="#"
-                              className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3"
-                              onClick={openModal} // Open modal on click
+                        <Link
+                            href="#"
+                            className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3"
+                            onClick={openModal} // Open modal on click
                         >
                             <ArrowDownTrayIcon
-                                className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition"/>
+                                className={`h-8 w-8 mr-2 p-1 rounded-full ${
+                                    mode === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-500'
+                                } transition`}
+                            />
                             Download Mobile App
                         </Link>
                     </li>
 
                     <li className="py-2">
-                        <Link href="#"
-                              className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3">
+                        <Link
+                            href="#"
+                            className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3"
+                        >
                             <UserPlusIcon
-                                className="h-8 w-8 mr-2 p-1 rounded-full bg-gray-200 text-gray-500 transition"/>
+                                className={`h-8 w-8 mr-2 p-1 rounded-full ${
+                                    mode === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-500'
+                                } transition`}
+                            />
                             Account Settings
                         </Link>
                     </li>
                 </ul>
+
 
                 <div className="relative flex items-center space-x-2 pt-4 md:pt-0 w-full">
                     {/* Dark/Light Mode Toggle */}
