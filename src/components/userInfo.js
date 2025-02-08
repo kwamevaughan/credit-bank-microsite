@@ -7,13 +7,11 @@ import { uploadImage } from '../utils/imageKitService';
 import countriesData from '../../public/assets/misc/countries.json';
 import useUserData from '../hooks/useUserData';
 
-
 const UserInfo = ({ userData, token, mode, toggleMode, notify }) => {
     const {
         userName,
         userPoints,
         actionsCompleted,
-        imageUrl,
         rankImage,
         userId,
     } = userData; // Use userData from props
@@ -29,7 +27,7 @@ const UserInfo = ({ userData, token, mode, toggleMode, notify }) => {
     const [countryCode, setCountryCode] = useState('');
     const [uploading, setUploading] = useState(false);
     const [hovering, setHovering] = useState(false);
-
+    const [imageUrl, setImageUrl] = useState('/assets/images/placeholder.png'); // Define imageUrl state
 
     // Ensure that token exists before fetching country code
     useEffect(() => {
@@ -55,8 +53,6 @@ const UserInfo = ({ userData, token, mode, toggleMode, notify }) => {
 
         fetchUserCountryCode();
     }, [token]);
-
-
 
     // Handle file changes for profile image upload
     const handleFileChange = async (event) => {

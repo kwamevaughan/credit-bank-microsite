@@ -14,6 +14,8 @@ import Referral from "@/components/referFriend";
 import { ArrowRightOnRectangleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import DeleteAccountModal from "@/components/DeleteAccountModal"; // Import your DeleteAccountModal
 import AppDownloadModal from "@/components/AppDownloadModal";
+import { imagekit } from '../utils/imageKitService';
+
 
 const Dashboard = () => {
     const router = useRouter();
@@ -122,15 +124,26 @@ const Dashboard = () => {
                 return toast.update(toastId, { render: "No user data found. Please log in again.", type: "error", isLoading: false });
             }
 
-            // Fetch user profile data
+            // Fetch user profile data including image ID
             const { data: userData, error: profileError } = await supabase
                 .from('users')
-                .select('email, name')
+                .select('profile_image_id, email, name')
                 .eq('id', user.id)
                 .single();
 
             if (profileError) {
                 return toast.update(toastId, { render: `Error fetching user profile: ${profileError.message}`, type: "error", isLoading: false });
+            }
+
+            // Check if an image exists and delete it
+            const { profile_image_id: imageId } = userData;
+            if (imageId) {
+                try {
+                    await imagekit.deleteFile(imageId);
+                    console.log(`Image with ID ${imageId} deleted successfully.`);
+                } catch (imageDeleteError) {
+                    return toast.update(toastId, { render: `Error deleting image: ${imageDeleteError.message}`, type: "error", isLoading: false });
+                }
             }
 
             // Send email about account deletion
