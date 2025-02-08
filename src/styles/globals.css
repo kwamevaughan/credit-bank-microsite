@@ -63,3 +63,31 @@ html {
     scrollbar-color: #888 #f1f1f1; /* Thumb and track colors */
 }
 
+.media-table {
+    display: table;
+}
+
+.media-table > thead > tr,
+.media-table > thead > tr > th {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    /* Hide unnecessary columns on mobile devices */
+    .media-table {
+        display: block;
+        border: 0;
+    }
+
+    .media-table tr {
+        display: flex;
+        flex-direction: column;
+        border: 0;
+    }
+
+    .media-table tbody tr td {
+        border: 0;
+        padding: 15px;
+    }
+
+}

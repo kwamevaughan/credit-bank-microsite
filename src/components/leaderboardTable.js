@@ -115,7 +115,7 @@ const LeaderboardTable = ({ token, mode, toggleMode, toggleSidebar, isSidebarOpe
                     ) : (
                         <div className="overflow-x-auto">
                             <table
-                                className={`${mode === 'dark' ? 'bg-[#101720] text-white' : 'bg-transparent text-black'} min-w-full table-auto border-separate border-spacing-y-4 rounded-md`}>
+                                className={`${mode === 'dark' ? 'bg-[#101720] text-white' : 'bg-transparent text-black'} min-w-full media-table table-auto border-separate border-spacing-y-4 rounded-md`}>
                                 <thead>
                                 <tr className={`hidden`}>
                                     <th className={`${mode === 'dark' ? 'bg-[#101720]' : 'bg-gray-100'} px-4 py-2 text-left border-r`}>Rank</th>
@@ -159,7 +159,7 @@ const LeaderboardTable = ({ token, mode, toggleMode, toggleSidebar, isSidebarOpe
                                                 className={`shadow-md hover:shadow-sm transition-all duration-300 ease-in-out ${mode === 'dark' ? 'bg-black' : 'bg-white'} rounded-md`}
                                                 style={{transform: `translateY(${(index - 1) * 10}px)`}} // Added smooth animation
                                             >
-                                                <td className="text-gray-400 px-4 py-2 border-r flex items-center">
+                                                <td className="text-gray-400 px-4 py-2 border-r flex items-center hidden md:block">
                                                     {(page - 1) * pageSize + index + 1}.
                                                     <Image
                                                         src={rankImageSrc}
@@ -171,8 +171,8 @@ const LeaderboardTable = ({ token, mode, toggleMode, toggleSidebar, isSidebarOpe
                                                 </td>
 
                                                 <td className="px-4 py-2 border-r">
-                                                    <div className="sm:block md:flex items-center justify-between">
-                                                    <span className="flex items-center gap-4">
+                                                    <div className="sm:block flex flex-col md:flex md:flex-row items-center justify-between">
+                                                    <span className="flex items-center gap-4 ">
                                                         <Image
                                                             src={leader.profile_image ? leader.profile_image : '/assets/images/placeholder.png'}
                                                             alt={leader.profile_image ? 'Leader Image' : 'Placeholder Image'}
@@ -184,14 +184,15 @@ const LeaderboardTable = ({ token, mode, toggleMode, toggleSidebar, isSidebarOpe
                                                             {leader.name}
                                                         </span>
                                                     </span>
-                                                        <span className="text-[#ff9409] mt-2 md:ml-4 md:mt-0">
-                                                        {leader.points} Points
-                                                    </span>
+                                                        <span
+                                                            className="text-[#ff9409] text-2xl md:text-base mt-2 md:ml-4 md:mt-0">
+                                                            {leader.points} Points
+                                                        </span>
                                                     </div>
                                                 </td>
                                                 <td className="px-4 py-2">
                                                     <div className="flex justify-between items-center">
-                                                    <span className="text-[#ff9409]">
+                                                    <span className="text-[#ff9409] text-lg md:text-base">
                                                         {leader.actions_completed ? leader.actions_completed : 0} Actions Completed
                                                     </span>
                                                         <button className={buttonClass}>
