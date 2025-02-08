@@ -85,9 +85,7 @@ const LeaderboardTable = ({ token, mode, toggleMode, toggleSidebar, isSidebarOpe
         <main
             className={`${mode === 'dark' ? 'bg-[#101720] text-white' : 'bg-transparent text-black'} rounded-lg px-4 md:px-0 transition-all duration-300 ease-in-out`}
         >
-
-            <div className="px-8 pt-6 pb-8 mb-4"
-            >
+            <div className="px-8 pt-6 pb-8 mb-4">
                 <h2 className="text-4xl font-bold text-teal-600 mb-4 text-center">Leaderboard</h2>
                 <h3 className="text-2xl font-bold text-[#ff9409] mb-4 text-center">See Who's Leading the Pack!</h3>
                 <p className="mb-4 text-center">Stay competitive! Check the live leaderboard to see who's winning.</p>
@@ -98,7 +96,7 @@ const LeaderboardTable = ({ token, mode, toggleMode, toggleSidebar, isSidebarOpe
                     <div className="mb-4">
                         <input
                             type="search"
-                            className="block w-full p-2 border border-gray-300 rounded-lg"
+                            className={`block w-full p-2 rounded-lg ${mode === 'dark' ? 'bg-black text-white border-gray-600' : 'bg-white text-black border-gray-300'} transition-all duration-300 ease-in-out`}
                             placeholder="Search by name"
                             value={search}
                             onChange={(e) => {
@@ -108,18 +106,22 @@ const LeaderboardTable = ({ token, mode, toggleMode, toggleSidebar, isSidebarOpe
                         />
                     </div>
 
+
                     {isFetching ? (
                         <p>Fetching leaderboard...</p>
                     ) : error ? (
                         <p className="text-red-500">Failed to fetch leaderboard: {error}</p>
                     ) : (
-                        <div className="overflow-x-auto"> {/* Enable horizontal scrolling for small screens */}
-                            <table className="min-w-full table-auto border-separate border-spacing-y-4 rounded-md">
+                        <div className="overflow-x-auto">
+                            <table
+                                className={`${mode === 'dark' ? 'bg-[#101720] text-white' : 'bg-transparent text-black'} min-w-full table-auto border-separate border-spacing-y-4 rounded-md`}>
                                 <thead>
-                                <tr className="hidden">
-                                    <th className="px-4 py-2 text-left border-r">Rank</th>
-                                    <th className="px-4 py-2 text-left border-r">Name</th>
-                                    <th className="px-4 py-2 text-left">Actions Completed</th>
+                                <tr className={`hidden`}>
+                                    <th className={`${mode === 'dark' ? 'bg-[#101720]' : 'bg-gray-100'} px-4 py-2 text-left border-r`}>Rank</th>
+                                    <th className={`${mode === 'dark' ? 'bg-[#101720]' : 'bg-gray-100'} px-4 py-2 text-left border-r`}>Name</th>
+                                    <th className={`${mode === 'dark' ? 'bg-[#101720]' : 'bg-gray-100'} px-4 py-2 text-left`}>Actions
+                                        Completed
+                                    </th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -153,7 +155,7 @@ const LeaderboardTable = ({ token, mode, toggleMode, toggleSidebar, isSidebarOpe
                                         return (
                                             <tr
                                                 key={leader.id}
-                                                className="shadow-md hover:shadow-sm transition-all duration-300 ease-in-out bg-white rounded-md"
+                                                className={`shadow-md hover:shadow-sm transition-all duration-300 ease-in-out ${mode === 'dark' ? 'bg-black' : 'bg-white'} rounded-md`}
                                                 style={{transform: `translateY(${(index - 1) * 10}px)`}} // Added smooth animation
                                             >
                                                 <td className="text-gray-400 px-4 py-2 border-r flex items-center">
@@ -169,28 +171,28 @@ const LeaderboardTable = ({ token, mode, toggleMode, toggleSidebar, isSidebarOpe
 
                                                 <td className="px-4 py-2 border-r">
                                                     <div className="sm:block md:flex items-center justify-between">
-                                                        <span className="flex items-center gap-4">
-                                <Image
-                                    src={leader.profile_image ? leader.profile_image : '/assets/images/placeholder.png'}
-                                    alt={leader.profile_image ? 'Leader Image' : 'Placeholder Image'}
-                                    width={50}
-                                    height={50}
-                                    className="w-12 h-12 rounded-full object-cover" // Ensure equal width and height and cover the area
-                                />
-                                <span className="text-teal-600 font-bold text-lg">
-                                    {leader.name}
-                                </span>
-                            </span>
+                                                    <span className="flex items-center gap-4">
+                                                        <Image
+                                                            src={leader.profile_image ? leader.profile_image : '/assets/images/placeholder.png'}
+                                                            alt={leader.profile_image ? 'Leader Image' : 'Placeholder Image'}
+                                                            width={50}
+                                                            height={50}
+                                                            className="w-12 h-12 rounded-full object-cover"
+                                                        />
+                                                        <span className="text-teal-600 font-bold text-lg">
+                                                            {leader.name}
+                                                        </span>
+                                                    </span>
                                                         <span className="text-[#ff9409] mt-2 md:ml-4 md:mt-0">
-                                {leader.points} Points
-                            </span>
+                                                        {leader.points} Points
+                                                    </span>
                                                     </div>
                                                 </td>
                                                 <td className="px-4 py-2">
                                                     <div className="flex justify-between items-center">
-                                                        <span className="text-[#ff9409]">
-                                                            {leader.actions_completed ? leader.actions_completed : 0} Actions Completed
-                                                        </span>
+                                                    <span className="text-[#ff9409]">
+                                                        {leader.actions_completed ? leader.actions_completed : 0} Actions Completed
+                                                    </span>
                                                         <button className={buttonClass}>
                                                             {buttonText}
                                                         </button>
@@ -207,7 +209,6 @@ const LeaderboardTable = ({ token, mode, toggleMode, toggleSidebar, isSidebarOpe
                                     </tr>
                                 )}
                                 </tbody>
-
                             </table>
                         </div>
                     )}
@@ -233,6 +234,7 @@ const LeaderboardTable = ({ token, mode, toggleMode, toggleSidebar, isSidebarOpe
                 </div>
             </div>
         </main>
+
     );
 };
 

@@ -61,15 +61,20 @@ const MyActivity = ({ token, mode }) => {
             {!loading && !error && activities.length > 0 ? (
                 <div
                     className=""
-                    style={{overflowY: 'auto', height: '300px'}}>
-                    {activities.slice(0, 5).map((activity, index) => { // Limit to 5 activities
+                    style={{overflowY: 'auto', height: '300px'}}
+                >
+                    {activities.slice(0, 5).map((activity, index) => {
                         return (
                             <div
                                 key={activity.activity_id}
                                 className={`${
                                     index % 2 === 0
-                                        ? 'bg-[#f4fbfb] hover:bg-[#cff0ed]'
-                                        : 'bg-white hover:bg-[#cff0ed]'
+                                        ? mode === 'dark'
+                                            ? 'bg-[#0a0c1d] hover:bg-[#2a3b4f]'  // Dark mode alternative
+                                            : 'bg-[#f4fbfb] hover:bg-[#cff0ed]'
+                                        : mode === 'dark'
+                                            ? 'bg-[#1b2937] hover:bg-[#2a3b4f]'  // Dark mode alternative
+                                            : 'bg-white hover:bg-[#cff0ed]'
                                 } py-6 transition-all duration-300 ease-in-out group relative`}
                             >
                                 <div className="flex justify-between px-8">
@@ -77,7 +82,7 @@ const MyActivity = ({ token, mode }) => {
                                     <p className="font-bold text-[#ff9409]">+{activity.points} Points</p>
                                 </div>
                                 <div
-                                    className="absolute left-1/2 transform -translate-x-1/2  bottom-0 flex items-center mb-2 opacity-0 group-hover:opacity-75 transition-opacity duration-300 bg-gray-800 text-white text-sm rounded px-4 py-2 shadow-lg"
+                                    className={`absolute left-1/2 transform -translate-x-1/2  bottom-0 flex items-center mb-2 opacity-0 group-hover:opacity-75 transition-opacity duration-300 ${mode === 'dark' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-black'} text-sm rounded px-4 py-2 shadow-lg`}
                                 >
                                     {`Task completed on ${formatDate(activity.created_at)}`}
                                 </div>
@@ -89,6 +94,7 @@ const MyActivity = ({ token, mode }) => {
                 <div className="text-center py-4">No activities yet!</div>
             )}
         </div>
+
     );
 };
 

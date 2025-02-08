@@ -102,9 +102,10 @@ const Referral = ({ token, mode, toggleMode, notify }) => {
 
                 <div className="flex justify-center pb-4">
                     <span
-                        className="uppercase text-[#0CB4AB] font-bold border-2 border-[#ff9409] bg-white rounded-lg py-2 w-3/5 px-4">
-                        {referralCode}
-                    </span>
+                        className={`${mode === 'dark' ? 'bg-[#2a3b4f] text-white border-[#ff9409]' : 'bg-white text-black border-[#ff9409]'} 
+            uppercase font-bold border-2 rounded-lg py-2 w-3/5 px-4`}>
+        {referralCode}
+    </span>
 
                     <button onClick={handleCopy}
                             className="bg-[#ff9409] text-white rounded-lg py-2 px-8 transition-all duration-300 ease-in-out hover:bg-[#ff7f00]">

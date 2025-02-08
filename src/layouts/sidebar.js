@@ -2,6 +2,7 @@ import {
     ChevronLeftIcon,
     ChevronRightIcon,
     ArrowRightOnRectangleIcon,
+    ArrowRightStartOnRectangleIcon,
     HomeIcon,
     MagnifyingGlassIcon,
     ChartBarIcon,
@@ -9,14 +10,15 @@ import {
     CogIcon,
     DocumentTextIcon,
     BellIcon,
-    ArrowTrendingUpIcon, ArrowDownTrayIcon, QuestionMarkCircleIcon, BanknotesIcon, UserPlusIcon
+    ArrowTrendingUpIcon, ArrowDownTrayIcon, QuestionMarkCircleIcon, BanknotesIcon, UserPlusIcon,
+    ArrowsPointingInIcon as FullScreenIcon, MoonIcon, SunIcon
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import Link from "next/link";
 import AppDownloadModal from "@/components/AppDownloadModal";
 import {useState} from "react";
 
-const Sidebar = ({ isOpen, toggleSidebar, mode, onLogout, openModal }) => {
+const Sidebar = ({ isOpen, toggleSidebar, mode, onLogout, openModal, toggleFullScreen, toggleMode}) => {
     const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
 
@@ -29,18 +31,18 @@ const Sidebar = ({ isOpen, toggleSidebar, mode, onLogout, openModal }) => {
             <div className="flex flex-col h-full">
                 <div className="flex justify-between p-4">
                     <Link href="/">
-                    <Image
-                        src="/assets/images/logo.svg"
-                        alt="Logo"
-                        width={300}
-                        height={75}
-                    />
+                        <Image
+                            src="/assets/images/logo.svg"
+                            alt="Logo"
+                            width={300}
+                            height={75}
+                        />
                     </Link>
                     <button onClick={toggleSidebar} className="-ml-2">
                         {isOpen ? (
-                            <ChevronLeftIcon className="h-6 w-6 text-gray-950 font-bold" />
+                            <ChevronLeftIcon className="h-6 w-6 text-gray-950 font-bold"/>
                         ) : (
-                            <ChevronRightIcon className="h-6 w-6 text-gray-950" />
+                            <ChevronRightIcon className="h-6 w-6 text-gray-950"/>
                         )}
                     </button>
                 </div>
@@ -102,12 +104,45 @@ const Sidebar = ({ isOpen, toggleSidebar, mode, onLogout, openModal }) => {
                     </li>
                 </ul>
 
-                <button
-                    onClick={onLogout}
-                    className="w-full bg-gray-100 text-black p-2 rounded-b-lg flex items-center justify-center hover:bg-gray-400 transition duration-200"
-                >
-                    <ArrowRightOnRectangleIcon className="h-5 w-5 mr-2"/> Sign Out
-                </button>
+                <div className="relative flex items-center space-x-2 pt-4 md:pt-0 w-full">
+                    {/* Dark/Light Mode Toggle */}
+                    <div className="group relative w-full">
+                        <button
+                            onClick={toggleMode}
+                            className={`flex items-center justify-between w-full gap-x-2 ${mode === 'dark' ? 'bg-black text-white' : 'bg-gray-200 text-black'} px-2 py-2 rounded-full`}
+                        >
+                            {mode === 'dark' ? "Light Mode" : "Dark Mode"}
+                            {mode === 'dark' ? (
+                                <SunIcon className="h-6 w-6 text-white hover:text-[#ff9409] transition"/>
+                            ) : (
+                                <MoonIcon className="h-6 w-6 text-gray-500 hover:text-[#ff9409] transition"/>
+                            )}
+                        </button>
+                        <span
+                            style={{top: '-50px'}} // Custom top value
+                            className="absolute left-0 w-full text-sm text-white bg-black rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity text-center">
+            {mode === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"}
+        </span>
+                    </div>
+
+                    {/* Sign Out Button */}
+                    <div className="group relative w-full">
+                        <button
+                            onClick={onLogout}
+                            className={`flex items-center justify-between w-full gap-x-2 ${mode === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-200 text-black'} px-4 py-2 rounded-full`}
+                        >
+                            Sign Out
+                            <ArrowRightStartOnRectangleIcon
+                                className="h-6 w-6 text-gray-500 hover:text-[#ff9409] transition"/>
+                        </button>
+                        <span
+                            style={{top: '-50px'}} // Custom top value
+                            className="absolute left-0 w-full text-sm text-white bg-black rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity text-center">
+            Sign Out
+        </span>
+                    </div>
+                </div>
+
 
             </div>
         </div>
