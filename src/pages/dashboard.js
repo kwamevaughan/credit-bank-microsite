@@ -98,6 +98,18 @@ const Dashboard = () => {
         });
     };
 
+    const toggleFullScreen = () => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+            });
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    };
+
     const toggleSidebar = () => {
         setSidebarOpen(!isSidebarOpen);
     };
@@ -105,6 +117,9 @@ const Dashboard = () => {
     const handleSignOut = () => {
         localStorage.removeItem('token');
         sessionStorage.removeItem('token');
+        localStorage.removeItem('supabase_session');  // Remove session now
+        localStorage.removeItem('loginEmail');        // Clear email
+        localStorage.removeItem('loginReferralCode'); // Clear referral code
         notify("You have been signed out successfully.");
         router.push('/'); // Redirect to login page
     };
@@ -196,7 +211,9 @@ const Dashboard = () => {
                 toggleSidebar={toggleSidebar}
                 isSidebarOpen={isSidebarOpen}
                 mode={mode}
+                onLogout={handleSignOut}
                 toggleMode={toggleMode}
+                toggleFullScreen={toggleFullScreen}
             />
 
             <div className="flex flex-1 transition-all duration-300">
@@ -206,6 +223,8 @@ const Dashboard = () => {
                     mode={mode}
                     onLogout={handleSignOut}
                     openModal={openModal}
+                    toggleMode={toggleMode}
+                    toggleFullScreen={toggleFullScreen}
 
                 />
 
@@ -229,7 +248,8 @@ const Dashboard = () => {
 
                         <div>
                             <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className={`${mode === 'dark' ? 'bg-[#101720] text-white' : 'bg-white text-black'} rounded-lg hover:shadow-md transition-all duration-300 ease-in-out`}>
+                                <div
+                                    className={`${mode === 'dark' ? 'bg-[#101720] text-white' : 'bg-white text-black'} rounded-lg hover:shadow-md transition-all duration-300 ease-in-out`}>
                                     <MyActivity
                                         mode={mode}
                                         toggleMode={toggleMode}
@@ -237,7 +257,8 @@ const Dashboard = () => {
                                         notify={notify}
                                     />
                                 </div>
-                                <div className={`${mode === 'dark' ? 'bg-[#101720] text-white' : 'bg-[#0CB4AB] text-black'} rounded-lg hover:shadow-md transition-all duration-300 ease-in-out`}>
+                                <div
+                                    className={`${mode === 'dark' ? 'bg-[#101720] text-white' : 'bg-[#0CB4AB] text-black'} rounded-lg hover:shadow-md transition-all duration-300 ease-in-out`}>
                                     <Referral
                                         mode={mode}
                                         toggleMode={toggleMode}
@@ -261,23 +282,32 @@ const Dashboard = () => {
                         <div className="flex justify-center gap-x-4 pt-4">
                             <button
                                 onClick={handleSignOut} // Attach sign out handler
-                                className="bg-white text-[#0eb4ab] flex items-center px-4 py-4 rounded-lg hover:bg-gray-200 transition-all duration-300 ease-in-out">
-                                <ArrowRightOnRectangleIcon className="h-5 w-5 mr-2 text-[#ff9409]" />
+                                className={`flex items-center px-4 py-4 rounded-lg transition-all duration-300 ease-in-out 
+            ${mode === 'dark'
+                                    ? 'bg-[#2a3a48] text-[#0eb4ab] hover:bg-[#3e4b5d]'
+                                    : 'bg-white text-[#0eb4ab] hover:bg-gray-200'}`
+                                }>
+                                <ArrowRightOnRectangleIcon className="h-5 w-5 mr-2 text-[#ff9409]"/>
                                 Sign out
                             </button>
                             <button
                                 onClick={() => setShowDeleteModal(true)} // Trigger modal
-                                className="bg-[#ef4547] text-white flex items-center px-4 py-4 rounded-lg hover:bg-red-600 transition-all duration-300 ease-in-out">
-                                <TrashIcon className="h-5 w-5 mr-2 text-white" />
+                                className={`flex items-center px-4 py-4 rounded-lg transition-all duration-300 ease-in-out 
+            ${mode === 'dark'
+                                    ? 'bg-[#ef4547] text-white hover:bg-[#c0392b]'
+                                    : 'bg-[#ef4547] text-white hover:bg-red-600'}`
+                                }>
+                                <TrashIcon className="h-5 w-5 mr-2 text-white"/>
                                 Delete Account
                             </button>
                         </div>
+
 
                         {/* Use DeleteAccountModal */}
                         <DeleteAccountModal
                             isOpen={showDeleteModal}
                             onClose={() => setShowDeleteModal(false)} // Close modal
-                            handleDeleteAccount={handleDeleteAccount}                        />
+                            handleDeleteAccount={handleDeleteAccount}/>
                     </div>
                     <AppDownloadModal
                         isOpen={isModalOpen}
