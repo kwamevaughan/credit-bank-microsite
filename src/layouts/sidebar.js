@@ -40,11 +40,14 @@ const Sidebar = ({ isOpen, toggleSidebar, mode, onLogout, openModal, toggleFullS
                     </Link>
                     <button onClick={toggleSidebar} className="-ml-2">
                         {isOpen ? (
-                            <ChevronLeftIcon className="h-6 w-6 text-gray-950 font-bold"/>
+                            <ChevronLeftIcon
+                                className={`h-6 w-6 ${mode === 'dark' ? 'text-white' : 'text-gray-950'} font-bold`}/>
                         ) : (
-                            <ChevronRightIcon className="h-6 w-6 text-gray-950"/>
+                            <ChevronRightIcon
+                                className={`h-6 w-6 ${mode === 'dark' ? 'text-white' : 'text-gray-950'}`}/>
                         )}
                     </button>
+
                 </div>
                 <ul className="flex-grow px-4">
                     <li className="py-2">
