@@ -53,9 +53,37 @@ const Quiz = () => {
         const timeRemaining = tomorrow - now;
         const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
         const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
 
-        return `${hours}h ${minutes}m`;
+        return `${hours}h ${minutes}m ${seconds}s`;
     };
+
+    useEffect(() => {
+        let intervalId;
+
+        if (showResult && !quizAvailable) {
+            // Use the existing calculateNextAvailableTime function
+            intervalId = setInterval(() => {
+                const timeRemaining = calculateNextAvailableTime(new Date());
+                if (timeRemaining.startsWith('0h 0m 0s')) {
+                    // Time's up - quiz should be available again
+                    clearInterval(intervalId);
+                    setQuizAvailable(true);
+                    setShowResult(false);
+                    fetchUserProgress(); // Refresh the quiz state
+                } else {
+                    setNextAvailableTime(timeRemaining);
+                }
+            }, 1000);
+        }
+
+        return () => {
+            if (intervalId) {
+                clearInterval(intervalId);
+            }
+        };
+    }, [showResult, quizAvailable]);
+
 
     // Function to get topic and question index from global index
     const getQuestionFromGlobalIndex = (globalIndex) => {
@@ -89,6 +117,9 @@ const Quiz = () => {
             current_question_index: activeQuestionIndex,
             questions_answered_today: currentAnsweredCount,
             points: result.score,
+            correct_answers: result.correctAnswers,    // Add these fields
+            wrong_answers: result.wrongAnswers,        // Add these fields
+            total_minutes_spent: result.totalMinutesSpent, // Add these fields
             last_updated: now,
             completed_for_day: isComplete
         };
@@ -212,7 +243,10 @@ const Quiz = () => {
                 setQuestionsAnsweredToday(userProgress.questions_answered_today);
                 setResult(prev => ({
                     ...prev,
-                    score: userProgress.points || 0
+                    score: userProgress.points || 0,
+                    correctAnswers: userProgress.correct_answers || 0,     // Add these
+                    wrongAnswers: userProgress.wrong_answers || 0,        // Add these
+                    totalMinutesSpent: userProgress.total_minutes_spent || 0  // Add these
                 }));
 
                 // If quiz was completed for the day, show results
