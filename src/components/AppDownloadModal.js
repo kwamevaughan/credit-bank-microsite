@@ -147,7 +147,7 @@ const AppDownloadModal = ({ isOpen, onClose, mode }) => {
                 </div>
 
                 <p className={`text-center mb-4 ${mode === 'dark' ? 'text-white' : 'text-black'}`}>
-                    Download the Credit Bank mobile app to earn points.
+                    Download the Credit Bank mobile app to earn 15 points.
                 </p>
                 <div className="flex justify-center gap-x-14">
                     <div>
