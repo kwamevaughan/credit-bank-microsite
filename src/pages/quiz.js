@@ -18,6 +18,11 @@ const Quiz = () => {
     const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
     const [selectedAnswerIndex, setSelectedAnswerIndex] = useState(null);
     const [showResult, setShowResult] = useState(false);
+    const [quizAvailable, setQuizAvailable] = useState(true);
+    const [globalQuestionIndex, setGlobalQuestionIndex] = useState(0);
+    // Calculate total questions across all topics
+    const totalQuestionsAcrossTopics = quizzes.reduce((acc, quiz) => acc + quiz.questions.length, 0);
+
     const [result, setResult] = useState({
         score: 0,
         correctAnswers: 0,
@@ -39,104 +44,197 @@ const Quiz = () => {
         },
     });
 
-    const updateUserProgress = async (userId, quizId, currentAnsweredCount) => {
-        console.log("Updating user progress...", { userId, quizId, currentAnsweredCount, activeQuestionIndex });
+    const calculateNextAvailableTime = (lastUpdated) => {
+        const now = new Date();
+        const tomorrow = new Date(lastUpdated);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+
+        const timeRemaining = tomorrow - now;
+        const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+        const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+
+        return `${hours}h ${minutes}m`;
+    };
+
+    // Function to get topic and question index from global index
+    const getQuestionFromGlobalIndex = (globalIndex) => {
+        let remainingIndex = globalIndex;
+        let topicIndex = 0;
+
+        while (topicIndex < quizzes.length) {
+            if (remainingIndex < quizzes[topicIndex].questions.length) {
+                return {
+                    topicIndex,
+                    questionIndex: remainingIndex
+                };
+            }
+            remainingIndex -= quizzes[topicIndex].questions.length;
+            topicIndex++;
+        }
+
+        // If we've reached the end, start over
+        return {
+            topicIndex: 0,
+            questionIndex: 0
+        };
+    };
+
+    const updateUserProgress = async (userId, quizId, currentAnsweredCount, isComplete = false) => {
+        const now = new Date().toISOString();
+
+        const updateData = {
+            global_question_index: globalQuestionIndex,
+            current_topic_index: activeTopicIndex,
+            current_question_index: activeQuestionIndex,
+            questions_answered_today: currentAnsweredCount,
+            points: result.score,
+            last_updated: now,
+            completed_for_day: isComplete
+        };
 
         const { error } = await supabase
             .from("user_quiz_progress")
-            .update({
-                current_question_index: activeQuestionIndex + 1,
-                points: result.score,
-                questions_answered_today: currentAnsweredCount,
-            })
-            .eq("user_id", userId)
-            .eq("quiz_id", quizId);
+            .upsert({
+                user_id: userId,
+                quiz_id: quizId,
+                ...updateData
+            });
 
         if (error) {
-            console.error("Error updating user progress:", error);
-            notify("Error updating your quiz progress: " + error.message);
-        } else {
-            console.log("Successfully updated progress for user with ID: ${userId}.");
+            console.error("Error updating progress:", error);
+            notify("Error saving your progress: " + error.message);
         }
     };
+
 
 
     // Load user progress
     const fetchUserProgress = async () => {
+        setLoading(true);
         const storedSession = localStorage.getItem("supabase_session");
-        if (storedSession) {
-            const session = JSON.parse(storedSession);
-            const userId = session.user?.id;
 
-            if (!userId) {
-                notify("User ID is undefined. Please log in.");
-                return;
-            }
+        if (!storedSession) {
+            setLoading(false);
+            return;
+        }
 
-            const quizId = quizzes?.[activeTopicIndex]?.id;
-            if (!quizId || !quizzes[activeTopicIndex]) {
-                notify("Quiz ID is undefined. Please check your quiz data.");
-                return;
-            }
+        const session = JSON.parse(storedSession);
+        const userId = session.user?.id;
 
+        if (!userId) {
+            notify("Please log in to continue.");
+            setLoading(false);
+            return;
+        }
+
+        try {
             const { data: userProgress, error } = await supabase
                 .from("user_quiz_progress")
-                .select("current_question_index, points, questions_answered_today, last_updated")
+                .select("*")
                 .eq("user_id", userId)
-                .eq("quiz_id", quizId);
+                .single();
 
-            if (error) {
-                console.error("Error fetching user progress:", error);
-                notify("Error fetching your quiz progress: " + error.message);
+            if (error && error.code !== 'PGRST116') {
+                throw error;
+            }
+
+            const now = new Date();
+
+            // If no progress exists, create initial progress
+            if (!userProgress) {
+                const initialProgress = {
+                    user_id: userId,
+                    global_question_index: 0,
+                    current_topic_index: 0,
+                    current_question_index: 0,
+                    questions_answered_today: 0,
+                    points: 0,
+                    completed_for_day: false,
+                    last_updated: now.toISOString()
+                };
+
+                await supabase.from("user_quiz_progress").insert(initialProgress);
+
+                setGlobalQuestionIndex(0);
+                setActiveTopicIndex(0);
+                setActiveQuestionIndex(0);
+                setQuestionsAnsweredToday(0);
+                setQuizAvailable(true);
+                setLoading(false);
                 return;
             }
 
-            if (userProgress.length > 0) {
-                const progress = userProgress[0];
-                const lastUpdated = new Date(progress.last_updated || 0);
-                const now = new Date();
+            // Check if it's a new day
+            const lastUpdated = new Date(userProgress.last_updated);
+            const isSameDay = (date1, date2) => {
+                return date1.getFullYear() === date2.getFullYear() &&
+                    date1.getMonth() === date2.getMonth() &&
+                    date1.getDate() === date2.getDate();
+            };
 
-                const isSameDay = (date1, date2) => {
-                    return date1.getFullYear() === date2.getFullYear() &&
-                        date1.getMonth() === date2.getMonth() &&
-                        date1.getDate() === date2.getDate();
-                };
+            if (!isSameDay(now, lastUpdated)) {
+                // It's a new day - reset daily progress and advance questions
+                const newGlobalIndex = userProgress.global_question_index + 7;
 
-                if (!isSameDay(now, lastUpdated)) {
-                    // It's a new day, reset progress
-                    setQuestionsAnsweredToday(0);
-                    setActiveQuestionIndex(progress.current_question_index + 7); // Increment by 7 for the next day's questions
-                    setResult({ score: 0, correctAnswers: 0, wrongAnswers: 0, totalMinutesSpent: 0 });
-                    console.log("Starting fresh for the day.");
-                } else {
-                    // Still the same day, so keep the current question index
-                    setActiveQuestionIndex(progress.current_question_index);
-                    setQuestionsAnsweredToday(progress.questions_answered_today);
-                }
-            } else {
-                // Insert a new progress record if none exists
+                // Check if we've reached the end of all questions
+                const totalQuestions = quizzes.reduce((acc, quiz) => acc + quiz.questions.length, 0);
+                const actualNewIndex = newGlobalIndex >= totalQuestions ? 0 : newGlobalIndex;
+
+                // Calculate new topic and question positions
+                const { topicIndex, questionIndex } = getQuestionFromGlobalIndex(actualNewIndex);
+
+                // Update database with new day's starting point
                 await supabase
                     .from("user_quiz_progress")
-                    .insert({
-                        user_id: userId,
-                        quiz_id: quizId,
-                        current_question_index: 0,
-                        points: 0,
+                    .update({
+                        global_question_index: actualNewIndex,
+                        current_topic_index: topicIndex,
+                        current_question_index: questionIndex,
                         questions_answered_today: 0,
-                        last_updated: new Date().toISOString(),
-                    });
-                console.log("Created new progress record for user and quiz.");
+                        completed_for_day: false,
+                        last_updated: now.toISOString()
+                    })
+                    .eq("user_id", userId);
+
+                // Update local state
+                setGlobalQuestionIndex(actualNewIndex);
+                setActiveTopicIndex(topicIndex);
+                setActiveQuestionIndex(questionIndex);
+                setQuestionsAnsweredToday(0);
+                setQuizAvailable(true);
+                setShowResult(false);
+            } else {
+                // Same day - restore current progress
+                setGlobalQuestionIndex(userProgress.global_question_index);
+                setActiveTopicIndex(userProgress.current_topic_index);
+                setActiveQuestionIndex(userProgress.current_question_index);
+                setQuestionsAnsweredToday(userProgress.questions_answered_today);
+                setResult(prev => ({
+                    ...prev,
+                    score: userProgress.points || 0
+                }));
+
+                // If quiz was completed for the day, show results
+                if (userProgress.completed_for_day) {
+                    setQuizAvailable(false);
+                    setShowResult(true);
+                    setNextAvailableTime(calculateNextAvailableTime(lastUpdated));
+                } else {
+                    setQuizAvailable(true);
+                    setShowResult(false);
+                }
             }
-            setLoading(false);
-        } else {
-            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching progress:", error);
+            notify("Error loading your progress: " + error.message);
         }
+
+        setLoading(false);
     };
 
 
-    useEffect(() => {
-        fetchUserProgress();
-    }, [activeTopicIndex]);
+
 
     useEffect(() => {
         restart(new Date().getTime() + initialTime * 1000);
@@ -145,82 +243,67 @@ const Quiz = () => {
 
     const onClickNext = async (incrementCount = true) => {
         const storedSession = localStorage.getItem("supabase_session");
-        let userId;
-
-        if (storedSession) {
-            const session = JSON.parse(storedSession);
-            userId = session.user?.id;
-
-            if (!userId) {
-                notify("User ID is undefined. Please log in.");
-                return;
-            }
-        } else {
-            notify("No session found. Please log in again.");
+        if (!storedSession || !JSON.parse(storedSession).user?.id) {
+            notify("Please log in to continue.");
             return;
         }
-
-        const quizId = quizzes?.[activeTopicIndex]?.id;
-        if (!quizId) {
-            notify("Quiz ID is undefined. Please check your quiz data.");
-            return;
-        }
+        const userId = JSON.parse(storedSession).user.id;
 
         if (selectedAnswerIndex === null) {
-            notify("Please select an answer before navigating to the next question.");
+            notify("Please select an answer before continuing.");
             return;
         }
 
-        const isCorrect = quizzes[activeTopicIndex].questions[activeQuestionIndex].choices[selectedAnswerIndex] === quizzes[activeTopicIndex].questions[activeQuestionIndex].correctAnswer;
+        const isCorrect = quizzes[activeTopicIndex].questions[activeQuestionIndex].choices[selectedAnswerIndex] ===
+            quizzes[activeTopicIndex].questions[activeQuestionIndex].correctAnswer;
 
         setResult(prev => ({
             ...prev,
             score: isCorrect ? prev.score + quizzes[activeTopicIndex].perQuestionScore : prev.score,
             correctAnswers: isCorrect ? prev.correctAnswers + 1 : prev.correctAnswers,
             wrongAnswers: !isCorrect ? prev.wrongAnswers + 1 : prev.wrongAnswers,
-            totalMinutesSpent: Math.floor(totalTimeSpent / 60) + Math.floor((initialTime * quizzes[activeTopicIndex].questions.length - seconds) / 60),
+            totalMinutesSpent: prev.totalMinutesSpent + Math.floor((initialTime - seconds) / 60),
         }));
 
-        if (incrementCount) {
-            const currentAnsweredCount = questionsAnsweredToday + 1;
-            await updateUserProgress(userId, quizId, currentAnsweredCount);
-            setQuestionsAnsweredToday(currentAnsweredCount);
+        const newAnsweredCount = questionsAnsweredToday + 1;
+
+        // Check if this was the last question for today
+        if (newAnsweredCount >= 7) {
+            await updateUserProgress(userId, quizzes[activeTopicIndex].id, newAnsweredCount, true);
+            setQuestionsAnsweredToday(newAnsweredCount);
+            setQuizAvailable(false);
+            setShowResult(true);
+            setNextAvailableTime(calculateNextAvailableTime(new Date()));
+            notify("You've completed today's questions! Come back tomorrow for more.");
+            return;
         }
 
-        // Log the total number of questions across all topics
-        const totalQuestions = quizzes.reduce((acc, topic) => acc + topic.totalQuestions, 0);
-        console.log("Total Questions in the Entire Quiz:", totalQuestions);
+        // Continue to next question
+        if (incrementCount) {
+            const newGlobalIndex = globalQuestionIndex + 1;
+            setGlobalQuestionIndex(newGlobalIndex);
 
-        // Log the number of questions in the current topic
-        console.log("Questions in Current Topic:", quizzes[activeTopicIndex]?.questions.length);
+            // Calculate new topic and question indices
+            const { topicIndex, questionIndex } = getQuestionFromGlobalIndex(newGlobalIndex);
 
-        // If the user has answered 7 questions, stop and show results
-        if (questionsAnsweredToday === 7) {
-            notify("You have reached the limit of 7 questions today. Please check back tomorrow!");
-            setShowResult(true); // Show results if the last question is answered
-        } else {
-            // Calculate the index of the next question across all topics
-            let currentGlobalIndex = 0;
-            for (let i = 0; i < activeTopicIndex; i++) {
-                currentGlobalIndex += quizzes[i].totalQuestions;
-            }
-            currentGlobalIndex += activeQuestionIndex;
-
-            // Get the questions for today
-            const questionsForToday = getNextSetOfQuestions(currentGlobalIndex, 7);
-            console.log("Questions for Today:", questionsForToday);
-
-            // Get the questions for tomorrow (next 7 questions)
-            const questionsForTomorrow = getNextSetOfQuestions(currentGlobalIndex + 7, 7);
-            console.log("Questions for Tomorrow:", questionsForTomorrow);
-
-            // Update the active question index for the next question
-            setTimeout(() => {
-                setSelectedAnswerIndex(null);
-                setActiveQuestionIndex(activeQuestionIndex + 1); // Go to the next question in the current batch
-            }, 2000);
+            await updateUserProgress(userId, quizzes[activeTopicIndex].id, newAnsweredCount);
+            setQuestionsAnsweredToday(newAnsweredCount);
+            setSelectedAnswerIndex(null);
+            setActiveTopicIndex(topicIndex);
+            setActiveQuestionIndex(questionIndex);
+            restart(new Date().getTime() + initialTime * 1000);
         }
     };
+
+    useEffect(() => {
+        fetchUserProgress();
+    }, [activeTopicIndex]);
+
+    useEffect(() => {
+        if (quizAvailable) {
+            restart(new Date().getTime() + initialTime * 1000);
+        }
+    }, [activeQuestionIndex, activeTopicIndex, quizAvailable]);
 
 // Function to calculate the next set of questions, considering multiple topics
     const getNextSetOfQuestions = (startIndex, numberOfQuestions) => {
@@ -321,92 +404,125 @@ const Quiz = () => {
                     </p>
                 </div>
 
-                {!showResult ? (
-                    <div
-                        className={`p-8 rounded shadow-md max-w-4xl mx-auto ${mode === 'dark' ? 'bg-[#1f2a3d] text-white' : 'bg-white text-black'}`}>
-                        <div className="flex justify-between mb-4">
-                            <h2 className={`text-xl sm:text-2xl ${mode === 'dark' ? 'text-teal-300' : 'text-teal-600'}`}>{`Pillar: ${activeTopicIndex + 1} ${quizzes[activeTopicIndex]?.topic}`}</h2>
-                            <span
-                                className={`bg-[#cff0ed] p-2 rounded-lg ${mode === 'dark' ? 'text-black' : 'text-black'}`}>Time left: <span
-                                className={`bg-black p-2 rounded-lg text-white font-bold`}>{seconds} sec</span></span>
+                <div
+                    className={`p-8 rounded shadow-md max-w-4xl mx-auto ${mode === 'dark' ? 'bg-[#1f2a3d] text-white' : 'bg-white text-black'}`}>
+                    {loading ? (
+                        <div className="text-center py-8">
+                            <p>Loading...</p>
                         </div>
-
-                        {questionsAnsweredToday === 7 ? (
-                            <div className="text-center">
-                                <h2 className="text-xl mb-4">No Question Available</h2>
-                                <p className="text-lg">
-                                    Next set of questions will be available in {nextAvailableTime}
+                    ) : !quizAvailable ? (
+                        <div className="text-center py-8">
+                            <h2 className={`text-2xl mb-6 ${mode === 'dark' ? 'text-teal-300' : 'text-teal-600'}`}>
+                                Quiz Completed for Today!
+                            </h2>
+                            <div className="mb-8">
+                                <p className="text-lg mb-3">Next set of questions will be available in:</p>
+                                <p className={`text-2xl font-bold ${mode === 'dark' ? 'text-orange-400' : 'text-orange-500'}`}>
+                                    {nextAvailableTime}
                                 </p>
                             </div>
-                        ) : (
-                            <div>
+
+                            <div className={`p-6 rounded-lg ${mode === 'dark' ? 'bg-[#2a3749]' : 'bg-gray-50'}`}>
+                                <h3 className={`text-xl mb-6 ${mode === 'dark' ? 'text-teal-300' : 'text-teal-600'}`}>
+                                    Today's Results
+                                </h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                                    <div className="p-4 rounded-lg bg-opacity-20 bg-teal-400">
+                                        <p className="mb-2">Total Questions: 7</p>
+                                        <p className="mb-2">Total Score: {result.score}</p>
+                                    </div>
+                                    <div className="p-4 rounded-lg bg-opacity-20 bg-teal-400">
+                                        <p className="mb-2">Correct Answers: {result.correctAnswers}</p>
+                                        <p className="mb-2">Wrong Answers: {result.wrongAnswers}</p>
+                                    </div>
+                                </div>
+                                <p className="mt-4">Total Time: {result.totalMinutesSpent} minutes</p>
+                            </div>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="flex justify-between mb-4">
+                                <h2 className={`text-xl sm:text-2xl ${mode === 'dark' ? 'text-teal-300' : 'text-teal-600'}`}>
+                                    {`Pillar: ${activeTopicIndex + 1} ${quizzes[activeTopicIndex]?.topic}`}
+                                </h2>
+                                <span
+                                    className={`bg-[#cff0ed] p-2 rounded-lg ${mode === 'dark' ? 'text-black' : 'text-black'}`}>
+                        Time left: <span className="bg-black p-2 rounded-lg text-white font-bold">{seconds} sec</span>
+                    </span>
+                            </div>
+
+                            <div className="mb-6">
                                 {quizzes[activeTopicIndex]?.questions[activeQuestionIndex] ? (
-                                    <h2 className={`text-xl mb-4 ${mode === 'dark' ? 'text-white' : 'text-black'}`}>{quizzes[activeTopicIndex].questions[activeQuestionIndex].question}</h2>
+                                    <h2 className={`text-xl mb-4 ${mode === 'dark' ? 'text-white' : 'text-black'}`}>
+                                        {quizzes[activeTopicIndex].questions[activeQuestionIndex].question}
+                                    </h2>
                                 ) : (
-                                    <h4 className={`text-lg mb-4 ${mode === 'dark' ? 'text-white' : 'text-black'}`}>No
-                                        Question Available. Check back tomorrow!</h4>
+                                    <h4 className={`text-lg mb-4 ${mode === 'dark' ? 'text-white' : 'text-black'}`}>
+                                        No Question Available. Check back tomorrow!
+                                    </h4>
                                 )}
                             </div>
-                        )}
 
-                        <ul className="space-y-2">
-                            {quizzes[activeTopicIndex]?.questions[activeQuestionIndex]?.choices?.map((answer, index) => {
-                                let style = "";
-                                if (selectedAnswerIndex !== null) {
-                                    if (index === selectedAnswerIndex) {
-                                        style += ' bg-blue-200';
-                                        if (answer !== quizzes[activeTopicIndex].questions[activeQuestionIndex].correctAnswer) {
-                                            style = 'bg-red-200';
-                                        }
-                                    } else if (answer === quizzes[activeTopicIndex].questions[activeQuestionIndex].correctAnswer) {
-                                        style += ' bg-green-200';
-                                    }
-                                }
+                            <ul className="space-y-2 mb-6">
+                                {quizzes[activeTopicIndex]?.questions[activeQuestionIndex]?.choices?.map((answer, index) => {
+                                    let style = `cursor-pointer p-3 border rounded-lg transition-all duration-200 hover:bg-opacity-90 ${
+                                        mode === 'dark' ? 'border-gray-600' : 'border-gray-200'
+                                    }`;
 
-                                return (
-                                    <li
-                                        key={index}
-                                        onClick={() => {
-                                            if (selectedAnswerIndex === null) {
-                                                setSelectedAnswerIndex(index);
+                                    if (selectedAnswerIndex !== null) {
+                                        if (index === selectedAnswerIndex) {
+                                            if (answer === quizzes[activeTopicIndex].questions[activeQuestionIndex].correctAnswer) {
+                                                style += ' bg-green-200 text-black';
+                                            } else {
+                                                style += ' bg-red-200 text-black';
                                             }
-                                        }}
-                                        className={`cursor-pointer p-2 border rounded ${style}`}
-                                    >
-                                        {answer}
-                                    </li>
-                                );
-                            })}
-                        </ul>
+                                        } else if (answer === quizzes[activeTopicIndex].questions[activeQuestionIndex].correctAnswer) {
+                                            style += ' bg-green-200 text-black';
+                                        }
+                                    }
 
-                        <button
-                            onClick={onClickNext}
-                            disabled={selectedAnswerIndex === null}
-                            className={`mt-4 ${mode === 'dark' ? 'bg-[#ff9409]' : 'bg-[#ff9409]'} text-white py-2 px-4 rounded ${
-                                selectedAnswerIndex === null ? 'disabled:opacity-50' : ''
-                            }`}
-                        >
-                            {activeQuestionIndex === quizzes[activeTopicIndex]?.questions?.length - 1
-                                ? "Done" // Change button to "Done" on the last question
-                                : "Next"}
-                        </button>
+                                    return (
+                                        <li
+                                            key={index}
+                                            onClick={() => {
+                                                if (selectedAnswerIndex === null) {
+                                                    setSelectedAnswerIndex(index);
+                                                }
+                                            }}
+                                            className={style}
+                                        >
+                                            {answer}
+                                        </li>
+                                    );
+                                })}
+                            </ul>
 
-                        <div className="flex justify-between">
-                            <span>{questionsAnsweredToday}/{7} Questions Answered Today</span>
-                            <span>Points: {result.score}</span>
-                        </div>
-                    </div>
-                ) : (
-                    <div
-                        className={`p-8 rounded shadow-md text-center ${mode === 'dark' ? 'bg-[#1f2a3d] text-white' : 'bg-white text-black'}`}>
-                        <h3 className={`text-xl mb-4 ${mode === 'dark' ? 'text-teal-300' : 'text-teal-600'}`}>Result</h3>
-                        <p>Total Questions: {/* Total question count logic */}</p>
-                        <p>Total Score: {result.score}</p>
-                        <p>Correct Answers: {result.correctAnswers}</p>
-                        <p>Wrong Answers: {result.wrongAnswers}</p>
-                        <p>Total Minutes Spent: {result.totalMinutesSpent} minutes</p>
-                    </div>
-                )}
+                            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm">Progress: </span>
+                                    <span
+                                        className={`px-3 py-1 rounded-full ${mode === 'dark' ? 'bg-teal-900' : 'bg-teal-100'}`}>
+                            {questionsAnsweredToday}/7 Questions
+                        </span>
+                                    <span
+                                        className={`px-3 py-1 rounded-full ${mode === 'dark' ? 'bg-orange-900' : 'bg-orange-100'}`}>
+                            {result.score} Points
+                        </span>
+                                </div>
+
+                                <button
+                                    onClick={onClickNext}
+                                    disabled={selectedAnswerIndex === null}
+                                    className={`px-6 py-2 rounded-lg transition-all duration-200 ${
+                                        mode === 'dark' ? 'bg-[#ff9409]' : 'bg-[#ff9409]'
+                                    } text-white ${selectedAnswerIndex === null ? 'opacity-50 cursor-not-allowed' : 'hover:bg-opacity-90'}`}
+                                >
+                                    {activeQuestionIndex === quizzes[activeTopicIndex]?.questions?.length - 1 ? "Done" : "Next"}
+                                </button>
+                            </div>
+                        </>
+                    )}
+                </div>
             </main>
 
         </div>
