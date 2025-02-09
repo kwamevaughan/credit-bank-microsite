@@ -124,6 +124,9 @@ const AppDownloadModal = ({ isOpen, onClose, mode }) => {
                 position: "bottom-center",
             }
         );
+
+        window.location.href = url;
+
     };
 
     return (
@@ -149,12 +152,15 @@ const AppDownloadModal = ({ isOpen, onClose, mode }) => {
                 <div className="flex justify-center gap-x-14">
                     <div>
                         <a
-                            href="#"
+                            href="https://play.google.com/store/apps/details?id=co.ke.ekenya.creditbank"
+                            target="_blank"
+                            rel="noopener noreferrer"
                             onClick={(e) => {
                                 e.preventDefault();
                                 handleDownloadApp('Android', 'https://play.google.com/store/apps/details?id=co.ke.ekenya.creditbank');
                             }}
                         >
+
                             <Image
                                 src="/assets/images/android.svg"
                                 alt="Android"
@@ -170,12 +176,15 @@ const AppDownloadModal = ({ isOpen, onClose, mode }) => {
 
                     <div>
                         <a
-                            href="#"
+                            href="https://apps.apple.com/us/app/credit-bank-cb-konnect/id1469515952"
+                            target="_blank"
+                            rel="noopener noreferrer"
                             onClick={(e) => {
                                 e.preventDefault();
                                 handleDownloadApp('Apple', 'https://apps.apple.com/us/app/credit-bank-cb-konnect/id1469515952');
                             }}
                         >
+
                             <Image
                                 src="/assets/images/apple.svg"
                                 alt="Apple"
@@ -191,7 +200,7 @@ const AppDownloadModal = ({ isOpen, onClose, mode }) => {
                 </div>
             </div>
         </Modal>
-);
+    );
 };
 
 export default AppDownloadModal;
