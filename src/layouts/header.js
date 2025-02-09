@@ -119,7 +119,7 @@ const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, userNam
                         <button
                             onClick={toggleFullScreen}
                             className={`flex items-center justify-center h-10 w-10 rounded-full ${
-                                mode === 'dark' ? 'bg-black' : 'bg-gray-200'
+                                mode === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-500'
                             } transition`}
                         >
                             <FullScreenIcon
@@ -142,7 +142,7 @@ const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, userNam
                         <button
                             onClick={toggleMode}
                             className={`flex items-center justify-center h-10 w-10 rounded-full ${
-                                mode === 'dark' ? 'bg-black' : 'bg-gray-200'
+                                mode === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-500'
                             } transition`}
                         >
                             {mode === 'dark' ? (
@@ -173,11 +173,11 @@ const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, userNam
                         <button
                             onClick={() => setDropdownOpen(!dropdownOpen)}
                             className={`flex items-center justify-center h-10 w-10 rounded-full ${
-                                mode === 'dark' ? 'bg-black' : 'bg-gray-200'
+                                mode === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-500'
                             } transition`}
                         >
                             {profileImage ? (
-                                <div className="w-12 h-12 rounded-full overflow-hidden"> {/* Force square container */}
+                                <div className="w-10 h-10 rounded-full overflow-hidden"> {/* Force square container */}
                                     <Image
                                         src={profileImage}
                                         alt="User Profile"
@@ -189,7 +189,7 @@ const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, userNam
                             ) : (
                                 <UserCircleIcon
                                     className={`h-6 w-6 ${
-                                        mode === 'dark' ? 'text-white' : 'text-gray-500'
+                                        mode === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-500'
                                     } hover:text-blue-600 transition`}
                                 />
                             )}
