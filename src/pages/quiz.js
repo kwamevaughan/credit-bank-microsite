@@ -9,6 +9,7 @@ import AppDownloadModal from "@/components/AppDownloadModal";
 
 
 const Quiz = () => {
+    const [userName, setUserName] = useState('');
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [mode, setMode] = useState("light");
     const [isModalOpen, setIsModalOpen] = useState(false); // State for Modal
@@ -18,6 +19,7 @@ const Quiz = () => {
     const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
     const [selectedAnswerIndex, setSelectedAnswerIndex] = useState(null);
     const [showResult, setShowResult] = useState(false);
+    const [isQuizComplete, setIsQuizComplete] = useState(false);
     const [quizAvailable, setQuizAvailable] = useState(true);
     const [globalQuestionIndex, setGlobalQuestionIndex] = useState(0);
     // Calculate total questions across all topics
@@ -36,6 +38,8 @@ const Quiz = () => {
     const initialTime = 35; // Each question has 35 seconds
     const questionsForToday = quizzes[activeTopicIndex]?.questions.slice(activeQuestionIndex, activeQuestionIndex + 7);
     const [nextAvailableTime, setNextAvailableTime] = useState(null); // Time when the next set of questions will be available
+    const [isLastQuiz, setIsLastQuiz] = useState(false);
+
 
     const { seconds, restart, pause } = useTimer({
         expiryTimestamp: new Date().getTime() + initialTime * 1000,
@@ -312,8 +316,6 @@ const Quiz = () => {
     };
 
 
-
-
     useEffect(() => {
         restart(new Date().getTime() + initialTime * 1000);
     }, [activeQuestionIndex, activeTopicIndex]);
@@ -354,12 +356,25 @@ const Quiz = () => {
 
         // Check if this was the last question for today
         if (newAnsweredCount >= 7) {
-            await updateUserProgress(userId, 1, newAnsweredCount, true); // Use quiz_id: 1
+            // Check if this is the last question of the last topic
+            const lastTopicIndex = quizzes.length - 1;
+            const lastQuestionIndex = quizzes[lastTopicIndex].questions.length - 1;
+            const isComplete = activeTopicIndex === lastTopicIndex &&
+                activeQuestionIndex === lastQuestionIndex;
+
+            await updateUserProgress(userId, 1, newAnsweredCount, true);
             setQuestionsAnsweredToday(newAnsweredCount);
             setQuizAvailable(false);
             setShowResult(true);
-            setNextAvailableTime(calculateNextAvailableTime(new Date()));
-            notify("You've completed today's questions! Come back tomorrow for more.");
+
+            if (!isComplete) {
+                setNextAvailableTime(calculateNextAvailableTime(new Date()));
+            }
+
+            notify(isComplete
+                ? "🎊 Congratulations! You've completed the entire Credit Bank quiz!"
+                : "You've completed today's questions! Come back tomorrow for more."
+            );
             return;
         }
 
@@ -412,6 +427,38 @@ const Quiz = () => {
         return questions;
     };
 
+    const calculateProgress = () => {
+        return ((questionsAnsweredToday) / 7) * 100;
+    };
+
+    useEffect(() => {
+        const fetchUserName = async () => {
+            const storedSession = localStorage.getItem("supabase_session");
+            if (storedSession) {
+                const userId = JSON.parse(storedSession).user?.id;
+                if (userId) {
+                    const { data, error } = await supabase
+                        .from('users')
+                        .select('name')
+                        .eq('id', userId)
+                        .single();
+
+                    if (data?.name) {
+                        setUserName(data.name);
+                    }
+                }
+            }
+        };
+
+        // Calculate total questions across all topics
+        const totalQuestions = quizzes.reduce((acc, quiz) => acc + quiz.questions.length, 0);
+
+        // Check if we've reached the end of all available questions
+        const remainingQuestions = totalQuestions - (globalQuestionIndex + questionsAnsweredToday);
+        setIsQuizComplete(remainingQuestions <= 0);
+
+        fetchUserName();
+    }, [globalQuestionIndex, questionsAnsweredToday]);
 
     const openModal = () => {
         setIsModalOpen(true); // Function to open the modal
@@ -498,18 +545,34 @@ const Quiz = () => {
                     ) : !quizAvailable ? (
                         <div className="text-center py-8">
                             <h2 className={`text-2xl mb-6 ${mode === 'dark' ? 'text-teal-300' : 'text-teal-600'}`}>
-                                Quiz Completed for Today! 🎉
+                                {isQuizComplete ? '🎊 Quiz Journey Complete! 🎊' : 'Quiz Completed! 🎉'}
                             </h2>
                             <div className="mb-8">
-                                <p className="text-lg mb-3">Next set of questions will be available in:</p>
-                                <p className={`text-2xl font-bold ${mode === 'dark' ? 'text-orange-400' : 'text-orange-500'}`}>
-                                    {nextAvailableTime}
-                                </p>
+                                {isQuizComplete ? (
+                                    <div className="space-y-4">
+                                        <p className="text-xl mb-3">
+                                            🌟 Congratulations {userName}! 🌟
+                                        </p>
+                                        <p className="text-lg text-teal-600 dark:text-teal-400">
+                                            You've successfully completed the entire Credit Bank quiz!
+                                        </p>
+                                        <p className="text-base text-gray-600 dark:text-gray-400">
+                                            Thank you for learning about Credit Bank's history, products, and services.
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <p className="text-lg mb-3">Next set of questions will be available in:</p>
+                                        <p className={`text-2xl font-bold ${mode === 'dark' ? 'text-orange-400' : 'text-orange-500'}`}>
+                                            {nextAvailableTime}
+                                        </p>
+                                    </>
+                                )}
                             </div>
 
                             <div className={`p-6 rounded-lg ${mode === 'dark' ? 'bg-[#2a3749]' : 'bg-gray-50'}`}>
                                 <h3 className={`text-xl mb-6 ${mode === 'dark' ? 'text-teal-300' : 'text-teal-600'}`}>
-                                    Today's Results
+                                    {isQuizComplete ? 'Final Results' : 'Today\'s Results'}
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
                                     <div className="p-4 rounded-lg bg-opacity-20 bg-teal-400">
@@ -526,14 +589,21 @@ const Quiz = () => {
                         </div>
                     ) : (
                         <>
-                            <div className="flex justify-between mb-4">
+                            <div className="flex md:flex-row flex-col justify-between items-center mb-4">
                                 <h2 className={`text-xl sm:text-2xl ${mode === 'dark' ? 'text-teal-300' : 'text-teal-600'}`}>
                                     {`Pillar: ${activeTopicIndex + 1} ${quizzes[activeTopicIndex]?.topic}`}
                                 </h2>
                                 <span
-                                    className={`bg-[#cff0ed] p-2 rounded-lg ${mode === 'dark' ? 'text-black' : 'text-black'}`}>
+                                    className={`bg-[#cff0ed] p-2 rounded-lg ${mode === 'dark' ? 'text-black' : 'text-black'} flex items-center gap-2`}>
                         Time left: <span className="bg-black p-2 rounded-lg text-white font-bold">{seconds} sec</span>
                     </span>
+                            </div>
+
+                            <div className="bg-[#cff0ed] rounded-full h-2.5 dark:bg-gray-700 mb-4 overflow-hidden">
+                                <div
+                                    className="bg-[#0CB4AB] h-2.5 rounded-full transition-width duration-500 ease-in-out"
+                                    style={{width: `${calculateProgress()}%`}}
+                                ></div>
                             </div>
 
                             <div className="mb-6">
