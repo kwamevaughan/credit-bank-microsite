@@ -307,7 +307,10 @@ const Dashboard = () => {
                         <DeleteAccountModal
                             isOpen={showDeleteModal}
                             onClose={() => setShowDeleteModal(false)} // Close modal
-                            handleDeleteAccount={handleDeleteAccount}/>
+                            handleDeleteAccount={handleDeleteAccount}
+                            toggleMode={toggleMode}
+                            mode={mode}
+                        />
                     </div>
                     <AppDownloadModal
                         isOpen={isModalOpen}
