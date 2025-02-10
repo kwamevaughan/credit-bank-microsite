@@ -269,7 +269,12 @@ const Dashboard = () => {
                             </div>
                         </div>
 
-
+                        <div className="pt-12">
+                            <h2 className="text-4xl font-bold text-teal-600 mb-4 text-center ">Leaderboard</h2>
+                            <h3 className="text-2xl font-bold text-[#ff9409] mb-4 text-center ">See Who's Leading the
+                                Pack!</h3>
+                            <p className="mb-4 text-center ">Stay competitive! Check the live leaderboard to see who's
+                                winning.</p>
                         <LeaderboardTable
                             mode={mode}
                             toggleMode={toggleMode}
@@ -278,6 +283,8 @@ const Dashboard = () => {
                             toggleSidebar={toggleSidebar}
                             isSidebarOpen={isSidebarOpen}
                         />
+                        </div>
+
 
                         <div className="flex justify-center gap-x-4 pt-4">
                             <button

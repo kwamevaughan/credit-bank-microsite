@@ -8,6 +8,8 @@ import {CheckIcon, GiftIcon, ListBulletIcon, PencilSquareIcon} from '@heroicons/
 import {StarIcon} from "@heroicons/react/24/solid";
 import Footer from "@/layouts/footer";
 import Link from "next/link";
+import LeaderboardTable from "@/components/leaderboardTable"
+
 
 export default function Home() {
     const [mode, setMode] = useState('light');
@@ -261,14 +263,15 @@ export default function Home() {
                             <p className="text-base sm:text-lg">Stay competitive! Check the live leaderboard to see who's winning.</p>
                         </div>
 
-                        <div className="w-full pt-0 md:pt-12">
-                            <Image
-                                src="/assets/images/leaderboard.png"
-                                alt="leaderboard image"
-                                width={0} // Set width and height to 0 when using w-full
-                                height={0}
-                                layout="responsive" // This will help preserve the image's aspect ratio
-                            />
+                        <div className="w-full pt-0 md:pt-12 ">
+                            <LeaderboardTable />
+                            {/*<Image*/}
+                            {/*    src="/assets/images/leaderboard.png"*/}
+                            {/*    alt="leaderboard image"*/}
+                            {/*    width={0} // Set width and height to 0 when using w-full*/}
+                            {/*    height={0}*/}
+                            {/*    layout="responsive" // This will help preserve the image's aspect ratio*/}
+                            {/*/>*/}
                         </div>
                     </div>
 

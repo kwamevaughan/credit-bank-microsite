@@ -74,7 +74,19 @@ const Leaderboard = ({ }) => {
 
             />
 
-            <main className="">
+            <main
+                className={`${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-white text-black'} rounded-lg hover:shadow-md transition-all duration-300 ease-in-out`}>
+
+                <div className="flex flex-col justify-center text-center pt-12">
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-teal-600 mb-4">
+                        Leaderboard
+                    </h2>
+                    <span className="text-2xl sm:text-2xl md:text-3xl font-extrabold font-orange mb-4">
+      See Who's Leading the Pack!
+    </span>
+                    <p className="text-base sm:text-lg">Stay competitive! Check the live leaderboard to see who's
+                        winning.</p>
+                </div>
                 <LeaderboardTable
                     mode={mode}
                     isOpen={isSidebarOpen}
