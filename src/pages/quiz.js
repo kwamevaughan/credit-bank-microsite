@@ -7,15 +7,13 @@ import { toast } from 'react-toastify';
 import { useTimer } from 'react-timer-hook';
 import AppDownloadModal from "@/components/AppDownloadModal";
 
-
 const Quiz = () => {
     const [userName, setUserName] = useState('');
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [mode, setMode] = useState("light");
     const [isModalOpen, setIsModalOpen] = useState(false); // State for Modal
     const notify = (message) => toast(message);
-    const [loading, setLoading] = useState(false);
-
+    const [loading, setLoading] = useState(false)
     const [activeTopicIndex, setActiveTopicIndex] = useState(0);
     const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
     const [selectedAnswerIndex, setSelectedAnswerIndex] = useState(null);
@@ -72,7 +70,6 @@ const Quiz = () => {
     const [nextAvailableTime, setNextAvailableTime] = useState(null); // Time when the next set of questions will be available
     const [isLastQuiz, setIsLastQuiz] = useState(false);
 
-
     const { seconds, restart, pause } = useTimer({
         expiryTimestamp: new Date().getTime() + initialTime * 1000,
         onExpire: async () => {
@@ -92,9 +89,6 @@ const Quiz = () => {
             restart(new Date().getTime() + initialTime * 1000);
         }
     }, [quizAvailable, showResult]);
-
-
-
 
     const calculateNextAvailableTime = (lastUpdated) => {
         const now = new Date();
@@ -166,8 +160,6 @@ const Quiz = () => {
         return getQuestionFromGlobalIndex(wrappedGlobalIndex);
     };
 
-
-
     const updateUserProgress = async (userId, quizId, currentAnsweredCount, isComplete = false, newResults) => {
         const now = new Date().toISOString();
 
@@ -183,7 +175,6 @@ const Quiz = () => {
             last_updated: now,
             completed_for_day: isComplete
         };
-
 
         const { error } = await supabase
             .from("user_quiz_progress")
@@ -210,7 +201,6 @@ const Quiz = () => {
         }
         return `${minutes}min ${seconds}seconds`;
     };
-
 
     // Load user progress
     const fetchUserProgress = async () => {
@@ -355,14 +345,13 @@ const Quiz = () => {
         restart(new Date().getTime() + initialTime * 1000);
     }, [activeQuestionIndex, activeTopicIndex]);
 
-
     const onClickNext = async (incrementCount = true) => {
         const storedSession = localStorage.getItem("supabase_session");
         if (!storedSession || !JSON.parse(storedSession).user?.id) {
             notify("Please log in to continue.");
             return;
         }
-        const userId = JSON.parse(storedSession).user.id;
+        const userId = parseInt(JSON.parse(storedSession).user.id);
 
         if (selectedAnswerIndex === null && selectedAnswerIndex !== 99) {
             notify("Please select an answer before continuing.");
@@ -388,43 +377,88 @@ const Quiz = () => {
         setResult(newResults);
 
         const newAnsweredCount = questionsAnsweredToday + 1;
+        const isFirstQuestion = newAnsweredCount === 1;
+        const isLastQuestion = newAnsweredCount >= 7;
 
-        // First update database
-        await updateUserProgress(userId, 1, newAnsweredCount, newAnsweredCount >= 7, newResults);
+        try {
+            // Update user progress in the user_quiz_progress table
+            await updateUserProgress(userId, 1, newAnsweredCount, isLastQuestion, newResults);
 
-        // Then update UI state
-        setQuestionsAnsweredToday(newAnsweredCount);
+            // Get current user data (points, actions_completed, and email)
+            const { data: userData, error: userFetchError } = await supabase
+                .from("users")
+                .select("points, actions_completed, email")
+                .eq("id", userId)
+                .single();
 
-        if (newAnsweredCount >= 7) {
-            const lastTopicIndex = quizzes.length - 1;
-            const lastQuestionIndex = quizzes[lastTopicIndex].questions.length - 1;
-            const isComplete = activeTopicIndex === lastTopicIndex &&
-                activeQuestionIndex === lastQuestionIndex;
+            if (userFetchError) throw new Error("Error fetching user data: " + userFetchError.message);
 
-            setQuizAvailable(false);
-            setShowResult(true);
+            const updatedPoints = (userData?.points || 0) + (isCorrect ? quizzes[activeTopicIndex].perQuestionScore : 0);
+            const updatedActionsCompleted = (userData?.actions_completed || 0) + 1;
 
-            if (!isComplete) {
-                setNextAvailableTime(calculateNextAvailableTime(new Date()));
+            // Increment the user's points and actions_completed in the users table
+            const { error: updateUserError } = await supabase
+                .from("users")
+                .upsert({
+                    id: userId,
+                    email: userData?.email, // Ensure email is included
+                    points: updatedPoints,
+                    actions_completed: updatedActionsCompleted
+                });
+
+            if (updateUserError) throw new Error("Error updating user data: " + updateUserError.message);
+
+            setQuestionsAnsweredToday(newAnsweredCount);
+
+            // If it's the last question, log the participation in the quiz
+            if (isLastQuestion) {
+                const lastTopicIndex = quizzes.length - 1;
+                const lastQuestionIndex = quizzes[lastTopicIndex].questions.length - 1;
+                const isComplete = activeTopicIndex === lastTopicIndex &&
+                    activeQuestionIndex === lastQuestionIndex;
+
+                // Upsert a participation record to user_activities and increment points if already exists
+                const { error: participationActivityError } = await supabase
+                    .from("user_activities")
+                    .upsert([{
+                        user_id: userId,
+                        activity_type: "Participated in the Quiz",
+                        points: updatedPoints, // Increment the points instead of overwriting
+                        platform_url: window.location.pathname,
+                        created_at: new Date().toISOString()
+                    }]);
+
+                if (participationActivityError) throw new Error("Error logging quiz participation: " + participationActivityError.message);
+
+                setQuizAvailable(false);
+                setShowResult(true);
+
+                if (!isComplete) {
+                    setNextAvailableTime(calculateNextAvailableTime(new Date()));
+                }
+
+                notify(isComplete
+                    ? "🎊 Congratulations! You've completed the entire Credit Bank quiz!"
+                    : "You've completed today's questions! Come back tomorrow for more."
+                );
+                return;
             }
 
-            notify(isComplete
-                ? "🎊 Congratulations! You've completed the entire Credit Bank quiz!"
-                : "You've completed today's questions! Come back tomorrow for more."
-            );
-            return;
-        }
+            if (incrementCount) {
+                const newGlobalIndex = globalQuestionIndex + 1;
+                setGlobalQuestionIndex(newGlobalIndex);
 
-        if (incrementCount) {
-            const newGlobalIndex = globalQuestionIndex + 1;
-            setGlobalQuestionIndex(newGlobalIndex);
+                const { topicIndex, questionIndex } = getQuestionFromGlobalIndex(newGlobalIndex);
 
-            const { topicIndex, questionIndex } = getQuestionFromGlobalIndex(newGlobalIndex);
+                setSelectedAnswerIndex(null);
+                setActiveTopicIndex(topicIndex);
+                setActiveQuestionIndex(questionIndex);
+                restart(new Date().getTime() + initialTime * 1000);
+            }
 
-            setSelectedAnswerIndex(null);
-            setActiveTopicIndex(topicIndex);
-            setActiveQuestionIndex(questionIndex);
-            restart(new Date().getTime() + initialTime * 1000);
+        } catch (error) {
+            console.error("Error updating quiz progress:", error);
+            notify("Error saving your progress. Please try again.");
         }
     };
 
@@ -554,7 +588,6 @@ const Quiz = () => {
                 toggleMode={toggleMode}
             />
 
-
             <main
                 className={`flex-1 pt-14 p-8 min-h-screen transition-all duration-300 ${isSidebarOpen ? "ml-64" : "ml-0"} ${mode === "dark" ? "bg-[#0a0c1d] text-white" : "bg-[#f7f1eb] text-black"}`}>
                 <div className="mb-12">
@@ -657,8 +690,10 @@ const Quiz = () => {
 
                             <ul className="space-y-2 mb-6">
                                 {randomizedQuizzes[activeTopicIndex]?.questions[activeQuestionIndex]?.choices?.map((answer, index) => {
-                                    let className = `cursor-pointer p-3 border rounded-lg transition-all duration-200 hover:bg-opacity-90 ${
-                                        mode === 'dark' ? 'border-gray-600' : 'border-gray-200'
+                                    let className = `cursor-pointer p-3 border rounded-lg transition-all duration-200 
+            hover:bg-opacity-90 hover:bg-gray-200 
+            ${
+                                        mode === 'dark' ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-200 hover:bg-gray-300'
                                     }`;
 
                                     if (selectedAnswerIndex !== null) {
@@ -686,6 +721,7 @@ const Quiz = () => {
                                     );
                                 })}
                             </ul>
+
 
                             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
                                 <div className="flex items-center gap-2">
