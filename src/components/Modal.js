@@ -29,11 +29,7 @@ const Modal = ({ isOpen, onClose, title, children, mode }) => {
             className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
             onClick={handleOutsideClick} // Close on overlay click
         >
-            <div
-                className={`${
-                    mode === 'dark' ? '' : 'bg-black text-white'
-                }  rounded-lg shadow-lg max-w-md w-full relative`}
-            >
+
                 <button
                     onClick={onClose}
                     className={`${
@@ -44,7 +40,6 @@ const Modal = ({ isOpen, onClose, title, children, mode }) => {
                 </button>
 
                 {children}
-            </div>
 
         </div>
     );
