@@ -1,9 +1,14 @@
-// next.config.js
 module.exports = {
     images: {
-        domains: [
-            'vcmrqslmzrdyilgoglqm.supabase.co',
-            'ik.imagekit.io', // Added the new domain
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'vcmrqslmzrdyilgoglqm.supabase.co',
+            },
+            {
+                protocol: 'https',
+                hostname: 'ik.imagekit.io',
+            },
         ],
     },
     env: {
