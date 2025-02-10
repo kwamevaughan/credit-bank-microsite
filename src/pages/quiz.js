@@ -38,9 +38,11 @@ const Quiz = () => {
 
     const { seconds, restart } = useTimer({
         expiryTimestamp: new Date().getTime() + initialTime * 1000,
-        onExpire: () => {
+        onExpire: async () => {
             notify("Time's up! Moving on to the next question.");
-            onClickNext(false); // Move to the next question without incrementing answered count
+            // Force move to next question with wrong answer
+            setSelectedAnswerIndex(99); // Use a non-existent index to mark as wrong
+            await onClickNext(true); // Pass true to increment the count
         },
     });
 
@@ -91,21 +93,27 @@ const Quiz = () => {
         let topicIndex = 0;
 
         while (topicIndex < quizzes.length) {
-            if (remainingIndex < quizzes[topicIndex].questions.length) {
+            const currentTopicQuestions = quizzes[topicIndex].questions.length;
+
+            if (remainingIndex < currentTopicQuestions) {
+                // We found the right topic and can return the specific question index
                 return {
                     topicIndex,
                     questionIndex: remainingIndex
                 };
             }
-            remainingIndex -= quizzes[topicIndex].questions.length;
+
+            // Subtract this topic's questions from remaining and move to next topic
+            remainingIndex -= currentTopicQuestions;
             topicIndex++;
         }
+// If we've gone beyond all questions, calculate the proper wrap-around
+        // Instead of defaulting to topic 0, we need to do a proper modulo calculation
+        const totalQuestions = quizzes.reduce((acc, quiz) => acc + quiz.questions.length, 0);
+        const wrappedGlobalIndex = globalIndex % totalQuestions;
 
-        // If we've reached the end, start over
-        return {
-            topicIndex: 0,
-            questionIndex: 0
-        };
+        // Recalculate with the wrapped index
+        return getQuestionFromGlobalIndex(wrappedGlobalIndex);
     };
 
     const updateUserProgress = async (userId, quizId, currentAnsweredCount, isComplete = false) => {
@@ -128,7 +136,7 @@ const Quiz = () => {
             .from("user_quiz_progress")
             .upsert({
                 user_id: userId,
-                quiz_id: quizId,
+                quiz_id: 1, // Always use the same quiz_id
                 ...updateData
             });
 
@@ -163,7 +171,7 @@ const Quiz = () => {
             const { data: userProgress, error } = await supabase
                 .from("user_quiz_progress")
                 .select("*")
-                .eq("user_id", userId)
+                .eq("quiz_id", 1) // Always query for quiz_id: 1
                 .single();
 
             if (error && error.code !== 'PGRST116') {
@@ -176,11 +184,15 @@ const Quiz = () => {
             if (!userProgress) {
                 const initialProgress = {
                     user_id: userId,
+                    quiz_id: 1, // Set initial quiz_id to 1
                     global_question_index: 0,
                     current_topic_index: 0,
                     current_question_index: 0,
                     questions_answered_today: 0,
                     points: 0,
+                    correct_answers: 0,
+                    wrong_answers: 0,
+                    total_minutes_spent: 0,
                     completed_for_day: false,
                     last_updated: now.toISOString()
                 };
@@ -210,7 +222,10 @@ const Quiz = () => {
 
                 // Check if we've reached the end of all questions
                 const totalQuestions = quizzes.reduce((acc, quiz) => acc + quiz.questions.length, 0);
-                const actualNewIndex = newGlobalIndex >= totalQuestions ? 0 : newGlobalIndex;
+                // const actualNewIndex = newGlobalIndex >= totalQuestions ? 0 : newGlobalIndex;
+
+                // Use modulo to properly wrap around
+                const actualNewIndex = newGlobalIndex % totalQuestions;
 
                 // Calculate new topic and question positions
                 const { topicIndex, questionIndex } = getQuestionFromGlobalIndex(actualNewIndex);
@@ -283,13 +298,19 @@ const Quiz = () => {
         }
         const userId = JSON.parse(storedSession).user.id;
 
-        if (selectedAnswerIndex === null) {
+        // Only check for selected answer if not from timer expiry
+        if (selectedAnswerIndex === null && selectedAnswerIndex !== 99) {
             notify("Please select an answer before continuing.");
             return;
         }
 
-        const isCorrect = quizzes[activeTopicIndex].questions[activeQuestionIndex].choices[selectedAnswerIndex] ===
+        // Consider answer wrong if it's from timer expiry (index 99)
+        const isCorrect = selectedAnswerIndex === 99 ? false :
+            quizzes[activeTopicIndex].questions[activeQuestionIndex].choices[selectedAnswerIndex] ===
             quizzes[activeTopicIndex].questions[activeQuestionIndex].correctAnswer;
+
+        // Calculate time spent on this question
+        const timeSpentOnQuestion = Math.max(1, Math.round((initialTime - seconds) / 60));
 
         setResult(prev => ({
             ...prev,
@@ -303,7 +324,7 @@ const Quiz = () => {
 
         // Check if this was the last question for today
         if (newAnsweredCount >= 7) {
-            await updateUserProgress(userId, quizzes[activeTopicIndex].id, newAnsweredCount, true);
+            await updateUserProgress(userId, 1, newAnsweredCount, true); // Use quiz_id: 1
             setQuestionsAnsweredToday(newAnsweredCount);
             setQuizAvailable(false);
             setShowResult(true);
@@ -320,7 +341,7 @@ const Quiz = () => {
             // Calculate new topic and question indices
             const { topicIndex, questionIndex } = getQuestionFromGlobalIndex(newGlobalIndex);
 
-            await updateUserProgress(userId, quizzes[activeTopicIndex].id, newAnsweredCount);
+            await updateUserProgress(userId, 1, newAnsweredCount); // Use quiz_id: 1
             setQuestionsAnsweredToday(newAnsweredCount);
             setSelectedAnswerIndex(null);
             setActiveTopicIndex(topicIndex);
