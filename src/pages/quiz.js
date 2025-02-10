@@ -168,7 +168,7 @@ const Quiz = () => {
 
 
 
-    const updateUserProgress = async (userId, quizId, currentAnsweredCount, isComplete = false) => {
+    const updateUserProgress = async (userId, quizId, currentAnsweredCount, isComplete = false, newResults) => {
         const now = new Date().toISOString();
 
         const updateData = {
@@ -176,13 +176,14 @@ const Quiz = () => {
             current_topic_index: activeTopicIndex,
             current_question_index: activeQuestionIndex,
             questions_answered_today: currentAnsweredCount,
-            points: result.score,
-            correct_answers: result.correctAnswers,    // Add these fields
-            wrong_answers: result.wrongAnswers,        // Add these fields
-            total_seconds_spent: result.totalSecondsSpent, // Update this field
+            points: newResults.score,
+            correct_answers: newResults.correctAnswers,
+            wrong_answers: newResults.wrongAnswers,
+            total_seconds_spent: newResults.totalSecondsSpent,
             last_updated: now,
             completed_for_day: isComplete
         };
+
 
         const { error } = await supabase
             .from("user_quiz_progress")
@@ -363,7 +364,6 @@ const Quiz = () => {
         }
         const userId = JSON.parse(storedSession).user.id;
 
-        // Only check for selected answer if not from timer expiry
         if (selectedAnswerIndex === null && selectedAnswerIndex !== 99) {
             notify("Please select an answer before continuing.");
             return;
@@ -374,30 +374,33 @@ const Quiz = () => {
             randomizedQuizzes[activeTopicIndex].questions[activeQuestionIndex].choices[selectedAnswerIndex] ===
             randomizedQuizzes[activeTopicIndex].questions[activeQuestionIndex].correctAnswer;
 
-        // Calculate time spent on this question
-        const timeSpentOnQuestion = Math.max(1, Math.round((initialTime - seconds) / 60));
         const timeSpentInSeconds = initialTime - seconds;
 
-        setResult(prev => ({
-            ...prev,
-            score: isCorrect ? prev.score + quizzes[activeTopicIndex].perQuestionScore : prev.score,
-            correctAnswers: isCorrect ? prev.correctAnswers + 1 : prev.correctAnswers,
-            wrongAnswers: !isCorrect ? prev.wrongAnswers + 1 : prev.wrongAnswers,
-            totalSecondsSpent: prev.totalSecondsSpent + timeSpentInSeconds,
-        }));
+        // Calculate new results atomically
+        const newResults = {
+            score: result.score + (isCorrect ? quizzes[activeTopicIndex].perQuestionScore : 0),
+            correctAnswers: result.correctAnswers + (isCorrect ? 1 : 0),
+            wrongAnswers: result.wrongAnswers + (!isCorrect ? 1 : 0),
+            totalSecondsSpent: result.totalSecondsSpent + timeSpentInSeconds
+        };
+
+        // Update state with new results
+        setResult(newResults);
 
         const newAnsweredCount = questionsAnsweredToday + 1;
 
-        // Check if this was the last question for today
+        // First update database
+        await updateUserProgress(userId, 1, newAnsweredCount, newAnsweredCount >= 7, newResults);
+
+        // Then update UI state
+        setQuestionsAnsweredToday(newAnsweredCount);
+
         if (newAnsweredCount >= 7) {
-            // Check if this is the last question of the last topic
             const lastTopicIndex = quizzes.length - 1;
             const lastQuestionIndex = quizzes[lastTopicIndex].questions.length - 1;
             const isComplete = activeTopicIndex === lastTopicIndex &&
                 activeQuestionIndex === lastQuestionIndex;
 
-            await updateUserProgress(userId, 1, newAnsweredCount, true);
-            setQuestionsAnsweredToday(newAnsweredCount);
             setQuizAvailable(false);
             setShowResult(true);
 
@@ -412,22 +415,19 @@ const Quiz = () => {
             return;
         }
 
-        // Continue to next question
         if (incrementCount) {
             const newGlobalIndex = globalQuestionIndex + 1;
             setGlobalQuestionIndex(newGlobalIndex);
 
-            // Calculate new topic and question indices
             const { topicIndex, questionIndex } = getQuestionFromGlobalIndex(newGlobalIndex);
 
-            await updateUserProgress(userId, 1, newAnsweredCount); // Use quiz_id: 1
-            setQuestionsAnsweredToday(newAnsweredCount);
             setSelectedAnswerIndex(null);
             setActiveTopicIndex(topicIndex);
             setActiveQuestionIndex(questionIndex);
             restart(new Date().getTime() + initialTime * 1000);
         }
     };
+
 
     useEffect(() => {
         fetchUserProgress();
