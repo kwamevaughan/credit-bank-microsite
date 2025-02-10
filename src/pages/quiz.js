@@ -28,6 +28,7 @@ const Quiz = () => {
         correctAnswers: 0,
         wrongAnswers: 0,
         totalMinutesSpent: 0,
+        totalSecondsSpent: 0,  // Add this new field
     });
 
     const [totalTimeSpent, setTotalTimeSpent] = useState(0);
@@ -36,15 +37,28 @@ const Quiz = () => {
     const questionsForToday = quizzes[activeTopicIndex]?.questions.slice(activeQuestionIndex, activeQuestionIndex + 7);
     const [nextAvailableTime, setNextAvailableTime] = useState(null); // Time when the next set of questions will be available
 
-    const { seconds, restart } = useTimer({
+    const { seconds, restart, pause } = useTimer({
         expiryTimestamp: new Date().getTime() + initialTime * 1000,
         onExpire: async () => {
-            notify("Time's up! Moving on to the next question.");
-            // Force move to next question with wrong answer
-            setSelectedAnswerIndex(99); // Use a non-existent index to mark as wrong
-            await onClickNext(true); // Pass true to increment the count
+            if (quizAvailable && !showResult) {
+                notify("Time's up! Moving on to the next question.");
+                setSelectedAnswerIndex(99);
+                await onClickNext(true);
+            }
         },
     });
+
+    // Add a useEffect to handle timer state based on quiz availability
+    useEffect(() => {
+        if (!quizAvailable || showResult) {
+            pause();
+        } else {
+            restart(new Date().getTime() + initialTime * 1000);
+        }
+    }, [quizAvailable, showResult]);
+
+
+
 
     const calculateNextAvailableTime = (lastUpdated) => {
         const now = new Date();
@@ -127,7 +141,7 @@ const Quiz = () => {
             points: result.score,
             correct_answers: result.correctAnswers,    // Add these fields
             wrong_answers: result.wrongAnswers,        // Add these fields
-            total_minutes_spent: result.totalMinutesSpent, // Add these fields
+            total_seconds_spent: result.totalSecondsSpent, // Update this field
             last_updated: now,
             completed_for_day: isComplete
         };
@@ -138,6 +152,8 @@ const Quiz = () => {
                 user_id: userId,
                 quiz_id: 1, // Always use the same quiz_id
                 ...updateData
+            }, {
+                onConflict: 'user_id, quiz_id' // Specify both fields in onConflict
             });
 
         if (error) {
@@ -146,6 +162,15 @@ const Quiz = () => {
         }
     };
 
+    // Helper function to format time
+    const formatTime = (totalSeconds) => {
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = Math.floor(totalSeconds % 60);
+        if (minutes === 0) {
+            return `${seconds} seconds`;
+        }
+        return `${minutes}min ${seconds}seconds`;
+    };
 
 
     // Load user progress
@@ -172,6 +197,7 @@ const Quiz = () => {
                 .from("user_quiz_progress")
                 .select("*")
                 .eq("quiz_id", 1) // Always query for quiz_id: 1
+                .eq("user_id", userId) // Add this condition
                 .single();
 
             if (error && error.code !== 'PGRST116') {
@@ -197,7 +223,10 @@ const Quiz = () => {
                     last_updated: now.toISOString()
                 };
 
-                await supabase.from("user_quiz_progress").insert(initialProgress);
+                await supabase
+                    .from("user_quiz_progress")
+                    .insert(initialProgress)
+                    .match({ user_id: userId, quiz_id: 1 });
 
                 setGlobalQuestionIndex(0);
                 setActiveTopicIndex(0);
@@ -241,7 +270,7 @@ const Quiz = () => {
                         completed_for_day: false,
                         last_updated: now.toISOString()
                     })
-                    .eq("user_id", userId);
+                    .match({ user_id: userId, quiz_id: 1 });
 
                 // Update local state
                 setGlobalQuestionIndex(actualNewIndex);
@@ -311,13 +340,14 @@ const Quiz = () => {
 
         // Calculate time spent on this question
         const timeSpentOnQuestion = Math.max(1, Math.round((initialTime - seconds) / 60));
+        const timeSpentInSeconds = initialTime - seconds;
 
         setResult(prev => ({
             ...prev,
             score: isCorrect ? prev.score + quizzes[activeTopicIndex].perQuestionScore : prev.score,
             correctAnswers: isCorrect ? prev.correctAnswers + 1 : prev.correctAnswers,
             wrongAnswers: !isCorrect ? prev.wrongAnswers + 1 : prev.wrongAnswers,
-            totalMinutesSpent: prev.totalMinutesSpent + Math.floor((initialTime - seconds) / 60),
+            totalSecondsSpent: prev.totalSecondsSpent + timeSpentInSeconds,
         }));
 
         const newAnsweredCount = questionsAnsweredToday + 1;
@@ -468,7 +498,7 @@ const Quiz = () => {
                     ) : !quizAvailable ? (
                         <div className="text-center py-8">
                             <h2 className={`text-2xl mb-6 ${mode === 'dark' ? 'text-teal-300' : 'text-teal-600'}`}>
-                                Quiz Completed for Today!
+                                Quiz Completed for Today! 🎉
                             </h2>
                             <div className="mb-8">
                                 <p className="text-lg mb-3">Next set of questions will be available in:</p>
@@ -491,7 +521,7 @@ const Quiz = () => {
                                         <p className="mb-2">Wrong Answers: {result.wrongAnswers}</p>
                                     </div>
                                 </div>
-                                <p className="mt-4">Total Time: {result.totalMinutesSpent} minutes</p>
+                                <p className="mt-4">Total Time: {formatTime(result.totalSecondsSpent)}</p>
                             </div>
                         </div>
                     ) : (
