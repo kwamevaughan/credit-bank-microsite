@@ -263,7 +263,7 @@ export default function Home() {
                             <p className="text-base sm:text-lg">Stay competitive! Check the live leaderboard to see who's winning.</p>
                         </div>
 
-                        <div className="w-full pt-0 md:pt-12 ">
+                        <div className="w-full pt-0 md:pt-8 ">
                             <LeaderboardTable />
                             {/*<Image*/}
                             {/*    src="/assets/images/leaderboard.png"*/}
