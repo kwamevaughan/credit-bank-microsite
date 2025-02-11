@@ -1,0 +1,274 @@
+import { useState, useEffect } from 'react';
+import { supabase } from '/lib/supabase';
+import { toast } from 'react-toastify';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+
+const TransactionIDUpdater = ({ userId, mode, toggleMode, notify }) => {
+    const [name, setName] = useState("");
+    const [transactionId, setTransactionId] = useState("");
+    const [bulkData, setBulkData] = useState("");
+
+    const [selectedUpload, setSelectedUpload] = useState("single");
+
+    const handleRadioChange = (value) => {
+        setSelectedUpload(value);
+    };
+
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        // Set the default name to "Customer" if not provided
+        const finalName = name || "Customer"; // Use "Customer" if name is empty
+
+        // Prepare the data to submit
+        const formData = selectedUpload === "single"
+            ? {
+                name: finalName, // Set name to finalName, which is either provided or "Customer"
+                transaction_id: transactionId,
+                points: 0, // Default points are 0 when the transaction is pending
+                action: 'Pending', // Default action is "Pending"
+            }
+            : {
+                name: finalName, // Same for bulk
+                transaction_id: bulkData, // Bulk transaction data will need parsing later
+                points: 0, // Default points are 0 for bulk records
+                action: 'Pending', // Default action for bulk transactions is "Pending"
+            };
+
+        // Function to check if the transaction_id already exists
+        const checkDuplicateTransaction = async (transactionId) => {
+            const { data, error } = await supabase
+                .from('transaction_verification')
+                .select('transaction_id')
+                .eq('transaction_id', transactionId);
+
+            if (error) {
+                toast.error("Error checking for duplicates: " + error.message);
+                return false;
+            }
+
+            return data.length > 0; // If data is found, it means the transaction ID already exists
+        };
+
+        // Check for duplicates before insert for single upload
+        if (selectedUpload === "single") {
+            const isDuplicate = await checkDuplicateTransaction(transactionId);
+            if (isDuplicate) {
+                toast.error("Transaction ID already exists.");
+                return;
+            }
+
+            // Insert single transaction into Supabase
+            const { data, error } = await supabase
+                .from('transaction_verification')
+                .insert([formData]);
+
+            if (error) {
+                toast.error("Failed to submit transaction: " + error.message);
+            } else {
+                toast.success("Transaction successfully submitted!");
+                // Clear the form fields after submission
+                setName("");
+                setTransactionId("");
+            }
+        }
+
+        // Insert bulk transactions if selected
+        if (selectedUpload === "bulk") {
+            // Split the input by new lines and process each line
+            const transactions = bulkData.split("\n").map(async (line) => {
+                // Trim the line to remove extra whitespace around it
+                const trimmedLine = line.trim();
+
+                // Skip empty lines
+                if (trimmedLine === "") {
+                    return null;
+                }
+
+                // Split by comma if there's a name and transaction ID
+                const parts = trimmedLine.split(",");
+
+                // If the line doesn't have a comma, treat the whole line as a transaction ID
+                let bulkName = "Customer"; // Default name if no name is provided
+                let bulkTransactionId = trimmedLine; // Treat the whole line as transaction ID
+
+                if (parts.length === 2) {
+                    // If the line has a comma, we assume it's in the format of "name, transaction ID"
+                    bulkName = parts[0]?.trim() || "Customer"; // Use name if available, else default to "Customer"
+                    bulkTransactionId = parts[1]?.trim();
+                }
+
+                // If the transaction ID is missing, skip this line
+                if (!bulkTransactionId) {
+                    return null;
+                }
+
+                // Check if the transaction ID already exists before preparing it for insertion
+                const isDuplicate = await checkDuplicateTransaction(bulkTransactionId);
+                if (isDuplicate) {
+                    toast.error(`Transaction ID ${bulkTransactionId} already exists.`);
+                    return null; // Skip adding this transaction if it already exists
+                }
+
+                return {
+                    name: bulkName, // Set the name (default to "Customer" if empty)
+                    transaction_id: bulkTransactionId,
+                    points: 0, // Default points for bulk
+                    action: 'Pending', // Default action for bulk transactions
+                };
+            });
+
+            // Wait for all bulk transactions to be checked
+            const validTransactions = (await Promise.all(transactions)).filter(Boolean);
+
+            if (validTransactions.length > 0) {
+                const { data, error } = await supabase
+                    .from('transaction_verification')
+                    .insert(validTransactions);
+
+                if (error) {
+                    toast.error("Failed to submit bulk transactions: " + error.message);
+                } else {
+                    toast.success("Bulk transactions successfully submitted!");
+                    // Clear the form fields after submission
+                    setBulkData("");
+                }
+            } else {
+                toast.error("No valid transactions to submit.");
+            }
+        }
+
+
+    };
+
+
+
+
+    return (
+        <div
+            className="flex rounded-xl shadow-lg hover:shadow-none transition-all duration-300 overflow-hidden w-full bg-white rounded-lg">
+            <div className="w-full p-8 px-10">
+                <form onSubmit={handleSubmit}>
+                    <label className="text-gray-700 text-base sm:text-lg font-bold mb-2">
+                        Choose Upload Type
+                    </label>
+                    <div className="flex mt-4 w-full space-x-4">
+                        {/* Single Upload Container */}
+                        <div
+                            className={`flex items-center ps-4 border rounded-lg w-full ${
+                                selectedUpload === "single" ? "bg-[#0CB4AB] text-white" : ""
+                            }`}
+                        >
+                            <input
+                                id="single-upload"
+                                type="radio"
+                                value="single"
+                                name="upload-type"
+                                className="w-5 h-5 accent-[#FFFFFF] bg-gray-100 border-[#FFFFFF] border-2 focus:ring-[#FFFFFF] dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
+                                onChange={() => handleRadioChange("single")}
+                                checked={selectedUpload === "single"} // Ensure it starts checked
+                            />
+                            <label
+                                htmlFor="single-upload"
+                                className={`flex-grow py-2 ms-2 text-sm font-medium ${
+                                    selectedUpload === "single" ? "text-white" : "text-gray-900"
+                                } dark:text-gray-300`}
+                            >
+                                Single Upload
+                            </label>
+                        </div>
+                        {/* Bulk Upload Container */}
+                        <div
+                            className={`flex items-center ps-4 border rounded-lg w-full ${
+                                selectedUpload === "bulk" ? "bg-[#0CB4AB] text-white" : ""
+                            }`}
+                        >
+                            <input
+                                id="bulk-upload"
+                                type="radio"
+                                value="bulk"
+                                name="upload-type"
+                                className="w-5 h-5 accent-[#FFFFFF] bg-gray-100 border-[#FFFFFF] border-2 focus:ring-[#FFFFFF] dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                onChange={() => handleRadioChange("bulk")}
+                                checked={selectedUpload === "bulk"}
+                            />
+                            <label
+                                htmlFor="bulk-upload"
+                                className={`flex-grow py-2 ms-2 text-sm font-medium ${
+                                    selectedUpload === "bulk" ? "text-white" : "text-gray-900"
+                                } dark:text-gray-300`}
+                            >
+                                Bulk Upload
+                            </label>
+                        </div>
+                    </div>
+
+                    {/* Show Name Field only if Single Upload is selected */}
+                    {selectedUpload === "single" && (
+                        <div className="mt-4">
+                            <label className="text-gray-700 text-sm font-bold mb-2">Name (Optional)</label>
+                            <div
+                                className="flex items-center border border-[#FF930A] rounded focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out">
+                                <input
+                                    className="bg-transparent text-gray-700 py-2 px-4 block w-full rounded"
+                                    type="text"
+                                    placeholder="Enter customer name"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Show Transaction ID Field only if Single Upload is selected */}
+                    {selectedUpload === "single" && (
+                        <div className="mt-4">
+                            <label className="text-gray-700 text-sm font-bold mb-2">Transaction ID</label>
+                            <div className="relative">
+                                <input
+                                    className="bg-transparent text-gray-700 border border-[#FF930A] rounded py-2 px-4 block w-full focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out"
+                                    placeholder="Enter transaction ID"
+                                    required
+                                    value={transactionId}
+                                    onChange={(e) => setTransactionId(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Show Textarea only if Bulk Upload is selected */}
+                    {selectedUpload === "bulk" && (
+                        <div className="mt-4">
+                            <label className="text-gray-700 text-sm font-bold mb-2">
+                                Paste Name and Transaction IDs (one per line). See sample below:
+                            </label>
+                            <textarea
+                                className="bg-transparent text-gray-700 border border-[#FF930A] rounded py-2 px-4 block w-full focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out"
+                                placeholder={`John Doe, R1234567890ABC\nJane Doe, R9876543210DEF\n\nR5389201847XYZ\nR7493028461LMN`}
+                                rows="6"
+                                required
+                                value={bulkData}
+                                onChange={(e) => setBulkData(e.target.value)}
+                            />
+
+                        </div>
+                    )}
+
+                    <div className="mt-8">
+                        <button
+                            type="submit"
+                            className="bg-[#0CB4AB] text-white font-bold py-4 px-4 w-full rounded-lg transform transition-transform duration-700 ease-in-out hover:scale-105"
+                        >
+                            Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
+
+export default TransactionIDUpdater;
