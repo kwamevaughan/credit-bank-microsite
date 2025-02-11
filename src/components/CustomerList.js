@@ -21,7 +21,9 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
             setLoading(true);
             const { data, error } = await supabase
                 .from('transaction_verification')
-                .select('*'); // Select all columns
+                .select('*', {
+                    count: ['redeemed'], // Include the redeemed counter in the select statement
+                });
 
             if (error) {
                 console.error('Error fetching data: ', error.message);
@@ -103,6 +105,10 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                 return sortOrder === 'asc'
                     ? a.status.localeCompare(b.status)
                     : b.status.localeCompare(a.status);
+            } else if (sortBy === 'redeemed') {
+                return sortOrder === 'asc'
+                    ? (a.redeemed === b.redeemed) ? 0 : a.redeemed ? 1 : -1 // Not Redeemed first
+                    : (a.redeemed === b.redeemed) ? 0 : a.redeemed ? -1 : 1; // Redeemed first
             }
             return 0;
         });
@@ -111,7 +117,7 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
     const totalPages = Math.ceil(filteredCustomers.length / pageSize);
     const currentPageData = filteredCustomers.slice((page - 1) * pageSize, page * pageSize);
 
-    // Sorting function
+// Sorting function
     const handleSort = (column) => {
         if (sortBy === column) {
             setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); // Toggle sort order
@@ -259,9 +265,6 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
 
 
 
-
-
-
     return (
         <div
             className="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-lg hover:shadow-none transition-all duration-300 ease-in-out">
@@ -331,6 +334,12 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                         >
                             Points Allocated {sortBy === 'points' && (sortOrder === 'asc' ? '↑' : '↓')}
                         </th>
+                        <th
+                            className="px-4 py-2 text-left bg-gray-100 text-gray-600 cursor-pointer"
+                            onClick={() => handleSort('redeemed')}
+                        >
+                            Redeemed {sortBy === 'redeemed' && (sortOrder === 'asc' ? '↑' : '↓')}
+                        </th>
                     </tr>
                     </thead>
                     <tbody>
@@ -357,7 +366,8 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                                             index % 2 === 0
                                                 ? 'bg-[#f4fbfb] hover:bg-[#cff0ed]'
                                                 : 'bg-white hover:bg-[#cff0ed]'
-                                        } py-3 transition-all duration-300 ease-in-out group relative cursor-pointer`} // Changed to cursor-pointer
+                                        } py-3 transition-all duration-300 ease-in-out group relative cursor-pointer`}
+                                        // Changed to cursor-pointer
                                         onClick={() => handleRowClick(customer.id)} // Handle click for dropdown
                                     >
                                         <td className="px-4 py-3 text-gray-600 border-r flex items-center justify-between">
@@ -367,8 +377,8 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                                                 className="ml-2 transform transition-transform duration-300 ease-in-out opacity-0 group-hover:opacity-100 group-hover:rotate-180"
                                                 style={{fontSize: '12px', color: '#999'}}
                                             >
-                            &#9660; {/* Downward triangle arrow */}
-                        </span>
+                                &#9660; {/* Downward triangle arrow */}
+                            </span>
                                         </td>
                                         <td className="px-4 py-3 text-gray-600 border-r">{customer.transaction_id}</td>
                                         <td className="px-4 py-3 text-gray-600 border-r">
@@ -384,8 +394,8 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                                                 />
                                                 <span
                                                     className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                {customer.status === 'Pending' ? 'Pending' : 'Approved'}
-                            </span>
+                                    {customer.status === 'Pending' ? 'Pending' : 'Approved'}
+                                </span>
                                             </label>
                                             {formattedDate && (
                                                 <div
@@ -395,12 +405,25 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                                             )}
                                         </td>
                                         <td className="px-4 py-3 text-gray-600 border-r">{customer.points}</td>
+                                        <td className="px-4 py-3 text-gray-600">
+                                            {customer.redeemed ? (
+                                                <span
+                                                    className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-md font-medium text-green-700 ring-1 ring-green-600/20 ring-inset">
+                                    Yes
+                                </span>
+                                            ) : (
+                                                <span
+                                                    className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-md font-medium text-red-700 ring-1 ring-red-600/10 ring-inset">
+                                    No
+                                </span>
+                                            )}
+                                        </td>
                                     </tr>
 
                                     {/* Expanded Row with Editable Fields */}
                                     {expandedRow === customer.id && (
                                         <tr>
-                                            <td colSpan="4" className="px-4 py-4 bg-gray-50">
+                                            <td colSpan="5" className="px-4 py-4 bg-gray-50">
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div>
                                                         <label className="block text-gray-700">Name</label>
@@ -449,15 +472,13 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                         })
                     ) : (
                         <tr>
-                            <td colSpan="4" className="px-4 py-2 text-center text-gray-500">
+                            <td colSpan="5" className="px-4 py-2 text-center text-gray-500">
                                 No records found.
                             </td>
                         </tr>
                     )}
 
                     </tbody>
-
-
                 </table>
             </div>
 
