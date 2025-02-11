@@ -10,16 +10,19 @@ import {
     CogIcon,
     DocumentTextIcon,
     BellIcon,
+    CheckBadgeIcon,
     ArrowTrendingUpIcon, ArrowDownTrayIcon, QuestionMarkCircleIcon, BanknotesIcon, UserPlusIcon,
     ArrowsPointingInIcon as FullScreenIcon, MoonIcon, SunIcon
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import Link from "next/link";
 import AppDownloadModal from "@/components/AppDownloadModal";
+import VerificationModal from "@/components/VerificationModal";
 import {useState} from "react";
 
-const Sidebar = ({ isOpen, toggleSidebar, mode, onLogout, openModal, toggleFullScreen, toggleMode}) => {
-    const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+const Sidebar = ({ isOpen, toggleSidebar, mode, onLogout, openModal, openVerificationModal, toggleFullScreen, toggleMode}) => {
+    const [isAppDownloadModalOpen, setIsAppDownloadModalOpen] = useState(false); // State to control modal visibility
+    const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
 
 
 
@@ -101,6 +104,21 @@ const Sidebar = ({ isOpen, toggleSidebar, mode, onLogout, openModal, toggleFullS
                                 } transition`}
                             />
                             Open An Account
+                        </Link>
+                    </li>
+
+                    <li className="py-2">
+                        <Link
+                            href="#"
+                            className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3"
+                            onClick={openVerificationModal} // Open modal on click
+                        >
+                            <CheckBadgeIcon
+                                className={`h-8 w-8 mr-2 p-1 rounded-full ${
+                                    mode === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-500'
+                                } transition`}
+                            />
+                            Verify Transaction
                         </Link>
                     </li>
 
