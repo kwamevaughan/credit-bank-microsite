@@ -15,6 +15,7 @@ const Quiz = () => {
     const [isModalOpen, setIsModalOpen] = useState(false); // State for Modal
     const notify = (message) => toast(message);
     const [loading, setLoading] = useState(false);
+
     const [activeTopicIndex, setActiveTopicIndex] = useState(0);
     const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
     const [selectedAnswerIndex, setSelectedAnswerIndex] = useState(null);
@@ -22,6 +23,37 @@ const Quiz = () => {
     const [isQuizComplete, setIsQuizComplete] = useState(false);
     const [quizAvailable, setQuizAvailable] = useState(true);
     const [globalQuestionIndex, setGlobalQuestionIndex] = useState(0);
+    const [randomizedQuizzes, setRandomizedQuizzes] = useState([]);
+
+    // Function to shuffle an array using Fisher-Yates algorithm
+    const shuffleArray = (array) => {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    };
+
+    const shuffleQuestionsAndChoices = () => {
+        const randomizedQuestions = quizzes.map((topic) => {
+            const shuffledQuestions = shuffleArray(topic.questions.map((question) => ({
+                ...question,     // Copy existing question
+                choices: shuffleArray([...question.choices]), // Shuffle choices here
+            })));
+
+            return {
+                ...topic,
+                questions: shuffledQuestions,
+            };
+        });
+        setRandomizedQuizzes(randomizedQuestions); // Save this to state
+    };
+
+    useEffect(() => {
+        shuffleQuestionsAndChoices();
+    }, [quizAvailable]);
+
+
     // Calculate total questions across all topics
     const totalQuestionsAcrossTopics = quizzes.reduce((acc, quiz) => acc + quiz.questions.length, 0);
 
@@ -133,6 +165,8 @@ const Quiz = () => {
         // Recalculate with the wrapped index
         return getQuestionFromGlobalIndex(wrappedGlobalIndex);
     };
+
+
 
     const updateUserProgress = async (userId, quizId, currentAnsweredCount, isComplete = false) => {
         const now = new Date().toISOString();
@@ -337,8 +371,8 @@ const Quiz = () => {
 
         // Consider answer wrong if it's from timer expiry (index 99)
         const isCorrect = selectedAnswerIndex === 99 ? false :
-            quizzes[activeTopicIndex].questions[activeQuestionIndex].choices[selectedAnswerIndex] ===
-            quizzes[activeTopicIndex].questions[activeQuestionIndex].correctAnswer;
+            randomizedQuizzes[activeTopicIndex].questions[activeQuestionIndex].choices[selectedAnswerIndex] ===
+            randomizedQuizzes[activeTopicIndex].questions[activeQuestionIndex].correctAnswer;
 
         // Calculate time spent on this question
         const timeSpentOnQuestion = Math.max(1, Math.round((initialTime - seconds) / 60));
@@ -556,9 +590,11 @@ const Quiz = () => {
                                         <p className="text-lg text-teal-600 dark:text-teal-400">
                                             You've successfully completed the entire Credit Bank quiz!
                                         </p>
-                                        <p className="text-base text-gray-600 dark:text-gray-400">
+
+                                        <p className={`text-base mb-6 ${mode === 'dark' ? 'text-teal-300' : 'text-teal-600'}`}>
                                             Thank you for learning about Credit Bank's history, products, and services.
                                         </p>
+
                                     </div>
                                 ) : (
                                     <>
@@ -607,10 +643,11 @@ const Quiz = () => {
                             </div>
 
                             <div className="mb-6">
-                                {quizzes[activeTopicIndex]?.questions[activeQuestionIndex] ? (
+                                {randomizedQuizzes[activeTopicIndex]?.questions[activeQuestionIndex] ? (
                                     <h2 className={`text-xl mb-4 ${mode === 'dark' ? 'text-white' : 'text-black'}`}>
-                                        {quizzes[activeTopicIndex].questions[activeQuestionIndex].question}
+                                        {randomizedQuizzes[activeTopicIndex].questions[activeQuestionIndex].question}
                                     </h2>
+
                                 ) : (
                                     <h4 className={`text-lg mb-4 ${mode === 'dark' ? 'text-white' : 'text-black'}`}>
                                         No Question Available. Check back tomorrow!
@@ -619,20 +656,18 @@ const Quiz = () => {
                             </div>
 
                             <ul className="space-y-2 mb-6">
-                                {quizzes[activeTopicIndex]?.questions[activeQuestionIndex]?.choices?.map((answer, index) => {
-                                    let style = `cursor-pointer p-3 border rounded-lg transition-all duration-200 hover:bg-opacity-90 ${
+                                {randomizedQuizzes[activeTopicIndex]?.questions[activeQuestionIndex]?.choices?.map((answer, index) => {
+                                    let className = `cursor-pointer p-3 border rounded-lg transition-all duration-200 hover:bg-opacity-90 ${
                                         mode === 'dark' ? 'border-gray-600' : 'border-gray-200'
                                     }`;
 
                                     if (selectedAnswerIndex !== null) {
                                         if (index === selectedAnswerIndex) {
-                                            if (answer === quizzes[activeTopicIndex].questions[activeQuestionIndex].correctAnswer) {
-                                                style += ' bg-green-200 text-black';
-                                            } else {
-                                                style += ' bg-red-200 text-black';
-                                            }
-                                        } else if (answer === quizzes[activeTopicIndex].questions[activeQuestionIndex].correctAnswer) {
-                                            style += ' bg-green-200 text-black';
+                                            className += answer === randomizedQuizzes[activeTopicIndex].questions[activeQuestionIndex].correctAnswer
+                                                ? ' bg-green-200 text-black'
+                                                : ' bg-red-200 text-black';
+                                        } else if (answer === randomizedQuizzes[activeTopicIndex].questions[activeQuestionIndex].correctAnswer) {
+                                            className += ' bg-green-200 text-black';
                                         }
                                     }
 
@@ -644,7 +679,7 @@ const Quiz = () => {
                                                     setSelectedAnswerIndex(index);
                                                 }
                                             }}
-                                            className={style}
+                                            className={className}
                                         >
                                             {answer}
                                         </li>
