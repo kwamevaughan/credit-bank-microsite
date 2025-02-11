@@ -29,13 +29,13 @@ const TransactionIDUpdater = ({ userId, mode, toggleMode, notify }) => {
                 name: finalName, // Set name to finalName, which is either provided or "Customer"
                 transaction_id: transactionId,
                 points: 0, // Default points are 0 when the transaction is pending
-                action: 'Pending', // Default action is "Pending"
+                status: 'Pending', // Default status is "Pending"
             }
             : {
                 name: finalName, // Same for bulk
                 transaction_id: bulkData, // Bulk transaction data will need parsing later
                 points: 0, // Default points are 0 for bulk records
-                action: 'Pending', // Default action for bulk transactions is "Pending"
+                status: 'Pending', // Default status for bulk transactions is "Pending"
             };
 
         // Function to check if the transaction_id already exists
@@ -117,7 +117,7 @@ const TransactionIDUpdater = ({ userId, mode, toggleMode, notify }) => {
                     name: bulkName, // Set the name (default to "Customer" if empty)
                     transaction_id: bulkTransactionId,
                     points: 0, // Default points for bulk
-                    action: 'Pending', // Default action for bulk transactions
+                    status: 'Pending', // Default status for bulk transactions
                 };
             });
 
