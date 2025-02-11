@@ -9,6 +9,10 @@ module.exports = {
                 protocol: 'https',
                 hostname: 'ik.imagekit.io',
             },
+            {
+                protocol: 'https',
+                hostname: 'creditbank.co.ke',
+            },
         ],
     },
     env: {
