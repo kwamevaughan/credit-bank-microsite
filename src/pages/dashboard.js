@@ -14,6 +14,7 @@ import Referral from "@/components/referFriend";
 import { ArrowRightOnRectangleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import DeleteAccountModal from "@/components/DeleteAccountModal"; // Import your DeleteAccountModal
 import AppDownloadModal from "@/components/AppDownloadModal";
+import VerificationModal from "@/components/VerificationModal";
 import { imagekit } from '../utils/imageKitService';
 
 
@@ -192,16 +193,24 @@ const Dashboard = () => {
         }
     };
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isAppDownloadModalOpen, setIsAppDownloadModalOpen] = useState(false);
+    const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
 
     const openModal = () => {
-        setIsModalOpen(true);
+        setIsAppDownloadModalOpen(true);
     };
 
     const closeModal = () => {
-        setIsModalOpen(false);
+        setIsAppDownloadModalOpen(false);
     };
 
+    const openVerificationModal = () => {
+        setIsVerificationModalOpen(true);
+    };
+
+    const closeVerificationModal = () => {
+        setIsVerificationModalOpen(false);
+    };
 
 
     return (
@@ -223,6 +232,7 @@ const Dashboard = () => {
                     mode={mode}
                     onLogout={handleSignOut}
                     openModal={openModal}
+                    openVerificationModal={openVerificationModal}
                     toggleMode={toggleMode}
                     toggleFullScreen={toggleFullScreen}
 
@@ -320,8 +330,17 @@ const Dashboard = () => {
                         />
                     </div>
                     <AppDownloadModal
-                        isOpen={isModalOpen}
+                        isOpen={isAppDownloadModalOpen}
                         onClose={closeModal}
+                        token={token}
+                        toggleMode={toggleMode}
+                        mode={mode}
+                        notify={notify}
+                    />
+
+                    <VerificationModal
+                        isOpen={isVerificationModalOpen}
+                        onClose={closeVerificationModal}
                         token={token}
                         toggleMode={toggleMode}
                         mode={mode}
