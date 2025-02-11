@@ -7,7 +7,7 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
     const [page, setPage] = useState(1);
     const [sortBy, setSortBy] = useState('name'); // Default sort by 'name'
     const [sortOrder, setSortOrder] = useState('asc'); // Default sort order is ascending
-    const [actionFilter, setActionFilter] = useState(''); // Filter for 'Action' column
+    const [statusFilter, setStatusFilter] = useState(''); // Filter for 'Status' column
     const [customers, setCustomers] = useState([]); // Store customer data
     const [loading, setLoading] = useState(true); // Loading state
     const [dropdownVisible, setDropdownVisible] = useState(null); // Track visible dropdown
@@ -74,7 +74,7 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
         };
     }, []); // Empty dependency array ensures it runs once when the component mounts
 
-    // Filter customers based on search input and action filter
+    // Filter customers based on search input and status filter
     const filteredCustomers = customers
         .filter((customer) => {
             const searchQuery = search.toLowerCase();
@@ -83,7 +83,7 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
 
             return (
                 (matchesName || matchesTransactionId) && // Match either name or transaction_id
-                (actionFilter === '' || customer.action === actionFilter)
+                (statusFilter === '' || customer.status === statusFilter)
             );
         })
         .sort((a, b) => {
@@ -99,10 +99,10 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                 return sortOrder === 'asc'
                     ? a.points - b.points
                     : b.points - a.points;
-            } else if (sortBy === 'action') {
+            } else if (sortBy === 'status') {
                 return sortOrder === 'asc'
-                    ? a.action.localeCompare(b.action)
-                    : b.action.localeCompare(a.action);
+                    ? a.status.localeCompare(b.status)
+                    : b.status.localeCompare(a.status);
             }
             return 0;
         });
@@ -121,43 +121,67 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
         }
     };
 
-    // Toggle action function
-    const toggleAction = async (id) => {
-        // Find the customer object to determine the current action
+    // Toggle status function
+    const toggleStatus = async (id) => {
+        // Find the customer object to determine the current status
         const customer = customers.find(c => c.id === id);
 
-        // If the action is "Pending", update to "Approved" and assign 200 points
-        if (customer.action !== "Approved") {
-            // Toggle the action and assign 200 points, set the current time to `approved_at`
+        // If the status is "Approved", update to "Pending" and reverse the points by 200
+        if (customer.status === "Approved") {
+            // Reverse the points by 200
             const { data, error } = await supabase
                 .from('transaction_verification')
                 .update({
-                    action: 'Approved',
-                    points: customer.points + 200, // Use the correct column 'points'
-                    approved_at: new Date().toISOString() // Set the current date and time
+                    status: 'Pending',
+                    points: customer.points - 200, // Reverse the points
+                    approved_at: null // Reset the approved_at timestamp
                 })
                 .eq('id', id);
 
             if (error) {
-                console.error("Error updating action: ", error.message);
-                notify("Error updating action.", "error");
+                console.error("Error updating status: ", error.message);
+                notify("Error updating status.", "error");
             } else {
                 // Update the local state to reflect the change
                 setCustomers((prevCustomers) =>
                     prevCustomers.map((customer) =>
                         customer.id === id
-                            ? { ...customer, action: 'Approved', points: customer.points + 200, approved_at: new Date().toISOString() }
+                            ? { ...customer, status: 'Pending', points: customer.points - 200, approved_at: null }
+                            : customer
+                    )
+                );
+                // Show toast notification for points reversed
+                toast.success(`200 Points reversed: from ${customer.name}`);
+            }
+        } else {
+            // If the status is not "Approved" (i.e., it's "Pending"), update to "Approved" and assign 200 points
+            const { data, error } = await supabase
+                .from('transaction_verification')
+                .update({
+                    status: 'Approved',
+                    points: customer.points + 200, // Assign 200 points
+                    approved_at: new Date().toISOString() // Set the current date and time
+                })
+                .eq('id', id);
+
+            if (error) {
+                console.error("Error updating status: ", error.message);
+                notify("Error updating status.", "error");
+            } else {
+                // Update the local state to reflect the change
+                setCustomers((prevCustomers) =>
+                    prevCustomers.map((customer) =>
+                        customer.id === id
+                            ? { ...customer, status: 'Approved', points: customer.points + 200, approved_at: new Date().toISOString() }
                             : customer
                     )
                 );
                 // Show toast notification for points assigned
-                toast.success(`Points assigned: 200 to ${customer.name}`);
+                toast.success(`200 Points assigned:to ${customer.name}`);
             }
-        } else {
-            // If already approved, do nothing or handle accordingly
-            toast.info(`${customer.name} is already Approved.`);
         }
     };
+
 
 
     const handleRowClick = (id) => {
@@ -210,7 +234,7 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
         // Find the customer by ID to check if they're approved
         const customer = customers.find(c => c.id === id);
 
-        if (customer.action === 'Approved') {
+        if (customer.status === 'Approved') {
             // Show a toast notification if the customer is already approved
             toast.info(`${customer.name} is already approved. Deletion is not allowed.`);
         } else {
@@ -261,9 +285,9 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                 {/* Filter Dropdown */}
                 <select
                     className="p-3 rounded-lg border border-[#FF930A] bg-white focus:ring-[#FF930A]"
-                    value={actionFilter}
+                    value={statusFilter}
                     onChange={(e) => {
-                        setActionFilter(e.target.value);
+                        setStatusFilter(e.target.value);
                         setPage(1); // Reset to first page when filter changes
                     }}
                 >
@@ -278,7 +302,7 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
 
             <div
                 className="overflow-y-auto"
-                style={{maxHeight: '500px'}} // Limit the height and enable vertical scrolling
+                style={{maxHeight: '600px'}} // Limit the height and enable vertical scrolling
             >
                 <table className="min-w-full table-auto border-separate border-spacing-y-4 rounded-md">
                     <thead>
@@ -297,9 +321,9 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                         </th>
                         <th
                             className="px-4 py-2 text-left bg-gray-100 text-gray-600 cursor-pointer"
-                            onClick={() => handleSort('action')}
+                            onClick={() => handleSort('status')}
                         >
-                            Action {sortBy === 'action' && (sortOrder === 'asc' ? '↑' : '↓')}
+                            Status {sortBy === 'status' && (sortOrder === 'asc' ? '↑' : '↓')}
                         </th>
                         <th
                             className="px-4 py-2 text-left bg-gray-100 text-gray-600 cursor-pointer"
@@ -351,8 +375,8 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                                             <label className="inline-flex items-center cursor-pointer">
                                                 <input
                                                     type="checkbox"
-                                                    checked={customer.action === 'Approved'}
-                                                    onChange={() => toggleAction(customer.id)}
+                                                    checked={customer.status === 'Approved'}
+                                                    onChange={() => toggleStatus(customer.id)}
                                                     className="sr-only peer"
                                                 />
                                                 <div
@@ -360,7 +384,7 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                                                 />
                                                 <span
                                                     className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                {customer.action === 'Pending' ? 'Pending' : 'Approved'}
+                                {customer.status === 'Pending' ? 'Pending' : 'Approved'}
                             </span>
                                             </label>
                                             {formattedDate && (
