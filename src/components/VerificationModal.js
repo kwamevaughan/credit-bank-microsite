@@ -58,7 +58,10 @@ const VerificationModal = ({ isOpen, onClose, mode, notify }) => {
             // Handle the specific PGRST116 error for no results
             if (transactionError.code === 'PGRST116') {
                 // No results found (transaction not in the database)
-                setFeedbackMessage(`Hello ${name}, unfortunately, we couldn't match the transaction ID with our records. Kindly double-check and try again.`);
+                setFeedbackMessage(
+                    <span>Hello ${name}, unfortunately, we couldn't match the transaction ID "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" with our records. Kindly double-check and try again.
+                    </span>
+                );
             } else {
                 // Generic error handling for other types of errors
                 console.error(transactionError); // log the error for debugging
@@ -70,7 +73,10 @@ const VerificationModal = ({ isOpen, onClose, mode, notify }) => {
 
         if (!transactionData) {
             // Fallback for when no transaction data is returned (this should not be necessary after handling the PGRST116 error)
-            setFeedbackMessage(`Hello ${name}, unfortunately, we couldn't match the transaction ID with our records. Kindly double-check and try again.`);
+            setFeedbackMessage(
+                <span>Hello ${name}, unfortunately, we couldn't match the transaction ID "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" with our records. Kindly double-check and try again.
+                </span>
+            );
             setLoading(false);
             return;
         }
@@ -79,8 +85,8 @@ const VerificationModal = ({ isOpen, onClose, mode, notify }) => {
         if (transactionData.redeemed) {
             setFeedbackMessage(
                 <span>
-                Hello {name}, the transaction ID "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" you entered has already been redeemed for points. Please review the details and try again if necessary.
-            </span>
+            Hello {name}, the transaction ID "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" you entered has already been redeemed for points. Please review the details and try again if necessary.
+        </span>
             );
             setLoading(false);
             return;
@@ -161,16 +167,26 @@ const VerificationModal = ({ isOpen, onClose, mode, notify }) => {
                 return;
             }
 
-            setFeedbackMessage(`Hello ${name}, thank you for submitting the transaction ID! The transaction ID has been verified, and 200 points have been added to your account. Good luck!`);
+            setFeedbackMessage(
+                <span>Hello ${name}, thank you for submitting the transaction ID! "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" The transaction ID has been verified, and 200 points have been added to your account. Good luck!
+                </span>
+            );
 
             // Show a toast message
             notify('Congratulations 🎉 You have been awarded 200 points. Good luck!');
+
+            // Clear the transaction ID field after submission
+            setTransactionId('');  // Reset the transaction ID input
         } else if (transactionData.status === 'Pending') {
-            setFeedbackMessage('Hello, Thanks for submitting the transaction ID for verification. The transaction is pending approval. Kindly check back in an hour. Once verified, 200 points will be added to your existing points. Good luck!');
+            setFeedbackMessage(
+                <span>Hello, Thanks for submitting the transaction ID "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" for verification. The transaction is pending approval. Kindly check back in an hour. Once verified, 200 points will be added to your existing points. Good luck!
+                </span>
+            );
         }
 
         setLoading(false);
     };
+
 
 
     return (
@@ -248,6 +264,7 @@ const VerificationModal = ({ isOpen, onClose, mode, notify }) => {
                                 placeholder="RIA-20250211-123456789"
                                 value={transactionId}
                                 onChange={(e) => setTransactionId(e.target.value)}
+                                required
                             />
                         </div>
                     </div>
