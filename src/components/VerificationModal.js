@@ -17,6 +17,30 @@ const VerificationModal = ({ isOpen, onClose, mode, notify }) => {
         }
     }, [isOpen]);
 
+    useEffect(() => {
+        if (userId) {
+            // Fetch the logged-in user's name from Supabase when userId is set
+            const fetchUserName = async () => {
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('name')
+                    .eq('id', userId)
+                    .single();
+
+                if (error) {
+                    console.error('Error fetching user name:', error);
+                    return;
+                }
+
+                if (data) {
+                    setName(data.name); // Set the user's name to the state
+                }
+            };
+
+            fetchUserName();
+        }
+    }, [userId]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -55,7 +79,7 @@ const VerificationModal = ({ isOpen, onClose, mode, notify }) => {
         if (transactionData.redeemed) {
             setFeedbackMessage(
                 <span>
-                Hello {name}, the transaction ID "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" you've entered has already been redeemed for points. Please check the details and try again if needed.
+                Hello {name}, the transaction ID "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" you entered has already been redeemed for points. Please review the details and try again if necessary.
             </span>
             );
             setLoading(false);
@@ -174,23 +198,52 @@ const VerificationModal = ({ isOpen, onClose, mode, notify }) => {
 
                 <form onSubmit={handleSubmit}>
                     <div className="mt-4">
-                        <label className="text-gray-700 text-base font-bold mb-2">Name</label>
-                        <div className="flex items-center border border-[#FF930A] rounded focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out">
+                        <label
+                            className={`text-base font-bold mb-2 ${
+                                mode === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                            }`}
+                        >
+                            Name
+                        </label>
+                        <div
+                            className={`flex items-center border rounded focus:outline-none transition-all duration-300 ease-in-out ${
+                                mode === 'dark'
+                                    ? 'border-gray-600 text-gray-200 hover:border-teal-500 focus:border-teal-500' // Dark mode styles
+                                    : 'border-[#FF930A] text-gray-700 hover:border-teal-900 focus:border-teal-900' // Light mode styles
+                            }`}
+                        >
                             <input
-                                className="bg-transparent text-gray-700 py-2 px-4 block w-full rounded"
+                                className={`bg-transparent py-2 px-4 block w-full rounded cursor-default ${
+                                    mode === 'dark' ? 'text-gray-200' : 'text-gray-700' // Adjust text color
+                                }`}
                                 type="text"
                                 placeholder="Enter full name as appears on your ID"
                                 value={name}
-                                onChange={(e) => setName(e.target.value)}
+                                readOnly
                             />
                         </div>
                     </div>
 
+
                     <div className="mt-4">
-                        <label className="text-gray-700 text-base font-bold mb-2">Transaction ID</label>
-                        <div className="flex items-center border border-[#FF930A] rounded focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out">
+                        <label
+                            className={`text-base font-bold mb-2 ${
+                                mode === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                            }`}
+                        >
+                            Transaction ID
+                        </label>
+                        <div
+                            className={`flex items-center border rounded focus:outline-none transition-all duration-300 ease-in-out ${
+                                mode === 'dark'
+                                    ? 'border-gray-600 text-gray-200 hover:border-teal-500 focus:border-teal-500' // Dark mode styles
+                                    : 'border-[#FF930A] text-gray-700 hover:border-teal-900 focus:border-teal-900' // Light mode styles
+                            }`}
+                        >
                             <input
-                                className="bg-transparent text-gray-700 py-2 px-4 block w-full rounded"
+                                className={`bg-transparent py-2 px-4 block w-full rounded ${
+                                    mode === 'dark' ? 'text-gray-200' : 'text-gray-700' // Adjust text color
+                                }`}
                                 type="text"
                                 placeholder="RIA-20250211-123456789"
                                 value={transactionId}
@@ -199,23 +252,32 @@ const VerificationModal = ({ isOpen, onClose, mode, notify }) => {
                         </div>
                     </div>
 
+
                     <div className="mt-8">
                         <button
                             type="submit"
-                            className="bg-[#0CB4AB] text-white font-bold py-4 px-4 w-full rounded-lg transform transition-transform duration-700 ease-in-out hover:scale-105"
+                            className="bg-[#0CB4AB] text-white font-bold py-4 px-4 w-full rounded-lg transform transition-all duration-300 ease-in-out hover:bg-[#0A8E8A]"
                             disabled={loading}
                         >
                             {loading ? 'Verifying...' : 'Submit for Verification'}
                         </button>
+
                     </div>
                 </form>
 
                 {/* Feedback Message (Fixed Height, Scrollable) */}
                 {feedbackMessage && (
-                    <div className="mt-6 p-4 border rounded-lg bg-gray-100 text-gray-700 h-32 overflow-y-auto">
+                    <div
+                        className={`mt-6 p-4 border rounded-lg h-32 overflow-y-auto ${
+                            mode === 'dark'
+                                ? 'bg-gray-800 text-gray-200 border-gray-600' // Dark mode styles
+                                : 'bg-gray-100 text-gray-700 border-gray-300' // Light mode styles
+                        }`}
+                    >
                         <p>{feedbackMessage}</p>
                     </div>
                 )}
+
             </div>
         </Modal>
     );
