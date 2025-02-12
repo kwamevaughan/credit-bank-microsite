@@ -378,12 +378,12 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                                             &#9660;
                                         </span>
                                         </td>
-                                        <td className={`px-4 py-3 text-gray-600 border-r ${mode === 'dark' ? 'text-gray-200' : ''}`}>{customer.transaction_id}</td>
-                                        <td className={`px-4 py-3 text-gray-600 border-r ${mode === 'dark' ? 'text-gray-200' : ''}`}>
+                                        <td className={`px-4 py-3 text-gray-600 border-r ${mode === 'dark' ? 'text-white' : ''}`}>{customer.transaction_id}</td>
+                                        <td className={`px-4 py-3 text-gray-600 border-r ${mode === 'dark' ? 'text-white' : ''}`}>
                                             {formatNumberWithCommas(customer.amount_deposited)}
                                         </td>
-                                        <td className={`px-4 py-3 text-gray-600 border-r ${mode === 'dark' ? 'text-gray-200' : ''}`}>{customer.points}</td>
-                                        <td className={`px-4 py-3 text-gray-600 ${mode === 'dark' ? 'text-gray-200' : ''}`}>
+                                        <td className={`px-4 py-3 text-gray-600 border-r ${mode === 'dark' ? 'text-white' : ''}`}>{customer.points}</td>
+                                        <td className={`px-4 py-3 text-gray-600 ${mode === 'dark' ? 'text-white' : ''}`}>
                                             {customer.redeemed ? (
                                                 <span
                                                     className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-md font-medium text-green-700 ring-1 ring-green-600/20 ring-inset">
@@ -401,44 +401,58 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                                     {/* Expanded Row with Editable Fields */}
                                     {expandedRow === customer.id && (
                                         <tr>
-                                            <td colSpan="5" className="px-4 py-4 bg-gray-50">
+                                            <td colSpan="5"
+                                                className={`px-4 py-4 ${mode === 'dark' ? 'bg-gray-700 text-gray-200' : 'bg-gray-50 text-gray-900'}`}>
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div>
                                                         <label
-                                                            className={`block ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Name</label>
+                                                            className={`block ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
+                                                        >
+                                                            Name
+                                                        </label>
                                                         <input
                                                             type="text"
                                                             value={editableFields.name || customer.name}
                                                             onChange={(e) => handleInputChange(e, 'name')}
-                                                            className="w-full p-2 border rounded-md"
+                                                            className={`w-full p-2 border rounded-md ${mode === 'dark' ? 'bg-gray-700 text-gray-200 border-gray-600' : 'bg-white text-gray-900 border-gray-300'}`}
                                                         />
                                                     </div>
                                                     <div>
                                                         <label
-                                                            className={`block ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Transaction
-                                                            ID</label>
+                                                            className={`block ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
+                                                        >
+                                                            Transaction ID
+                                                        </label>
                                                         <input
                                                             type="text"
                                                             value={editableFields.transaction_id || customer.transaction_id}
                                                             onChange={(e) => handleInputChange(e, 'transaction_id')}
-                                                            className="w-full p-2 border rounded-md"
+                                                            className={`w-full p-2 border rounded-md ${mode === 'dark' ? 'bg-gray-700 text-gray-200 border-gray-600' : 'bg-white text-gray-900 border-gray-300'}`}
                                                         />
                                                     </div>
                                                 </div>
+
                                                 <div className="flex justify-end gap-4 mt-4">
-                                                    <button onClick={handleCancel}
-                                                            className="px-4 py-2 text-white bg-gray-400 rounded-md">
+                                                    <button
+                                                        onClick={handleCancel}
+                                                        className="px-4 py-2 text-white bg-gray-400 rounded-md hover:bg-gray-500 transition-all duration-200"
+                                                    >
                                                         Cancel
                                                     </button>
-                                                    <button onClick={() => handleSave(customer.id)}
-                                                            className="px-4 py-2 text-white bg-[#0CB4AB] rounded-md">
+                                                    <button
+                                                        onClick={() => handleSave(customer.id)}
+                                                        className="px-4 py-2 text-white bg-[#0CB4AB] rounded-md hover:bg-[#0A9F99] transition-all duration-200"
+                                                    >
                                                         Save
                                                     </button>
-                                                    <button onClick={() => handleDelete(customer.id)}
-                                                            className="px-4 py-2 text-white bg-red-600 rounded-md">
+                                                    <button
+                                                        onClick={() => handleDelete(customer.id)}
+                                                        className="px-4 py-2 text-white bg-red-600 rounded-md hover:bg-red-700 transition-all duration-200"
+                                                    >
                                                         Delete
                                                     </button>
                                                 </div>
+
                                             </td>
                                         </tr>
                                     )}
