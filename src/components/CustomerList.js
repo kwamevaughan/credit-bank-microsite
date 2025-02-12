@@ -267,7 +267,7 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                     notify("Error deleting customer.", "error");
                 } else {
                     setCustomers(customers.filter(customer => customer.id !== id));
-                    toast.success("Customer deleted successfully.");
+                    toast.success("Customer transaction details deleted successfully.");
                 }
             }
         }
