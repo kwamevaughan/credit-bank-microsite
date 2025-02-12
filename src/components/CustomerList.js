@@ -108,9 +108,15 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                 return sortOrder === 'asc'
                     ? (a.redeemed === b.redeemed) ? 0 : a.redeemed ? 1 : -1
                     : (a.redeemed === b.redeemed) ? 0 : a.redeemed ? -1 : 1;
+            } else if (sortBy === 'status') {
+                // Handle sorting by the 'status' field
+                return sortOrder === 'asc'
+                    ? a.status.localeCompare(b.status)
+                    : b.status.localeCompare(a.status);
             }
             return 0;
         });
+
 
     const pageSize = 8;
     const totalPages = Math.ceil(filteredCustomers.length / pageSize);
@@ -334,7 +340,7 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                         </th>
                         <th className={`px-4 py-2 text-left ${mode === 'dark' ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'} cursor-pointer`}
                             onClick={() => handleSort('status')}>
-                            Status
+                            Status {sortBy === 'status' && (sortOrder === 'asc' ? '↑' : '↓')}
                         </th>
                         <th className={`px-4 py-2 text-left ${mode === 'dark' ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'} cursor-pointer`}
                             onClick={() => handleSort('points')}>
