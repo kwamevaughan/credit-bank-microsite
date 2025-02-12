@@ -387,8 +387,7 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                                 </span>
                                         </td>
                                         <td className={`px-4 py-3 text-gray-600 border-r ${mode === 'dark' ? 'text-white' : ''}`}>{customer.transaction_id}</td>
-                                        <td className={`px-4 py-3 text-gray-600 border-r ${mode === 'dark' ? 'text-white' : ''}`}>
-                                            {formatNumberWithCommas(customer.amount_deposited)}
+                                        <td className={`px-4 py-3 text-gray-600 border-r ${mode === 'dark' ? 'text-white' : ''}`}>KES {formatNumberWithCommas(customer.amount_deposited)}
                                         </td>
                                         {/* New Status column */}
                                         <td className="px-4 py-3 text-gray-600 border-r">
