@@ -128,18 +128,21 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
 
     // Toggle status function
     const toggleStatus = async (id) => {
-        // Find the customer object to determine the current status
         const customer = customers.find(c => c.id === id);
 
-        // If the status is "Approved", update to "Pending" and reverse the points by 200
+        if (customer.redeemed) {
+            // If the customer has already redeemed points, show a toast and prevent the status change
+            toast.error("Customer has already redeemed their points. Status cannot be changed.");
+            return;
+        }
+
         if (customer.status === "Approved") {
-            // Reverse the points by 200
             const { data, error } = await supabase
                 .from('transaction_verification')
                 .update({
                     status: 'Pending',
-                    points: customer.points - 200, // Reverse the points
-                    approved_at: null // Reset the approved_at timestamp
+                    points: customer.points - 200,
+                    approved_at: null,
                 })
                 .eq('id', id);
 
@@ -147,7 +150,6 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                 console.error("Error updating status: ", error.message);
                 notify("Error updating status.", "error");
             } else {
-                // Update the local state to reflect the change
                 setCustomers((prevCustomers) =>
                     prevCustomers.map((customer) =>
                         customer.id === id
@@ -155,17 +157,15 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                             : customer
                     )
                 );
-                // Show toast notification for points reversed
                 toast.success(`200 Points reversed: from ${customer.name}`);
             }
         } else {
-            // If the status is not "Approved" (i.e., it's "Pending"), update to "Approved" and assign 200 points
             const { data, error } = await supabase
                 .from('transaction_verification')
                 .update({
                     status: 'Approved',
-                    points: customer.points + 200, // Assign 200 points
-                    approved_at: new Date().toISOString() // Set the current date and time
+                    points: customer.points + 200,
+                    approved_at: new Date().toISOString(),
                 })
                 .eq('id', id);
 
@@ -173,7 +173,6 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                 console.error("Error updating status: ", error.message);
                 notify("Error updating status.", "error");
             } else {
-                // Update the local state to reflect the change
                 setCustomers((prevCustomers) =>
                     prevCustomers.map((customer) =>
                         customer.id === id
@@ -181,8 +180,7 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                             : customer
                     )
                 );
-                // Show toast notification for points assigned
-                toast.success(`200 Points assigned:to ${customer.name}`);
+                toast.success(`200 Points assigned: to ${customer.name}`);
             }
         }
     };
@@ -204,11 +202,19 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
 
 
     const handleSave = async (id) => {
-        // Get the customer data, use the editable fields to update only the changed fields
+        const customer = customers.find(c => c.id === id);
+
+        if (customer.redeemed) {
+            // If the customer has already redeemed points, show a toast message
+            toast.info("You cannot edit or save the transaction ID, as the points have already been redeemed.");
+            return; // Prevent saving the changes
+        }
+
+        // Continue with the save logic if the transaction has not been redeemed
         const updatedCustomer = {
             ...customers.find(c => c.id === id),
-            name: editableFields.name || customers.find(c => c.id === id).name, // Preserve previous name if not changed
-            transaction_id: editableFields.transaction_id || customers.find(c => c.id === id).transaction_id, // Preserve previous transaction_id if not changed
+            name: editableFields.name || customers.find(c => c.id === id).name,
+            transaction_id: editableFields.transaction_id || customers.find(c => c.id === id).transaction_id,
         };
 
         const { data, error } = await supabase
@@ -228,19 +234,22 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
         }
     };
 
+
     const handleCancel = () => {
         setExpandedRow(null); // Collapse the row without saving
     };
 
     const handleDelete = async (id) => {
-        // Find the customer by ID to check if they're approved
         const customer = customers.find(c => c.id === id);
 
+        if (customer.redeemed) {
+            toast.error("Cannot delete. Customer has already redeemed points.");
+            return;
+        }
+
         if (customer.status === 'Approved') {
-            // Show a toast notification if the customer is already approved
             toast.info(`${customer.name} is already approved. Deletion is not allowed.`);
         } else {
-            // Proceed with the deletion only if the customer is not approved
             if (window.confirm('Are you sure you want to delete this record?')) {
                 const { data, error } = await supabase
                     .from('transaction_verification')
@@ -251,7 +260,6 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                     console.error("Error deleting customer: ", error.message);
                     notify("Error deleting customer.", "error");
                 } else {
-                    // Remove the customer from local state after deletion
                     setCustomers(customers.filter(customer => customer.id !== id));
                     toast.success("Customer deleted successfully.");
                 }
@@ -443,6 +451,7 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                                                             type="text"
                                                             value={editableFields.transaction_id || customer.transaction_id}
                                                             onChange={(e) => handleInputChange(e, 'transaction_id')}
+                                                            disabled={customer.redeemed}  // Disable input if points are redeemed
                                                             className={`w-full p-2 border rounded-md ${mode === 'dark' ? 'bg-gray-700 text-gray-200 border-gray-600' : 'bg-white text-gray-900 border-gray-300'}`}
                                                         />
                                                     </div>
@@ -456,7 +465,7 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                                                         Cancel
                                                     </button>
                                                     <button
-                                                        onClick={() => handleSave(customer.id)}
+                                                        onClick={() => handleSave(customer.id)} // still calling handleSave on click
                                                         className="px-4 py-2 text-white bg-[#0CB4AB] rounded-md hover:bg-[#0A9F99] transition-all duration-200"
                                                     >
                                                         Save
@@ -471,6 +480,7 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                                             </td>
                                         </tr>
                                     )}
+
                                 </React.Fragment>
                             );
                         })
