@@ -59,7 +59,7 @@ const VerificationModal = ({ isOpen, onClose, mode, notify }) => {
             if (transactionError.code === 'PGRST116') {
                 // No results found (transaction not in the database)
                 setFeedbackMessage(
-                    <span>Hello ${name}, unfortunately, we couldn't match the transaction ID "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" with our records. Kindly double-check and try again.
+                    <span>Hello {name}, unfortunately, we couldn't match the transaction ID "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" with our records. Kindly double-check and try again.
                     </span>
                 );
             } else {
@@ -74,7 +74,7 @@ const VerificationModal = ({ isOpen, onClose, mode, notify }) => {
         if (!transactionData) {
             // Fallback for when no transaction data is returned (this should not be necessary after handling the PGRST116 error)
             setFeedbackMessage(
-                <span>Hello ${name}, unfortunately, we couldn't match the transaction ID "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" with our records. Kindly double-check and try again.
+                <span>Hello {name}, unfortunately, we couldn't match the transaction ID "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" with our records. Kindly double-check and try again.
                 </span>
             );
             setLoading(false);
