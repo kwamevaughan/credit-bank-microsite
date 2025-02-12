@@ -123,7 +123,7 @@ const VerificationDashboard = () => {
 
                     </div>
 
-                    <div className="flex w-full gap-4 mb-8"> {/* Use flex with gap to separate the elements */}
+                    <div className="flex flex-col md:flex-row w-full gap-4 mb-8"> {/* Use flex with gap to separate the elements */}
                         <div
                             className="flex-1 space-y-12"> {/* This will make FileUploadWithPreview take up equal space */}
                             {user && (

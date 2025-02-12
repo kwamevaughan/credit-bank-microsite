@@ -267,16 +267,17 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
 
     return (
         <div
-            className="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-lg hover:shadow-none transition-all duration-300 ease-in-out">
-            <p className="flex gap-x-2 items-center text-base sm:text-lg mb-4 px-2">
+            className={`max-w-4xl mx-auto p-6 rounded-xl shadow-lg hover:shadow-none transition-all duration-300 ease-in-out ${mode === 'dark' ? 'bg-gray-800 text-gray-200' : 'bg-white text-gray-900'}`}
+        >
+            <p className="flex gap-x-2 items-center text-2xl md:text-lg justify-center md:justify-start mb-4 px-2">
                 Customer List
             </p>
             {/* Filter and Search Row */}
-            <div className="mb-4 flex items-center gap-4">
+            <div className="mb-4 flex flex-col md:flex-row items-center gap-4">
                 {/* Search input */}
                 <input
                     type="search"
-                    className="flex-grow p-3 rounded-lg bg-white text-gray-900 border border-[#FF930A] focus:ring-[#FF930A] focus:outline-none transition-all duration-300"
+                    className={`flex-grow p-3 rounded-lg ${mode === 'dark' ? 'bg-gray-700 text-gray-200' : 'bg-white text-gray-900'} border border-[#FF930A] focus:ring-[#FF930A] focus:outline-none transition-all duration-300`}
                     placeholder="Search by name or transaction ID"
                     value={search}
                     onChange={(e) => {
@@ -287,7 +288,7 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
 
                 {/* Filter Dropdown */}
                 <select
-                    className="p-3 rounded-lg border border-[#FF930A] bg-white focus:ring-[#FF930A]"
+                    className={`p-3 rounded-lg border border-[#FF930A] ${mode === 'dark' ? 'bg-gray-700 text-gray-200' : 'bg-white text-gray-900'} focus:ring-[#FF930A]`}
                     value={statusFilter}
                     onChange={(e) => {
                         setStatusFilter(e.target.value);
@@ -301,7 +302,8 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
             </div>
 
             {/* Loading indicator */}
-            {loading && <div className="text-center text-gray-500">Loading...</div>}
+            {loading &&
+                <div className={`text-center ${mode === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Loading...</div>}
 
             <div
                 className="overflow-y-auto"
@@ -311,31 +313,31 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                     <thead>
                     <tr>
                         <th
-                            className="px-4 py-2 text-left bg-gray-100 text-gray-600 cursor-pointer"
+                            className={`px-4 py-2 text-left ${mode === 'dark' ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'} cursor-pointer`}
                             onClick={() => handleSort('name')}
                         >
                             Name {sortBy === 'name' && (sortOrder === 'asc' ? '↑' : '↓')}
                         </th>
                         <th
-                            className="px-4 py-2 text-left bg-gray-100 text-gray-600 cursor-pointer"
+                            className={`px-4 py-2 text-left ${mode === 'dark' ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'} cursor-pointer`}
                             onClick={() => handleSort('transaction_id')}
                         >
                             Transaction ID {sortBy === 'transaction_id' && (sortOrder === 'asc' ? '↑' : '↓')}
                         </th>
                         <th
-                            className="px-4 py-2 text-left bg-gray-100 text-gray-600 cursor-pointer"
+                            className={`px-4 py-2 text-left ${mode === 'dark' ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'} cursor-pointer`}
                             onClick={() => handleSort('amount_deposited')}
                         >
                             Amount Deposited {sortBy === 'amount_deposited' && (sortOrder === 'asc' ? '↑' : '↓')}
                         </th>
                         <th
-                            className="px-4 py-2 text-left bg-gray-100 text-gray-600 cursor-pointer"
+                            className={`px-4 py-2 text-left ${mode === 'dark' ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'} cursor-pointer`}
                             onClick={() => handleSort('points')}
                         >
                             Points Allocated {sortBy === 'points' && (sortOrder === 'asc' ? '↑' : '↓')}
                         </th>
                         <th
-                            className="px-4 py-2 text-left bg-gray-100 text-gray-600 cursor-pointer"
+                            className={`px-4 py-2 text-left ${mode === 'dark' ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'} cursor-pointer`}
                             onClick={() => handleSort('redeemed')}
                         >
                             Redeemed {sortBy === 'redeemed' && (sortOrder === 'asc' ? '↑' : '↓')}
@@ -362,36 +364,36 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                                     <tr
                                         className={`${
                                             index % 2 === 0
-                                                ? 'bg-[#f4fbfb] hover:bg-[#cff0ed]'
-                                                : 'bg-white hover:bg-[#cff0ed]'
+                                                ? mode === 'dark' ? 'bg-gray-800 hover:bg-gray-700' : 'bg-[#f4fbfb] hover:bg-[#cff0ed]'
+                                                : mode === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-white hover:bg-[#cff0ed]'
                                         } py-3 transition-all duration-300 ease-in-out group relative cursor-pointer`}
                                         onClick={() => handleRowClick(customer.id)}
                                     >
-                                        <td className="px-4 py-3 text-gray-600 border-r flex items-center justify-between">
+                                        <td className={`px-4 py-3 text-gray-600 border-r flex items-center justify-between ${mode === 'dark' ? 'text-gray-200' : ''}`}>
                                             <span>{customer.name}</span>
                                             <span
                                                 className="ml-2 transform transition-transform duration-300 ease-in-out opacity-0 group-hover:opacity-100 group-hover:rotate-180"
                                                 style={{fontSize: '12px', color: '#999'}}
                                             >
-                                                    &#9660;
-                                                </span>
+                                            &#9660;
+                                        </span>
                                         </td>
-                                        <td className="px-4 py-3 text-gray-600 border-r">{customer.transaction_id}</td>
-                                        <td className="px-4 py-3 text-gray-600 border-r">
+                                        <td className={`px-4 py-3 text-gray-600 border-r ${mode === 'dark' ? 'text-gray-200' : ''}`}>{customer.transaction_id}</td>
+                                        <td className={`px-4 py-3 text-gray-600 border-r ${mode === 'dark' ? 'text-gray-200' : ''}`}>
                                             {formatNumberWithCommas(customer.amount_deposited)}
                                         </td>
-                                        <td className="px-4 py-3 text-gray-600 border-r">{customer.points}</td>
-                                        <td className="px-4 py-3 text-gray-600">
+                                        <td className={`px-4 py-3 text-gray-600 border-r ${mode === 'dark' ? 'text-gray-200' : ''}`}>{customer.points}</td>
+                                        <td className={`px-4 py-3 text-gray-600 ${mode === 'dark' ? 'text-gray-200' : ''}`}>
                                             {customer.redeemed ? (
                                                 <span
                                                     className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-md font-medium text-green-700 ring-1 ring-green-600/20 ring-inset">
-                                                        Yes
-                                                    </span>
+                                                Yes
+                                            </span>
                                             ) : (
                                                 <span
                                                     className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-md font-medium text-red-700 ring-1 ring-red-600/10 ring-inset">
-                                                        No
-                                                    </span>
+                                                No
+                                            </span>
                                             )}
                                         </td>
                                     </tr>
@@ -402,7 +404,8 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                                             <td colSpan="5" className="px-4 py-4 bg-gray-50">
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div>
-                                                        <label className="block text-gray-700">Name</label>
+                                                        <label
+                                                            className={`block ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Name</label>
                                                         <input
                                                             type="text"
                                                             value={editableFields.name || customer.name}
@@ -411,7 +414,9 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                                                         />
                                                     </div>
                                                     <div>
-                                                        <label className="block text-gray-700">Transaction ID</label>
+                                                        <label
+                                                            className={`block ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Transaction
+                                                            ID</label>
                                                         <input
                                                             type="text"
                                                             value={editableFields.transaction_id || customer.transaction_id}
@@ -462,9 +467,9 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                 >
                     Previous
                 </button>
-                <span className="text-gray-700">
-                    Page {page} of {totalPages}
-                </span>
+                <span className={mode === 'dark' ? 'text-gray-400' : 'text-gray-700'}>
+            Page {page} of {totalPages}
+        </span>
                 <button
                     className={`bg-[#FF930A] text-white py-2 px-4 rounded-md shadow-md hover:bg-[#F47C09] transition-all duration-200 ${
                         page >= totalPages ? 'opacity-50 cursor-not-allowed' : ''
@@ -476,6 +481,7 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                 </button>
             </div>
         </div>
+
     );
 };
 

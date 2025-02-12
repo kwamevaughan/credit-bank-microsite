@@ -187,8 +187,9 @@ const FileUploadWithPreview = ({ userId, mode, notify }) => {
 
 
     return (
-        <div className="rounded-xl shadow-lg hover:shadow-none transition-all duration-300 bg-white p-8">
-            <p className="flex gap-x-2 items-center text-base sm:text-lg mb-4 px-2">
+        <div
+            className={`rounded-xl shadow-lg hover:shadow-none transition-all duration-300 ${mode === 'dark' ? 'bg-neutral-800 text-gray-200' : 'bg-white text-gray-900'} p-8`}>
+            <p className={`flex flex-col md:flex-row gap-x-2 items-center text-center text-2xl md:text-lg mb-4 px-2 ${mode === 'dark' ? 'text-gray-300' : 'text-gray-800'}`}>
                 Upload from an Excel Sheet.
                 <Link href="/assets/misc/sample-data.xls" className="text-base text-[#0CB4AB] underline">
                     Download sample.
@@ -197,28 +198,30 @@ const FileUploadWithPreview = ({ userId, mode, notify }) => {
 
             <div
                 {...getRootProps()}
-                className="p-12 cursor-pointer flex justify-center border border-dashed border-gray-300 rounded-xl dark:bg-neutral-800 dark:border-neutral-600"
+                className={`p-12 cursor-pointer flex justify-center border border-dashed ${mode === 'dark' ? 'border-neutral-600 dark:bg-neutral-800' : 'border-gray-300 bg-white'} rounded-xl`}
             >
                 <div className="text-center">
-                    <span
-                        className="inline-flex justify-center items-center size-16 bg-gray-100 text-gray-800 rounded-full dark:bg-neutral-700 dark:text-neutral-200"
-                    >
-                        <CloudArrowUpIcon className="h-6 w-6 text-gray-500 dark:text-neutral-200"/>
-                    </span>
+            <span
+                className={`inline-flex justify-center items-center size-16 ${mode === 'dark' ? 'bg-neutral-700 text-neutral-200' : 'bg-gray-100 text-gray-800'} rounded-full`}
+            >
+                <CloudArrowUpIcon className={`h-6 w-6 ${mode === 'dark' ? 'text-neutral-200' : 'text-gray-500'}`}/>
+            </span>
 
-                    <div className="mt-4 flex flex-wrap justify-center text-sm leading-6 text-gray-600">
-                        <span className="pe-1 font-medium text-gray-800 dark:text-neutral-200">
-                            Drop your file here or
-                        </span>
+                    <div
+                        className={`mt-4 flex flex-wrap justify-center text-sm leading-6 ${mode === 'dark' ? 'text-neutral-200' : 'text-gray-600'}`}>
+                <span className={`pe-1 font-medium ${mode === 'dark' ? 'text-neutral-200' : 'text-gray-800'}`}>
+                    Drop your file here or
+                </span>
                         <span
                             onClick={() => document.getElementById('file-input').click()}
-                            className="bg-white font-semibold text-[#0CB4AB] hover:text-teal-700 rounded-lg decoration-2 hover:underline"
+                            className={`font-semibold rounded-lg decoration-2 hover:underline ${mode === 'dark' ? 'bg-neutral-800 text-[#0CB4AB] hover:text-teal-700' : 'bg-white text-[#0CB4AB] hover:text-teal-700'}`}
                         >
-                            browse
-                        </span>
+    browse
+</span>
+
                     </div>
 
-                    <p className="mt-1 text-xs text-gray-400 dark:text-neutral-400">
+                    <p className={`mt-1 text-xs ${mode === 'dark' ? 'text-neutral-400' : 'text-gray-400'}`}>
                         Pick an Excel file (CSV, XLS, XLSX).
                     </p>
                     {/* Hidden file input element */}
@@ -236,30 +239,30 @@ const FileUploadWithPreview = ({ userId, mode, notify }) => {
                 {files.map((file, index) => (
                     <div
                         key={index}
-                        className="p-3 bg-white border border-solid border-gray-300 rounded-xl dark:bg-neutral-800 dark:border-neutral-600"
+                        className={`p-3 ${mode === 'dark' ? 'bg-neutral-800 border-neutral-600' : 'bg-white border-gray-300'} border-solid rounded-xl`}
                     >
                         <div className="mb-1 flex justify-between items-center">
                             <div className="flex items-center gap-x-3">
-                                <span
-                                    className="size-10 flex justify-center items-center border border-gray-200 text-gray-500 rounded-lg dark:border-neutral-700 dark:text-neutral-500"
-                                >
-                                    <DocumentTextIcon
-                                        className="h-8 w-8 text-gray-500 dark:text-neutral-500"
-                                    />
-                                </span>
+                        <span
+                            className={`size-10 flex justify-center items-center border ${mode === 'dark' ? 'border-neutral-700 text-neutral-500' : 'border-gray-200 text-gray-500'} rounded-lg`}
+                        >
+                            <DocumentTextIcon
+                                className={`h-8 w-8 ${mode === 'dark' ? 'text-neutral-500' : 'text-gray-500'}`}
+                            />
+                        </span>
                                 <div>
-                                    <p className="text-sm font-medium text-gray-800 dark:text-white">
-                                        <span
-                                            className="truncate inline-block max-w-[300px] align-bottom">{file.name}</span>
+                                    <p className={`text-sm font-medium ${mode === 'dark' ? 'text-white' : 'text-gray-800'}`}>
+                                <span
+                                    className="truncate inline-block max-w-[300px] align-bottom">{file.name}</span>
                                     </p>
-                                    <p className="text-xs text-gray-500 dark:text-neutral-500">{file.size} bytes</p>
+                                    <p className={`text-xs ${mode === 'dark' ? 'text-neutral-500' : 'text-gray-500'}`}>{file.size} bytes</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-x-2">
                                 <button
                                     type="button"
                                     onClick={() => removeFile(file)}
-                                    className="text-gray-500 hover:text-gray-800 dark:text-neutral-500 dark:hover:text-neutral-200"
+                                    className={`text-gray-500 hover:text-gray-800 ${mode === 'dark' ? 'dark:text-neutral-500 dark:hover:text-neutral-200' : ''}`}
                                 >
                                     <TrashIcon className="h-4 w-4"/>
                                 </button>
@@ -268,7 +271,7 @@ const FileUploadWithPreview = ({ userId, mode, notify }) => {
 
                         <div className="flex items-center gap-x-3 whitespace-nowrap">
                             <div
-                                className="flex w-full h-2 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700"
+                                className={`flex w-full h-2 rounded-full overflow-hidden ${mode === 'dark' ? 'bg-neutral-700' : 'bg-gray-200'}`}
                             >
                                 <div
                                     className="flex flex-col justify-center rounded-full overflow-hidden bg-[#FF930A] text-xs text-white text-center whitespace-nowrap transition-all duration-500 hs-file-upload-complete:bg-green-500"
@@ -276,9 +279,9 @@ const FileUploadWithPreview = ({ userId, mode, notify }) => {
                                 />
                             </div>
                             <div className="w-10 text-end">
-                                <span className="text-sm text-gray-800 dark:text-white">
-                                    {progress}%
-                                </span>
+                        <span className={`text-sm ${mode === 'dark' ? 'text-white' : 'text-gray-800'}`}>
+                            {progress}%
+                        </span>
                             </div>
                         </div>
                     </div>
@@ -295,6 +298,7 @@ const FileUploadWithPreview = ({ userId, mode, notify }) => {
                 </button>
             </div>
         </div>
+
     );
 };
 

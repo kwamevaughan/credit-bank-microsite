@@ -185,18 +185,19 @@ const TransactionIDUpdater = ({ userId, mode, toggleMode, notify }) => {
 
     return (
         <div
-            className="flex rounded-xl shadow-lg hover:shadow-none transition-all duration-300 overflow-hidden w-full bg-white rounded-lg">
+            className={`flex rounded-xl shadow-lg hover:shadow-none transition-all duration-300 overflow-hidden w-full rounded-lg ${mode === 'dark' ? 'bg-gray-800 text-gray-200' : 'bg-white text-gray-900'}`}
+        >
+
             <div className="w-full p-8 px-10">
                 <form onSubmit={handleSubmit}>
-                    <label className="text-gray-700 text-base sm:text-lg font-bold mb-2">
+                    <label
+                        className={`text-2xl md:text-lg text-center font-bold mb-2 ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                         Choose Upload Type
                     </label>
                     <div className="flex mt-4 w-full space-x-4">
                         {/* Single Upload Container */}
                         <div
-                            className={`flex items-center ps-4 border rounded-lg w-full ${
-                                selectedUpload === "single" ? "bg-[#0CB4AB] text-white" : ""
-                            }`}
+                            className={`flex items-center ps-4 border rounded-lg w-full ${selectedUpload === "single" ? "bg-[#0CB4AB] text-white" : ""} ${mode === 'dark' ? 'bg-gray-700 border-gray-600' : ''}`}
                         >
                             <input
                                 id="single-upload"
@@ -209,18 +210,14 @@ const TransactionIDUpdater = ({ userId, mode, toggleMode, notify }) => {
                             />
                             <label
                                 htmlFor="single-upload"
-                                className={`flex-grow py-2 ms-2 text-sm font-medium ${
-                                    selectedUpload === "single" ? "text-white" : "text-gray-900"
-                                } dark:text-gray-300`}
+                                className={`flex-grow py-2 ms-2 text-sm font-medium ${selectedUpload === "single" ? "text-white" : "text-gray-900"} ${mode === 'dark' ? 'text-gray-300' : ''}`}
                             >
                                 Single Upload
                             </label>
                         </div>
                         {/* Bulk Upload Container */}
                         <div
-                            className={`flex items-center ps-4 border rounded-lg w-full ${
-                                selectedUpload === "bulk" ? "bg-[#0CB4AB] text-white" : ""
-                            }`}
+                            className={`flex items-center ps-4 border rounded-lg w-full ${selectedUpload === "bulk" ? "bg-[#0CB4AB] text-white" : ""} ${mode === 'dark' ? 'bg-gray-700 border-gray-600' : ''}`}
                         >
                             <input
                                 id="bulk-upload"
@@ -233,9 +230,7 @@ const TransactionIDUpdater = ({ userId, mode, toggleMode, notify }) => {
                             />
                             <label
                                 htmlFor="bulk-upload"
-                                className={`flex-grow py-2 ms-2 text-sm font-medium ${
-                                    selectedUpload === "bulk" ? "text-white" : "text-gray-900"
-                                } dark:text-gray-300`}
+                                className={`flex-grow py-2 ms-2 text-sm font-medium ${selectedUpload === "bulk" ? "text-white" : "text-gray-900"} ${mode === 'dark' ? 'text-gray-300' : ''}`}
                             >
                                 Bulk Upload
                             </label>
@@ -245,11 +240,14 @@ const TransactionIDUpdater = ({ userId, mode, toggleMode, notify }) => {
                     {/* Show Name Field only if Single Upload is selected */}
                     {selectedUpload === "single" && (
                         <div className="mt-4">
-                            <label className="text-gray-700 text-sm font-bold mb-2">Name (Optional)</label>
+                            <label
+                                className={`text-sm font-bold mb-2 ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Name
+                                (Optional)</label>
                             <div
-                                className="flex items-center border border-[#FF930A] rounded focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out">
+                                className="flex items-center border border-[#FF930A] rounded focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out"
+                            >
                                 <input
-                                    className="bg-transparent text-gray-700 py-2 px-4 block w-full rounded"
+                                    className={`bg-transparent ${mode === 'dark' ? 'text-gray-200' : 'text-gray-700'} py-2 px-4 block w-full rounded`}
                                     type="text"
                                     placeholder="Enter customer name"
                                     value={name}
@@ -262,10 +260,12 @@ const TransactionIDUpdater = ({ userId, mode, toggleMode, notify }) => {
                     {/* Show Transaction ID Field only if Single Upload is selected */}
                     {selectedUpload === "single" && (
                         <div className="mt-4">
-                            <label className="text-gray-700 text-sm font-bold mb-2">Transaction ID</label>
+                            <label
+                                className={`text-sm font-bold mb-2 ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Transaction
+                                ID</label>
                             <div className="relative">
                                 <input
-                                    className="bg-transparent text-gray-700 border border-[#FF930A] rounded py-2 px-4 block w-full focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out"
+                                    className={`bg-transparent ${mode === 'dark' ? 'text-gray-200' : 'text-gray-700'} border border-[#FF930A] rounded py-2 px-4 block w-full focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out`}
                                     placeholder="Enter transaction ID"
                                     required
                                     value={transactionId}
@@ -278,12 +278,14 @@ const TransactionIDUpdater = ({ userId, mode, toggleMode, notify }) => {
                     {/* Show Deposit Amount Field only if Single Upload is selected */}
                     {selectedUpload === "single" && (
                         <div className="mt-4">
-                            <label className="text-gray-700 text-sm font-bold mb-2">Amount Deposited</label>
+                            <label
+                                className={`text-sm font-bold mb-2 ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Amount
+                                Deposited</label>
                             <div className="relative">
                                 <span
-                                    className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-700 text-sm">KES</span>
+                                    className={`absolute left-4 top-1/2 transform -translate-y-1/2 ${mode === 'dark' ? 'text-gray-200' : 'text-gray-700'} text-sm`}>KES</span>
                                 <input
-                                    className="bg-transparent text-gray-700 border border-[#FF930A] rounded py-2 pl-16 pr-4 block w-full focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out"
+                                    className={`bg-transparent ${mode === 'dark' ? 'text-gray-200' : 'text-gray-700'} border border-[#FF930A] rounded py-2 pl-16 pr-4 block w-full focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out`}
                                     placeholder="Enter Amount deposited"
                                     required
                                     value={amountDeposited}
@@ -292,32 +294,31 @@ const TransactionIDUpdater = ({ userId, mode, toggleMode, notify }) => {
                                 />
                             </div>
                         </div>
-
                     )}
 
                     {/* Show Textarea only if Bulk Upload is selected */}
                     {selectedUpload === "bulk" && (
                         <div className="flex flex-col mt-4">
-                            <label className="text-gray-700 text-sm font-bold mb-2">
-                                Paste Name and Transaction IDs (one per line).<br />
+                            <label
+                                className={`text-sm font-bold mb-2 ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                                Paste Name and Transaction IDs (one per line).<br/>
                                 See sample below:
                             </label>
                             <textarea
-                                className="bg-transparent text-gray-700 border border-[#FF930A] rounded py-2 px-4 block w-full focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out"
+                                className={`bg-transparent ${mode === 'dark' ? 'text-gray-200' : 'text-gray-700'} border border-[#FF930A] rounded py-2 px-4 block w-full focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out`}
                                 placeholder={`John Doe, R1234567890ABC, 15000\nJane Doe, R9876543210DEF, 25000\n\nR5389201847XYZ, 45000\nR7493028461LMN, 35000`}
                                 rows="6"
                                 required
                                 value={bulkData}
                                 onChange={(e) => setBulkData(e.target.value)}
                             />
-
                         </div>
                     )}
 
                     <div className="mt-8">
                         <button
                             type="submit"
-                            className="bg-[#0CB4AB] text-white font-bold py-4 px-4 w-full rounded-lg transform transition-transform duration-700 ease-in-out hover:scale-105"
+                            className={`bg-[#0CB4AB] text-white font-bold py-4 px-4 w-full rounded-lg transform transition-transform duration-700 ease-in-out hover:scale-105`}
                         >
                             Submit
                         </button>
@@ -325,6 +326,7 @@ const TransactionIDUpdater = ({ userId, mode, toggleMode, notify }) => {
                 </form>
             </div>
         </div>
+
     );
 };
 
