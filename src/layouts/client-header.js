@@ -62,7 +62,7 @@ const ClientHeader = ({ userId, mode, toggleMode, toggleFullScreen, onLogout }) 
         >
             <div className="flex flex-col md:flex-row items-center justify-between">
                 <div className="flex items-center space-x-4">
-                    <div className="hidden md:flex items-center">
+                    <div className="md:flex items-center">
                         <Link href="/">
                             <Image
                                 src="/assets/images/logo.svg"
