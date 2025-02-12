@@ -312,34 +312,28 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                 <table className="min-w-full table-auto border-separate border-spacing-y-4 rounded-md">
                     <thead>
                     <tr>
-                        <th
-                            className={`px-4 py-2 text-left ${mode === 'dark' ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'} cursor-pointer`}
-                            onClick={() => handleSort('name')}
-                        >
+                        <th className={`px-4 py-2 text-left ${mode === 'dark' ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'} cursor-pointer`}
+                            onClick={() => handleSort('name')}>
                             Name {sortBy === 'name' && (sortOrder === 'asc' ? '↑' : '↓')}
                         </th>
-                        <th
-                            className={`px-4 py-2 text-left ${mode === 'dark' ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'} cursor-pointer`}
-                            onClick={() => handleSort('transaction_id')}
-                        >
+                        <th className={`px-4 py-2 text-left ${mode === 'dark' ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'} cursor-pointer`}
+                            onClick={() => handleSort('transaction_id')}>
                             Transaction ID {sortBy === 'transaction_id' && (sortOrder === 'asc' ? '↑' : '↓')}
                         </th>
-                        <th
-                            className={`px-4 py-2 text-left ${mode === 'dark' ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'} cursor-pointer`}
-                            onClick={() => handleSort('amount_deposited')}
-                        >
+                        <th className={`px-4 py-2 text-left ${mode === 'dark' ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'} cursor-pointer`}
+                            onClick={() => handleSort('amount_deposited')}>
                             Amount Deposited {sortBy === 'amount_deposited' && (sortOrder === 'asc' ? '↑' : '↓')}
                         </th>
-                        <th
-                            className={`px-4 py-2 text-left ${mode === 'dark' ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'} cursor-pointer`}
-                            onClick={() => handleSort('points')}
-                        >
+                        <th className={`px-4 py-2 text-left ${mode === 'dark' ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'} cursor-pointer`}
+                            onClick={() => handleSort('status')}>
+                            Status
+                        </th>
+                        <th className={`px-4 py-2 text-left ${mode === 'dark' ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'} cursor-pointer`}
+                            onClick={() => handleSort('points')}>
                             Points Allocated {sortBy === 'points' && (sortOrder === 'asc' ? '↑' : '↓')}
                         </th>
-                        <th
-                            className={`px-4 py-2 text-left ${mode === 'dark' ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'} cursor-pointer`}
-                            onClick={() => handleSort('redeemed')}
-                        >
+                        <th className={`px-4 py-2 text-left ${mode === 'dark' ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'} cursor-pointer`}
+                            onClick={() => handleSort('redeemed')}>
                             Redeemed {sortBy === 'redeemed' && (sortOrder === 'asc' ? '↑' : '↓')}
                         </th>
                     </tr>
@@ -375,25 +369,49 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                                                 className="ml-2 transform transition-transform duration-300 ease-in-out opacity-0 group-hover:opacity-100 group-hover:rotate-180"
                                                 style={{fontSize: '12px', color: '#999'}}
                                             >
-                                            &#9660;
-                                        </span>
+                                    &#9660;
+                                </span>
                                         </td>
                                         <td className={`px-4 py-3 text-gray-600 border-r ${mode === 'dark' ? 'text-white' : ''}`}>{customer.transaction_id}</td>
                                         <td className={`px-4 py-3 text-gray-600 border-r ${mode === 'dark' ? 'text-white' : ''}`}>
                                             {formatNumberWithCommas(customer.amount_deposited)}
+                                        </td>
+                                        {/* New Status column */}
+                                        <td className="px-4 py-3 text-gray-600 border-r">
+                                            <label className="inline-flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={customer.status === 'Approved'}
+                                                    onChange={() => toggleStatus(customer.id)}
+                                                    className="sr-only peer"
+                                                />
+                                                <div
+                                                    className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all duration-300 ease-in-out dark:border-gray-600 peer-checked:bg-[#0CB4AB] dark:peer-checked:bg-blue-600"
+                                                />
+                                                <span
+                                                    className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                        {customer.status === 'Pending' ? 'Pending' : 'Approved'}
+                                    </span>
+                                            </label>
+                                            {formattedDate && (
+                                                <div
+                                                    className="absolute bottom-10 right-0 bg-black text-white text-sm py-2 px-2 rounded-md opacity-0 group-hover:opacity-50 transition-opacity duration-200 max-w-xs shadow-md">
+                                                    Approved on {formattedDate}
+                                                </div>
+                                            )}
                                         </td>
                                         <td className={`px-4 py-3 text-gray-600 border-r ${mode === 'dark' ? 'text-white' : ''}`}>{customer.points}</td>
                                         <td className={`px-4 py-3 text-gray-600 ${mode === 'dark' ? 'text-white' : ''}`}>
                                             {customer.redeemed ? (
                                                 <span
                                                     className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-md font-medium text-green-700 ring-1 ring-green-600/20 ring-inset">
-                                                Yes
-                                            </span>
+                                        Yes
+                                    </span>
                                             ) : (
                                                 <span
                                                     className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-md font-medium text-red-700 ring-1 ring-red-600/10 ring-inset">
-                                                No
-                                            </span>
+                                        No
+                                    </span>
                                             )}
                                         </td>
                                     </tr>
@@ -401,13 +419,12 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                                     {/* Expanded Row with Editable Fields */}
                                     {expandedRow === customer.id && (
                                         <tr>
-                                            <td colSpan="5"
+                                            <td colSpan="6"
                                                 className={`px-4 py-4 ${mode === 'dark' ? 'bg-gray-700 text-gray-200' : 'bg-gray-50 text-gray-900'}`}>
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div>
                                                         <label
-                                                            className={`block ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
-                                                        >
+                                                            className={`block ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                                                             Name
                                                         </label>
                                                         <input
@@ -419,8 +436,7 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                                                     </div>
                                                     <div>
                                                         <label
-                                                            className={`block ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
-                                                        >
+                                                            className={`block ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                                                             Transaction ID
                                                         </label>
                                                         <input
@@ -452,7 +468,6 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                                                         Delete
                                                     </button>
                                                 </div>
-
                                             </td>
                                         </tr>
                                     )}
@@ -461,13 +476,14 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                         })
                     ) : (
                         <tr>
-                            <td colSpan="5" className="px-4 py-2 text-center text-gray-500">
+                            <td colSpan="6" className="px-4 py-2 text-center text-gray-500">
                                 No records found.
                             </td>
                         </tr>
                     )}
                     </tbody>
                 </table>
+
             </div>
 
             {/* Pagination */}
