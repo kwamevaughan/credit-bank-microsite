@@ -59,7 +59,7 @@ const VerificationModal = ({ isOpen, onClose, mode, notify }) => {
             if (transactionError.code === 'PGRST116') {
                 // No results found (transaction not in the database)
                 setFeedbackMessage(
-                    <span>Hello {name}, unfortunately, we couldn't match the transaction ID "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" with our records. Kindly double-check and try again.
+                    <span>Hello <span className="capitalize">{name}</span>, unfortunately, we couldn't match the transaction ID "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" with our records. Kindly double-check and try again.
                     </span>
                 );
             } else {
@@ -74,7 +74,7 @@ const VerificationModal = ({ isOpen, onClose, mode, notify }) => {
         if (!transactionData) {
             // Fallback for when no transaction data is returned (this should not be necessary after handling the PGRST116 error)
             setFeedbackMessage(
-                <span>Hello {name}, unfortunately, we couldn't match the transaction ID "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" with our records. Kindly double-check and try again.
+                <span>Hello <span className="capitalize">{name}</span>, unfortunately, we couldn't match the transaction ID "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" with our records. Kindly double-check and try again.
                 </span>
             );
             setLoading(false);
@@ -85,7 +85,7 @@ const VerificationModal = ({ isOpen, onClose, mode, notify }) => {
         if (transactionData.redeemed) {
             setFeedbackMessage(
                 <span>
-            Hello {name}, the transaction ID "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" you entered has already been redeemed for points. Please review the details and try again if necessary.
+            Hello <span className="capitalize">{name}</span>, the transaction ID "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" you entered has already been redeemed for points. Please review the details and try again if necessary.
         </span>
             );
             setLoading(false);
@@ -168,7 +168,7 @@ const VerificationModal = ({ isOpen, onClose, mode, notify }) => {
             }
 
             setFeedbackMessage(
-                <span>Hello {name}, thank you for submitting the transaction ID! "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" The transaction ID has been verified, and 200 points have been added to your account. Good luck!
+                <span>Hello <span className="capitalize">{name}</span>, thank you for submitting the transaction ID! "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" The transaction ID has been verified, and 200 points have been added to your account. Good luck!
                 </span>
             );
 
@@ -179,7 +179,7 @@ const VerificationModal = ({ isOpen, onClose, mode, notify }) => {
             setTransactionId('');  // Reset the transaction ID input
         } else if (transactionData.status === 'Pending') {
             setFeedbackMessage(
-                <span>Hello {name}, Thanks for submitting the transaction ID "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" for verification. The transaction is pending approval. Kindly check back in an hour. Once verified, 200 points will be added to your existing points. Good luck!
+                <span>Hello <span className="capitalize">{name}</span>, Thanks for submitting the transaction ID "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" for verification. The transaction is pending approval. Kindly check back in an hour. Once verified, 200 points will be added to your existing points. Good luck!
                 </span>
             );
         }
