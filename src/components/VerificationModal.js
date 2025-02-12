@@ -168,7 +168,7 @@ const VerificationModal = ({ isOpen, onClose, mode, notify }) => {
             }
 
             setFeedbackMessage(
-                <span>Hello ${name}, thank you for submitting the transaction ID! "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" The transaction ID has been verified, and 200 points have been added to your account. Good luck!
+                <span>Hello {name}, thank you for submitting the transaction ID! "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" The transaction ID has been verified, and 200 points have been added to your account. Good luck!
                 </span>
             );
 
@@ -179,7 +179,7 @@ const VerificationModal = ({ isOpen, onClose, mode, notify }) => {
             setTransactionId('');  // Reset the transaction ID input
         } else if (transactionData.status === 'Pending') {
             setFeedbackMessage(
-                <span>Hello, Thanks for submitting the transaction ID "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" for verification. The transaction is pending approval. Kindly check back in an hour. Once verified, 200 points will be added to your existing points. Good luck!
+                <span>Hello {name}, Thanks for submitting the transaction ID "<span style={{ fontWeight: 'bold', color: '#0eb4ab' }}>{transactionId}</span>" for verification. The transaction is pending approval. Kindly check back in an hour. Once verified, 200 points will be added to your existing points. Good luck!
                 </span>
             );
         }
