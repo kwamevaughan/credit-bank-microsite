@@ -1,5 +1,3 @@
-// pages/_document.js
-
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 
 class MyDocument extends Document {
@@ -18,6 +16,18 @@ class MyDocument extends Document {
                     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
                     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
                     <title>Credit Bank Diaspora Campaign</title>
+                    {/* Google Analytics Script */}
+                    <script async src="https://www.googletagmanager.com/gtag/js?id=G-54291TSTMQ"></script>
+                    <script
+                        dangerouslySetInnerHTML={{
+                            __html: `
+                                window.dataLayer = window.dataLayer || [];
+                                function gtag(){dataLayer.push(arguments);}
+                                gtag('js', new Date());
+                                gtag('config', 'G-54291TSTMQ');
+                            `,
+                        }}
+                    />
                 </Head>
                 <body>
                 <Main />
