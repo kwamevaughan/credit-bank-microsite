@@ -369,7 +369,7 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                                         } py-3 transition-all duration-300 ease-in-out group relative cursor-pointer`}
                                         onClick={() => handleRowClick(customer.id)}
                                     >
-                                        <td className={`px-4 py-3 text-gray-600 border-r flex items-center justify-between ${mode === 'dark' ? 'text-gray-200' : ''}`}>
+                                        <td className={`px-4 py-3 border-r flex items-center justify-between ${mode === 'dark' ? 'text-gray-200' : 'text-gray-600'}`}>
                                             <span>{customer.name}</span>
                                             <span
                                                 className="ml-2 transform transition-transform duration-300 ease-in-out opacity-0 group-hover:opacity-100 group-hover:rotate-180"
