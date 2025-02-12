@@ -318,7 +318,7 @@ const TransactionIDUpdater = ({ userId, mode, toggleMode, notify }) => {
                     <div className="mt-8">
                         <button
                             type="submit"
-                            className={`bg-[#0CB4AB] text-white font-bold py-4 px-4 w-full rounded-lg transform transition-transform duration-700 ease-in-out hover:scale-105`}
+                            className={`bg-[#0CB4AB] text-white font-bold py-4 px-4 w-full rounded-lg transform transition-transform duration-700 ease-in-out hover:scale-95`}
                         >
                             Submit
                         </button>
