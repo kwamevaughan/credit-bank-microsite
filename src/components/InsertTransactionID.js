@@ -104,7 +104,7 @@ const TransactionIDUpdater = ({ userId, mode, toggleMode, notify }) => {
             if (error) {
                 toast.error("Failed to submit transaction: " + error.message);
             } else {
-                toast.success("Transaction successfully submitted!");
+                toast.success("Transaction details successfully added!");
                 // Clear the form fields after submission
                 setName("");
                 setTransactionId("");
