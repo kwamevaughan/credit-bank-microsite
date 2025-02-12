@@ -8,17 +8,50 @@ import { useRouter } from 'next/router';
 const TransactionIDUpdater = ({ userId, mode, toggleMode, notify }) => {
     const [name, setName] = useState("");
     const [transactionId, setTransactionId] = useState("");
+    const [amountDeposited, setAmountDeposited] = useState("");
     const [bulkData, setBulkData] = useState("");
-
     const [selectedUpload, setSelectedUpload] = useState("single");
 
     const handleRadioChange = (value) => {
         setSelectedUpload(value);
     };
 
+    // Handle keypress to allow only numbers (no decimals)
+    const handleKeyPress = (e) => {
+        let charCode = e.which ? e.which : e.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            e.preventDefault();
+        }
+    };
+
+    // Format input with commas after every 3 digits
+    const formatAmount = (value) => {
+        value = value.replace(/,/g, ""); // Remove existing commas
+        if (value.length > 3) {
+            let noCommas = Math.ceil(value.length / 3) - 1;
+            let remain = value.length - (noCommas * 3);
+            let newVal = [];
+            for (let i = 0; i < noCommas; i++) {
+                newVal.unshift(value.substr(value.length - (i * 3) - 3, 3));
+            }
+            newVal.unshift(value.substr(0, remain));
+            return newVal.join(",");
+        }
+        return value;
+    };
+
+    // Handle input change
+    const handleChange = (e) => {
+        let value = e.target.value;
+        value = formatAmount(value);
+        setAmountDeposited(value);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Remove commas from the amountDeposited before submission
+        const cleanedAmount = amountDeposited.replace(/,/g, ""); // Remove commas
 
         // Set the default name to "Customer" if not provided
         const finalName = name || "Customer"; // Use "Customer" if name is empty
@@ -28,12 +61,14 @@ const TransactionIDUpdater = ({ userId, mode, toggleMode, notify }) => {
             ? {
                 name: finalName, // Set name to finalName, which is either provided or "Customer"
                 transaction_id: transactionId,
+                amount_deposited: cleanedAmount,
                 points: 0, // Default points are 0 when the transaction is pending
                 status: 'Pending', // Default status is "Pending"
             }
             : {
                 name: finalName, // Same for bulk
                 transaction_id: bulkData, // Bulk transaction data will need parsing later
+                amount_deposited: cleanedAmount,
                 points: 0, // Default points are 0 for bulk records
                 status: 'Pending', // Default status for bulk transactions is "Pending"
             };
@@ -73,6 +108,7 @@ const TransactionIDUpdater = ({ userId, mode, toggleMode, notify }) => {
                 // Clear the form fields after submission
                 setName("");
                 setTransactionId("");
+                setAmountDeposited("");
             }
         }
 
@@ -94,11 +130,14 @@ const TransactionIDUpdater = ({ userId, mode, toggleMode, notify }) => {
                 // If the line doesn't have a comma, treat the whole line as a transaction ID
                 let bulkName = "Customer"; // Default name if no name is provided
                 let bulkTransactionId = trimmedLine; // Treat the whole line as transaction ID
+                let bulkAmountDeposited = 0; // Default amount is 0 if not provided
 
                 if (parts.length === 2) {
                     // If the line has a comma, we assume it's in the format of "name, transaction ID"
                     bulkName = parts[0]?.trim() || "Customer"; // Use name if available, else default to "Customer"
                     bulkTransactionId = parts[1]?.trim();
+                    bulkAmountDeposited = parts[2]?.trim() || 0; // Use amount if available, else default to 0
+
                 }
 
                 // If the transaction ID is missing, skip this line
@@ -116,6 +155,7 @@ const TransactionIDUpdater = ({ userId, mode, toggleMode, notify }) => {
                 return {
                     name: bulkName, // Set the name (default to "Customer" if empty)
                     transaction_id: bulkTransactionId,
+                    amount_deposited: amountDeposited,
                     points: 0, // Default points for bulk
                     status: 'Pending', // Default status for bulk transactions
                 };
@@ -140,11 +180,7 @@ const TransactionIDUpdater = ({ userId, mode, toggleMode, notify }) => {
                 toast.error("No valid transactions to submit.");
             }
         }
-
-
     };
-
-
 
 
     return (
@@ -239,15 +275,36 @@ const TransactionIDUpdater = ({ userId, mode, toggleMode, notify }) => {
                         </div>
                     )}
 
+                    {/* Show Deposit Amount Field only if Single Upload is selected */}
+                    {selectedUpload === "single" && (
+                        <div className="mt-4">
+                            <label className="text-gray-700 text-sm font-bold mb-2">Amount Deposited</label>
+                            <div className="relative">
+                                <span
+                                    className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-700 text-sm">KES</span>
+                                <input
+                                    className="bg-transparent text-gray-700 border border-[#FF930A] rounded py-2 pl-16 pr-4 block w-full focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out"
+                                    placeholder="Enter Amount deposited"
+                                    required
+                                    value={amountDeposited}
+                                    onChange={handleChange}
+                                    onKeyPress={handleKeyPress}
+                                />
+                            </div>
+                        </div>
+
+                    )}
+
                     {/* Show Textarea only if Bulk Upload is selected */}
                     {selectedUpload === "bulk" && (
-                        <div className="mt-4">
+                        <div className="flex flex-col mt-4">
                             <label className="text-gray-700 text-sm font-bold mb-2">
-                                Paste Name and Transaction IDs (one per line). See sample below:
+                                Paste Name and Transaction IDs (one per line).<br />
+                                See sample below:
                             </label>
                             <textarea
                                 className="bg-transparent text-gray-700 border border-[#FF930A] rounded py-2 px-4 block w-full focus:outline-none focus:border-fuchsia-900 hover:border-fuchsia-900 transition-all duration-700 ease-in-out"
-                                placeholder={`John Doe, R1234567890ABC\nJane Doe, R9876543210DEF\n\nR5389201847XYZ\nR7493028461LMN`}
+                                placeholder={`John Doe, R1234567890ABC, 15000\nJane Doe, R9876543210DEF, 25000\n\nR5389201847XYZ, 45000\nR7493028461LMN, 35000`}
                                 rows="6"
                                 required
                                 value={bulkData}

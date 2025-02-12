@@ -14,7 +14,6 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
     const [expandedRow, setExpandedRow] = useState(null); // Track expanded row
     const [editableFields, setEditableFields] = useState({ name: '', transaction_id: '' }); // Store editable fields data
 
-
     // Fetch data from Supabase
     useEffect(() => {
         const fetchData = async () => {
@@ -97,18 +96,18 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                 return sortOrder === 'asc'
                     ? a.transaction_id.localeCompare(b.transaction_id)
                     : b.transaction_id.localeCompare(a.transaction_id);
+            } else if (sortBy === 'amount_deposited') {
+                return sortOrder === 'asc'
+                    ? a.amount_deposited - b.amount_deposited
+                    : b.amount_deposited - a.amount_deposited;
             } else if (sortBy === 'points') {
                 return sortOrder === 'asc'
                     ? a.points - b.points
                     : b.points - a.points;
-            } else if (sortBy === 'status') {
-                return sortOrder === 'asc'
-                    ? a.status.localeCompare(b.status)
-                    : b.status.localeCompare(a.status);
             } else if (sortBy === 'redeemed') {
                 return sortOrder === 'asc'
-                    ? (a.redeemed === b.redeemed) ? 0 : a.redeemed ? 1 : -1 // Not Redeemed first
-                    : (a.redeemed === b.redeemed) ? 0 : a.redeemed ? -1 : 1; // Redeemed first
+                    ? (a.redeemed === b.redeemed) ? 0 : a.redeemed ? 1 : -1
+                    : (a.redeemed === b.redeemed) ? 0 : a.redeemed ? -1 : 1;
             }
             return 0;
         });
@@ -229,12 +228,9 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
         }
     };
 
-
     const handleCancel = () => {
         setExpandedRow(null); // Collapse the row without saving
     };
-
-
 
     const handleDelete = async (id) => {
         // Find the customer by ID to check if they're approved
@@ -263,6 +259,10 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
         }
     };
 
+    const formatNumberWithCommas = (num) => {
+        if (num == null) return ''; // Handle null, undefined values
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    };
 
 
     return (
@@ -324,9 +324,9 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                         </th>
                         <th
                             className="px-4 py-2 text-left bg-gray-100 text-gray-600 cursor-pointer"
-                            onClick={() => handleSort('status')}
+                            onClick={() => handleSort('amount_deposited')}
                         >
-                            Status {sortBy === 'status' && (sortOrder === 'asc' ? '↑' : '↓')}
+                            Amount Deposited {sortBy === 'amount_deposited' && (sortOrder === 'asc' ? '↑' : '↓')}
                         </th>
                         <th
                             className="px-4 py-2 text-left bg-gray-100 text-gray-600 cursor-pointer"
@@ -345,7 +345,6 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                     <tbody>
                     {currentPageData.length > 0 ? (
                         currentPageData.map((customer, index) => {
-                            // Format the approved_at timestamp
                             const formattedDate = customer.approved_at
                                 ? new Date(customer.approved_at).toLocaleString('en-US', {
                                     weekday: 'short',
@@ -361,61 +360,38 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                             return (
                                 <React.Fragment key={customer.id}>
                                     <tr
-                                        key={customer.id}
                                         className={`${
                                             index % 2 === 0
                                                 ? 'bg-[#f4fbfb] hover:bg-[#cff0ed]'
                                                 : 'bg-white hover:bg-[#cff0ed]'
                                         } py-3 transition-all duration-300 ease-in-out group relative cursor-pointer`}
-                                        // Changed to cursor-pointer
-                                        onClick={() => handleRowClick(customer.id)} // Handle click for dropdown
+                                        onClick={() => handleRowClick(customer.id)}
                                     >
                                         <td className="px-4 py-3 text-gray-600 border-r flex items-center justify-between">
                                             <span>{customer.name}</span>
-                                            {/* Down Arrow for indicating clickability */}
                                             <span
                                                 className="ml-2 transform transition-transform duration-300 ease-in-out opacity-0 group-hover:opacity-100 group-hover:rotate-180"
                                                 style={{fontSize: '12px', color: '#999'}}
                                             >
-                                &#9660; {/* Downward triangle arrow */}
-                            </span>
+                                                    &#9660;
+                                                </span>
                                         </td>
                                         <td className="px-4 py-3 text-gray-600 border-r">{customer.transaction_id}</td>
                                         <td className="px-4 py-3 text-gray-600 border-r">
-                                            <label className="inline-flex items-center cursor-pointer">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={customer.status === 'Approved'}
-                                                    onChange={() => toggleStatus(customer.id)}
-                                                    className="sr-only peer"
-                                                />
-                                                <div
-                                                    className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all duration-300 ease-in-out dark:border-gray-600 peer-checked:bg-[#0CB4AB] dark:peer-checked:bg-blue-600"
-                                                />
-                                                <span
-                                                    className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                    {customer.status === 'Pending' ? 'Pending' : 'Approved'}
-                                </span>
-                                            </label>
-                                            {formattedDate && (
-                                                <div
-                                                    className="absolute bottom-10 right-0 bg-black text-white text-sm py-2 px-2 rounded-md opacity-0 group-hover:opacity-50 transition-opacity duration-200 max-w-xs shadow-md">
-                                                    Approved on {formattedDate}
-                                                </div>
-                                            )}
+                                            {formatNumberWithCommas(customer.amount_deposited)}
                                         </td>
                                         <td className="px-4 py-3 text-gray-600 border-r">{customer.points}</td>
                                         <td className="px-4 py-3 text-gray-600">
                                             {customer.redeemed ? (
                                                 <span
                                                     className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-md font-medium text-green-700 ring-1 ring-green-600/20 ring-inset">
-                                    Yes
-                                </span>
+                                                        Yes
+                                                    </span>
                                             ) : (
                                                 <span
                                                     className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-md font-medium text-red-700 ring-1 ring-red-600/10 ring-inset">
-                                    No
-                                </span>
+                                                        No
+                                                    </span>
                                             )}
                                         </td>
                                     </tr>
@@ -445,22 +421,16 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                                                     </div>
                                                 </div>
                                                 <div className="flex justify-end gap-4 mt-4">
-                                                    <button
-                                                        onClick={handleCancel}
-                                                        className="px-4 py-2 text-white bg-gray-400 rounded-md"
-                                                    >
+                                                    <button onClick={handleCancel}
+                                                            className="px-4 py-2 text-white bg-gray-400 rounded-md">
                                                         Cancel
                                                     </button>
-                                                    <button
-                                                        onClick={() => handleSave(customer.id)}
-                                                        className="px-4 py-2 text-white bg-[#0CB4AB] rounded-md"
-                                                    >
+                                                    <button onClick={() => handleSave(customer.id)}
+                                                            className="px-4 py-2 text-white bg-[#0CB4AB] rounded-md">
                                                         Save
                                                     </button>
-                                                    <button
-                                                        onClick={() => handleDelete(customer.id)}
-                                                        className="px-4 py-2 text-white bg-red-600 rounded-md"
-                                                    >
+                                                    <button onClick={() => handleDelete(customer.id)}
+                                                            className="px-4 py-2 text-white bg-red-600 rounded-md">
                                                         Delete
                                                     </button>
                                                 </div>
@@ -477,7 +447,6 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
                             </td>
                         </tr>
                     )}
-
                     </tbody>
                 </table>
             </div>

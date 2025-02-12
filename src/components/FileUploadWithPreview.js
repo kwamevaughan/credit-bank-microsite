@@ -62,7 +62,8 @@ const FileUploadWithPreview = ({ userId, mode, notify }) => {
                                 .filter(row => row.Name && row['Transaction ID'])
                                 .map((row) => ({
                                     name: String(row.Name || ''),
-                                    transaction_id: String(row['Transaction ID'] || '')
+                                    transaction_id: String(row['Transaction ID'] || ''),
+                                    amount_deposited: parseFloat(row['Amount Deposited']) || 0, // Ensure it's a number
                                 }));
 
                             if (formattedData.length === 0) {
@@ -88,7 +89,8 @@ const FileUploadWithPreview = ({ userId, mode, notify }) => {
                         .filter(row => row.Name && row['Transaction ID'])
                         .map((row) => ({
                             name: String(row.Name || ''),
-                            transaction_id: String(row['Transaction ID'] || '')
+                            transaction_id: String(row['Transaction ID'] || ''),
+                            amount_deposited: String(row['Amount Deposited'] || ''),
                         }));
 
                     if (formattedData.length === 0) {
@@ -133,8 +135,9 @@ const FileUploadWithPreview = ({ userId, mode, notify }) => {
                     userId,
                     data: parsedData.map(row => ({
                         name: String(row.name || '').trim(),
-                        transaction_id: String(row.transaction_id || '').trim()
-                    })).filter(row => row.name && row.transaction_id)
+                        transaction_id: String(row.transaction_id || '').trim(),
+                        amount_deposited: String(row.amount_deposited || '').trim(),
+                    })).filter(row => row.name && row.transaction_id && row.amount_deposited),
                 }),
             });
 

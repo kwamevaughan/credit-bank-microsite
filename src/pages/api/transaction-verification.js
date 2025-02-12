@@ -31,7 +31,8 @@ export default async function handler(req, res) {
                     // Transaction ID already exists
                     duplicates.push({
                         transaction_id: row.transaction_id,
-                        name: row.name
+                        name: row.name,
+                        amount_deposited: row.amount_deposited
                     });
                     continue;
                 }
@@ -42,17 +43,20 @@ export default async function handler(req, res) {
                     .insert([{
                         name: row.name,
                         transaction_id: row.transaction_id,
-                        action: 'Pending',
+                        amount_deposited: row.amount_deposited,
+                        status: 'Pending',
                         points: 0,
                         created_at: new Date().toISOString()
                     }]);
 
                 if (error) {
+                    console.error('Error inserting row:', row, 'Error:', error.message);
                     errors.push({
                         row,
                         error: error.message
                     });
-                } else {
+                }
+                else {
                     results.push(row);
                 }
             } catch (error) {
