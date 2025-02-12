@@ -137,17 +137,36 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
             }
 
             if (referredUserPoints > 0 && referredUserId) {
-                const { error: updateError } = await supabase
+                const { data: referrer, error: getReferrerError } = await supabase
+                    .from('users')
+                    .select('referral_count')
+                    .eq('id', referredUserId)
+                    .single();
+
+                if (getReferrerError) {
+                    toast.update(pleaseWaitToast, {
+                        render: `Error retrieving referrer: ${getReferrerError.message}`,
+                        type: 'error',
+                        isLoading: false,
+                        autoClose: 5000,
+                    });
+                    return;
+                }
+
+                const updatedReferralCount = referrer.referral_count + 1;
+
+                const { error: updateReferrerError } = await supabase
                     .from('users')
                     .update({
                         points: referredUserPoints,
-                        actions_completed: referredUserActionsCompleted
+                        actions_completed: referredUserActionsCompleted,
+                        referral_count: updatedReferralCount, // Increment referral_count by 1
                     })
                     .eq('id', referredUserId);
 
-                if (updateError) {
+                if (updateReferrerError) {
                     toast.update(pleaseWaitToast, {
-                        render: `Error updating referrer's points: ${updateError.message}`,
+                        render: `Error updating referrer's points and referral count: ${updateReferrerError.message}`,
                         type: 'error',
                         isLoading: false,
                         autoClose: 5000,
@@ -166,7 +185,7 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
                         console.error('Error recording referrer activity:', referralActivityError);
                     } else {
                         toast.update(pleaseWaitToast, {
-                            render: 'Referrer has been awarded 15 points!',
+                            render: 'Referrer has been awarded 15 points and referral count updated!',
                             type: 'success',
                             isLoading: false,
                             autoClose: 5000,
@@ -174,6 +193,7 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
                     }
                 }
             }
+
 
             const session = {
                 user: {
