@@ -92,20 +92,6 @@ const Sidebar = ({ isOpen, toggleSidebar, mode, onLogout, openModal, openVerific
                             Quiz
                         </Link>
                     </li>
-                    <li className="py-2">
-                        <Link
-                            href="https://diaspora.creditbank.co.ke/apply/"
-                            className="flex items-center transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3"
-                            target="_blank"
-                        >
-                            <DocumentTextIcon
-                                className={`h-8 w-8 mr-2 p-1 rounded-full ${
-                                    mode === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-500'
-                                } transition`}
-                            />
-                            Open An Account
-                        </Link>
-                    </li>
 
                     <li className="py-2">
                         <Link
