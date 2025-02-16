@@ -16,63 +16,70 @@ const useUserData = (token) => {
     });
 
     useEffect(() => {
-        if (!token) return;
+        let subscription;
 
         const fetchData = async () => {
-            const { data, error } = await supabase
-                .from('users')
-                .select('id, name, points, country, actions_completed, profile_image, email')
-                .eq('id', token)
-                .single();
+            if (!token) return;
 
-            if (error) {
+            try {
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('id, name, points, country, actions_completed, profile_image, email')
+                    .eq('id', token)
+                    .single();
+
+                if (error) throw error;
+
+                const foundCountry = countriesData.find(item => item.name === data.country);
+                const countryCode = foundCountry ? foundCountry.code : 'XX';
+
+                setUserData({
+                    imageUrl: data.profile_image,
+                    userName: data.name,
+                    userEmail: data.email,
+                    userPoints: data.points,
+                    actionsCompleted: data.actions_completed,
+                    countryCode,
+                    userId: `CB${data.id}${countryCode}`,
+                    rankImage: '/assets/images/position-default.png',
+                });
+
+                // Set up real-time subscription
+                subscription = supabase
+                    .channel('users')
+                    .on('postgres_changes', {
+                        event: 'UPDATE',
+                        schema: 'public',
+                        table: 'users',
+                        filter: `id=eq.${token}`,
+                    }, (payload) => {
+                        const foundCountry = countriesData.find(item => item.name === payload.new.country);
+                        const countryCode = foundCountry ? foundCountry.code : 'XX';
+
+                        setUserData(prevData => ({
+                            ...prevData,
+                            imageUrl: payload.new.profile_image,
+                            userPoints: payload.new.points,
+                            actionsCompleted: payload.new.actions_completed,
+                            countryCode,
+                            userName: payload.new.name,
+                            userEmail: payload.new.email,
+                            rankImage: prevData.rankImage
+                        }));
+                    })
+                    .subscribe();
+
+            } catch (error) {
                 console.error('Error fetching user data:', error);
-                return;
             }
-
-            const foundCountry = countriesData.find(item => item.name === data.country);
-            const countryCode = foundCountry ? foundCountry.code : 'XX';
-
-            setUserData({
-                imageUrl: data.profile_image,
-                userName: data.name,
-                userEmail: data.email,
-                userPoints: data.points,
-                actionsCompleted: data.actions_completed,
-                countryCode,
-                userId: `CB${data.id}${countryCode}`,
-                rankImage: '/assets/images/position-default.png',
-            });
         };
 
         fetchData();
 
-        const subscription = supabase
-            .channel('users')
-            .on('postgres_changes', {
-                event: 'UPDATE',
-                schema: 'public',
-                table: 'users',
-                filter: `id=eq.${token}`,
-            }, (payload) => {
-                const foundCountry = countriesData.find(item => item.name === payload.new.country);
-                const countryCode = foundCountry ? foundCountry.code : 'XX';
-
-                setUserData(prevData => ({
-                    ...prevData,
-                    imageUrl: payload.new.profile_image,
-                    userPoints: payload.new.points,
-                    actionsCompleted: payload.new.actions_completed,
-                    countryCode,
-                    userName: payload.new.name,
-                    userEmail: payload.new.email,
-                    rankImage: prevData.rankImage
-                }));
-            })
-            .subscribe();
-
         return () => {
-            supabase.removeChannel(subscription);
+            if (subscription) {
+                supabase.removeChannel(subscription);
+            }
         };
     }, [token]);
 
