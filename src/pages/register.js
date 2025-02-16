@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import Select from 'react-select';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
+import { useUser } from '@/context/UserContext'; // Import context here
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -17,6 +18,7 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
     const [countries, setCountries] = useState([]);
 
     const router = useRouter();
+    const { setToken } = useUser();  // Use the context to update token
     const notify = (message) => toast(message);
 
     useEffect(() => {
@@ -204,6 +206,10 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
                 access_token: newUserData.id,
             };
             localStorage.setItem('supabase_session', JSON.stringify(session));
+
+            // Update token in the context for immediate reactivity
+            setToken(session.access_token);
+
 
             toast.update(pleaseWaitToast, {
                 render: 'User registered successfully! Your referral code: ' + uniqueCode,

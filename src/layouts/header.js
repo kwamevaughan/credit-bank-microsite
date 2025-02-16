@@ -1,72 +1,35 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bars3Icon, XMarkIcon, MoonIcon, UserCircleIcon, SunIcon, ArrowsPointingInIcon as FullScreenIcon } from '@heroicons/react/24/outline';
+import { Bars3Icon, XMarkIcon, MoonIcon, UserCircleIcon, LockClosedIcon, ChevronDownIcon, SunIcon, ArrowsPointingInIcon as FullScreenIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { toast } from "react-toastify";
 import { supabase } from '/lib/supabase';
+import { useUser } from '@/context/UserContext';  // Import the context
+import useUserData from '@/hooks/useUserData';
 
-const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, userName, toggleFullScreen, onLogout }) => {
-    const [user, setUser] = useState(null);
-    const [profileImage, setProfileImage] = useState(null);
-    const router = useRouter();
+const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, toggleFullScreen, onLogout }) => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const { userName, userEmail, imageUrl: profileImage } = useUserData(token);  // Real-time updates from hook
 
-    // Create a ref for the dropdown container
     const dropdownRef = useRef(null);
 
-    // Fetch user data from Supabase
-    const fetchUserData = async () => {
-        if (!token) {
-            console.error('Token is missing');
-            return;
-        }
-
-        const { data, error } = await supabase
-            .from('users')
-            .select('profile_image')
-            .eq('id', token)
-            .single();
-
-        if (error) {
-            console.error('Error fetching user data:', error);
-            return;
-        }
-
-        setUser(data);
-        setProfileImage(data.profile_image);
-    };
-
-    useEffect(() => {
-        if (token) {
-            fetchUserData();
-        }
-    }, [token]);
-
-    // Add event listener to handle clicks outside of the dropdown
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setDropdownOpen(false); // Close the dropdown if clicked outside
+                setDropdownOpen(false); // Close dropdown if clicked outside
             }
         };
 
         document.addEventListener('mousedown', handleClickOutside);
-
-        // Cleanup the event listener on component unmount
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
 
-
-
-
     return (
-        <header
-            className={`p-4 transition-all duration-300 shadow-sm border-b ${mode === 'dark' ? 'border-[#ff9409]' : 'border-gray-300'} ${isSidebarOpen ? 'ml-64' : 'ml-0'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white shadow-lg' : 'bg-white text-black'}`}
-        >
-            <div className="flex flex-col md:flex-row items-center justify-between">
+        <header className={`rounded-lg transition-all duration-300 shadow-sm border-b ${mode === 'dark' ? 'border-[#ff9409]' : 'border-gray-300'} ${isSidebarOpen ? 'ml-72' : 'ml-28'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white shadow-lg' : 'bg-white text-black'}`}>
+            <div className="flex flex-col md:flex-row items-center justify-between p-4">
                 {!isSidebarOpen && (
                     <div className="md:hidden mb-2">
                         <Image
@@ -77,28 +40,11 @@ const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, userNam
                             className="w-[350px] md:w-auto"
                         />
                     </div>
-
                 )}
 
                 <div className="flex items-center space-x-4">
                     {!isSidebarOpen && (
                         <>
-                            <div className="group relative">
-                                <button onClick={toggleSidebar} className="focus:outline-none">
-                                    {isSidebarOpen ? (
-                                        <XMarkIcon
-                                            className={`h-6 w-6 ${mode === 'dark' ? 'text-white' : 'text-black'}`}/>
-                                    ) : (
-                                        <Bars3Icon
-                                            className={`h-6 w-6 ${mode === 'dark' ? 'text-white' : 'text-black'}`}/>
-                                    )}
-                                </button>
-                                <span
-                                    className="absolute top-10 left-1/2 transform -translate-x-1/2 text-sm text-white bg-black rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity">
-        {isSidebarOpen ? "Close Sidebar" : "Open Sidebar"}
-    </span>
-                            </div>
-
                             <div className="hidden md:flex items-center">
                                 <Link href="/">
                                     <Image
@@ -114,137 +60,75 @@ const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, userNam
                 </div>
 
                 <div className="relative flex items-center space-x-2 pt-4 md:pt-0">
-                    {/* Fullscreen Button */}
                     <div className="group relative">
-                        <button
-                            onClick={toggleFullScreen}
-                            className={`flex items-center justify-center h-10 w-10 rounded-full ${
-                                mode === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-500'
-                            } transition`}
-                        >
-                            <FullScreenIcon
-                                className={`h-6 w-6 ${
-                                    mode === 'dark' ? 'text-white' : 'text-gray-500'
-                                } hover:text-blue-600 transition`}
-                            />
+                        <button onClick={toggleFullScreen} className={`flex items-center justify-center h-10 w-10 rounded-full ${mode === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-500'} transition`}>
+                            <FullScreenIcon className={`h-6 w-6 ${mode === 'dark' ? 'text-white' : 'text-gray-500'} hover:text-blue-600 transition`} />
                         </button>
-                        <span
-                            className={`absolute top-10 left-1/2 transform -translate-x-1/2 text-sm ${
-                                mode === 'dark' ? 'text-black bg-white' : 'text-white bg-black'
-                            } rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity`}
-                        >
-            Toggle Fullscreen
-        </span>
+                        <span className={`absolute top-10 left-1/2 transform -translate-x-1/2 text-sm ${mode === 'dark' ? 'text-black bg-white' : 'text-white bg-black'} rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity`}>
+                            Toggle Fullscreen
+                        </span>
                     </div>
 
-                    {/* Dark/Light Mode Toggle Button */}
-                    <div className="group relative">
-                        <button
-                            onClick={toggleMode}
-                            className={`flex items-center justify-center h-10 w-10 rounded-full ${
-                                mode === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-500'
-                            } transition`}
-                        >
-                            {mode === 'dark' ? (
-                                <SunIcon
-                                    className={`h-6 w-6 ${
-                                        mode === 'dark' ? 'text-white' : 'text-gray-500'
-                                    } hover:text-blue-600 transition`}
-                                />
-                            ) : (
-                                <MoonIcon
-                                    className={`h-6 w-6 ${
-                                        mode === 'dark' ? 'text-white' : 'text-gray-500'
-                                    } hover:text-blue-600 transition`}
-                                />
-                            )}
-                        </button>
-                        <span
-                            className={`absolute top-10 left-1/2 transform -translate-x-1/2 text-sm ${
-                                mode === 'dark' ? 'text-black bg-white' : 'text-white bg-black'
-                            } rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity`}
-                        >
-            {mode === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-        </span>
-                    </div>
-
-                    {/* Profile/Dropdown Button */}
-                    <div className="relative group" ref={dropdownRef}>
-                        <button
-                            onClick={() => setDropdownOpen(!dropdownOpen)}
-                            className={`flex items-center justify-center h-10 w-10 rounded-full ${
-                                mode === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-500'
-                            } transition`}
-                        >
-                            {profileImage ? (
-                                <div className="w-10 h-10 rounded-full overflow-hidden"> {/* Force square container */}
-                                    <Image
-                                        src={profileImage}
-                                        alt="User Profile"
-                                        width={48}  // Ensures the image size matches the button size
-                                        height={48} // Ensures the image size matches the button size
-                                        className="object-cover" // Ensures the image is cropped properly inside the circle
-                                    />
+                    <div className="flex group relative">
+                        <label className="inline-flex items-center cursor-pointer">
+                            <input type="checkbox" checked={mode === 'dark'} onChange={toggleMode} className="hidden" />
+                            <div className={`relative w-14 h-8 rounded-full border-2 flex items-center ${mode === 'dark' ? 'border-blue-600 bg-blue-600' : 'border-gray-300 bg-gray-300'} transition`}>
+                                <div className={`absolute w-6 h-6 rounded-full bg-white flex items-center justify-center transition-transform ${mode === 'dark' ? 'translate-x-6' : ''}`}>
+                                    {mode === 'dark' ? (
+                                        <MoonIcon className="h-6 w-6 text-gray-700"/>
+                                    ) : (
+                                        <SunIcon className="h-6 w-6 text-yellow-500"/>
+                                    )}
                                 </div>
-                            ) : (
-                                <UserCircleIcon
-                                    className={`h-6 w-6 ${
-                                        mode === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-500'
-                                    } hover:text-blue-600 transition`}
-                                />
-                            )}
-                        </button>
-                        <span
-                            className={`absolute top-10 left-1/2 transform -translate-x-1/2 text-sm ${
-                                mode === 'dark' ? 'text-black bg-white' : 'text-white bg-black'
-                            } rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity`}
-                        >
-            User Menu
-        </span>
-                        {dropdownOpen && (
-                            <div
-                                className={`absolute right-0 mt-2 w-48 ${
-                                    mode === 'dark' ? 'bg-gray-800' : 'bg-white'
-                                } border border-gray-300 rounded-md shadow-lg`}
-                            >
-                                <ul className="py-1">
-                                    <li>
-                                        <Link
-                                            href="#"
-                                            className={`block px-4 py-2 ${
-                                                mode === 'dark' ? 'text-white' : 'text-gray-800'
-                                            } hover:${mode === 'dark' ? 'bg-gray-400' : 'bg-gray-100'}`}
-                                        >
-                                            Profile
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link
-                                            href="#"
-                                            className={`block px-4 py-2 ${
-                                                mode === 'dark' ? 'text-white' : 'text-gray-800'
-                                            } hover:${mode === 'dark' ? 'bg-gray-400' : 'bg-gray-100'}`}
-                                        >
-                                            Settings
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <button
-                                            onClick={onLogout}
-                                            className={`block w-full text-left px-4 py-2 ${
-                                                mode === 'dark' ? 'text-white' : 'text-gray-800'
-                                            } hover:${mode === 'dark' ? 'bg-gray-400' : 'bg-gray-100'}`}
-                                        >
-                                            Logout
-                                        </button>
-                                    </li>
-                                </ul>
+                            </div>
+                        </label>
+                    </div>
 
+                    <div className="flex items-center gap-2 relative group cursor-default" ref={dropdownRef} onClick={() => setDropdownOpen(!dropdownOpen)}>
+                        <div className="flex items-center gap-2 cursor-pointer">
+                            <div className="w-10 h-10 rounded-full overflow-hidden">
+                                <Image src={profileImage || '/assets/images/placeholder.png'} alt="User Profile" width={48} height={48} className="object-cover" />
+                            </div>
+                            <span>{userName || "John Doe"}</span>
+                            <ChevronDownIcon className={`h-5 w-5 ${mode === 'dark' ? 'text-white' : 'text-gray-500'}`} />
+                        </div>
+
+                        {dropdownOpen && (
+                            <div className={`absolute top-full mt-2 right-0 w-80 rounded-2xl shadow-lg z-10 ${mode === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-black'}`} onClick={(e) => e.stopPropagation()}>
+                                <div className="p-8">
+                                    <p className="text-lg mb-6">User Profile</p>
+                                    <div className="flex items-center gap-2 border-b pb-6">
+                                        <div className="rounded-full overflow-hidden">
+                                            <Image src={profileImage || '/assets/images/placeholder.png'} alt="User Profile" width={100} height={100} className="object-cover" />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-md font-bold">{userName || "John Doe"}</span>
+                                            <span className="text-sm">Customer</span>
+                                            <div className="flex justify-center gap-2">
+                                                <EnvelopeIcon className="h-4 w-4"/>
+                                                <span className="text-sm">{userEmail || "N/A"}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <Link href="/profile">
+                                        <div className="flex gap-2 capitalize py-6 transition-all duration-500 ease-out transform hover:-translate-y-[10px]">
+                                            <LockClosedIcon className="bg-[#e7f8f7] text-[#0eb4ab] rounded-full p-2 h-10 w-10"/>
+                                            <div className="flex flex-col">
+                                                <span className="text-md font-bold">My Profile</span>
+                                                <span className="text-sm">Account Settings</span>
+                                            </div>
+                                        </div>
+                                    </Link>
+
+                                    <button onClick={onLogout} className={`block w-full text-center text-white px-4 py-2 bg-[#0eb4ab] rounded-full transition-all duration-500 ease-out transform hover:-translate-y-[10px] ${mode === 'dark' ? 'text-white' : 'text-gray-800'} ${mode === 'dark' ? 'hover:bg-gray-600' : 'hover:bg-teal-600'}`}>
+                                        Logout
+                                    </button>
+                                </div>
                             </div>
                         )}
                     </div>
                 </div>
-
             </div>
         </header>
     );

@@ -16,40 +16,22 @@ import DeleteAccountModal from "@/components/DeleteAccountModal"; // Import your
 import AppDownloadModal from "@/components/AppDownloadModal";
 import VerificationModal from "@/components/VerificationModal";
 import { imagekit } from '../utils/imageKitService';
+import { useUser } from '@/context/UserContext';  // Import the context
 
 
 const Dashboard = () => {
     const router = useRouter();
+    const { token, setToken } = useUser();  // Use the context to get token and setToken
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [mode, setMode] = useState('light');
-    const [token, setToken] = useState(null);
 
     const [showDeleteModal, setShowDeleteModal] = useState(false); // Manage modal visibility
 
     const notify = (message) => toast(message);
-    const userData = useUserData(token);
-    const activities = useUserActivities(token);
+    const userData = useUserData(token);  // Get user data based on token
+    const activities = useUserActivities(token);  // Get user activities based on token
+    const { userName, userEmail, imageUrl: profileImage, userPoints } = userData || {};  // Destructure the user data
 
-    // Check if user is logged in (update for v2.x)
-    useEffect(() => {
-        const fetchSession = () => {
-            const session = JSON.parse(localStorage.getItem('supabase_session'));
-            if (session) {
-                setToken(session.access_token);
-            } else {
-                router.push('/');
-            }
-        };
-
-        fetchSession();
-
-        // You may want to add an event listener here if tokens are updated:
-        window.addEventListener('storage', fetchSession);
-
-        return () => {
-            window.removeEventListener('storage', fetchSession);
-        };
-    }, [router]);
 
     // Ensure userData is properly loaded and update as needed
     useEffect(() => {
@@ -57,23 +39,6 @@ const Dashboard = () => {
     }, [userData]);
 
     const handleDownloadApp = (message) => notify(message, 'success');
-
-    // Check if user is logged in (update for v2.x)
-    useEffect(() => {
-        try {
-            const session = JSON.parse(localStorage.getItem('supabase_session'));
-            if (session) {
-                setToken(session.access_token);
-            } else {
-                router.push('/');
-            }
-        } catch (error) {
-            console.error('Error parsing session', error);
-            router.push('/');
-        }
-    }, [router]);
-
-
 
     useEffect(() => {
         const savedMode = localStorage.getItem('mode');
@@ -214,19 +179,22 @@ const Dashboard = () => {
 
 
     return (
-        <div className={`flex flex-col bg-[#f7f1eb] h-screen ${mode === 'dark' ? 'dark' : ''}`}>
+        <div className={`flex flex-col h-screen ${mode === 'dark' ? 'bg-[#1a1a1a]' : 'bg-[#f7f1eb]'}`}>
             <Header
                 token={token}
                 toggleSidebar={toggleSidebar}
                 isSidebarOpen={isSidebarOpen}
                 mode={mode}
-                onLogout={handleSignOut}
                 toggleMode={toggleMode}
                 toggleFullScreen={toggleFullScreen}
+                onLogout={handleSignOut}
+                userData={userData}
             />
+
 
             <div className="flex flex-1 transition-all duration-300">
                 <Sidebar
+                    token={token}
                     isOpen={isSidebarOpen}
                     toggleSidebar={toggleSidebar}
                     mode={mode}
@@ -235,10 +203,11 @@ const Dashboard = () => {
                     openVerificationModal={openVerificationModal}
                     toggleMode={toggleMode}
                     toggleFullScreen={toggleFullScreen}
+                    userData={userData}
 
                 />
 
-                <main className={`flex-1 p-8 pt-14 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-0'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-[#f7f1eb] text-black'} w-full`}>
+                <main className={`flex-1 p-8 pt-14 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-20'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-[#f7f1eb] text-black'} w-full`}>
                     <div className="space-y-6">
                         <UserInfo
                             mode={mode}
@@ -283,6 +252,7 @@ const Dashboard = () => {
                             <h2 className="text-4xl font-bold text-teal-600 mb-4 text-center ">Leaderboard</h2>
                             <h3 className="text-2xl font-bold text-[#ff9409] mb-4 text-center ">See Who's Leading the
                                 Pack!</h3>
+
                             <p className="mb-4 text-center ">Stay competitive! Check the live leaderboard to see who's
                                 winning.</p>
                         <LeaderboardTable

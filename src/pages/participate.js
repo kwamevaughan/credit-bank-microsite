@@ -11,8 +11,11 @@ import Footer from '../layouts/footer';
 import ForgotPasswordModal from '../components/forgotPassword';
 
 import { useRouter } from 'next/router'; // Import useRouter for redirection
+import { useUser } from '@/context/UserContext';  // Import the context
+
 
 export default function Participate() {
+    const { setToken } = useUser(); // Get the function to update the token from context
     const [isRegistering, setIsRegistering] = useState(false); // State to toggle between login and register
     const [loginEmail, setLoginEmail] = useState('');
     const [loginReferralCode, setLoginReferralCode] = useState('');
@@ -123,6 +126,10 @@ export default function Participate() {
             };
 
             localStorage.setItem('supabase_session', JSON.stringify(session));
+
+            // Store token in UserContext
+            setToken(session.access_token); // Pass the token to UserContext
+
 
             if (rememberMe) {
                 localStorage.setItem('loginEmail', loginEmail);
