@@ -137,17 +137,17 @@ const LeaderboardTable = ({ token, mode, toggleMode, toggleSidebar, isSidebarOpe
                                         }
 
                                         // Define button styles based on rank
-                                        let buttonClass = "bg-gray-200 hover:bg-gray-500 text-teal-600 hover:text-white px-6 py-2 rounded-lg"; // Default for others
+                                        let buttonClass = "bg-gray-200 hover:bg-gray-500 text-slate-600 hover:text-white px-6 py-2 rounded-lg"; // Default for others
                                         let buttonText = "Keep Going!";
 
                                         if (index === 0) {
-                                            buttonClass = "bg-yellow-400 hover:bg-yellow-600 text-teal-600 hover:text-white px-6 py-2 rounded-lg"; // Champion in the Lead
+                                            buttonClass = "bg-yellow-400 hover:bg-yellow-600 text-slate-600 hover:text-white px-6 py-2 rounded-lg"; // Champion in the Lead
                                             buttonText = "Top Performer";
                                         } else if (index === 1) {
-                                            buttonClass = "bg-green-400 hover:bg-green-600 text-teal-600 hover:text-white px-6 py-2 rounded-lg"; // Steady Climber
+                                            buttonClass = "bg-green-400 hover:bg-green-600 text-slate-600 hover:text-white px-6 py-2 rounded-lg"; // Steady Climber
                                             buttonText = "Steady Climber";
                                         } else if (index === 2) {
-                                            buttonClass = "bg-orange-400 hover:bg-orange-600 text-teal-600 hover:text-white px-6 py-2 rounded-lg"; // Rising Star
+                                            buttonClass = "bg-orange-400 hover:bg-orange-600 text-slate-600 hover:text-white px-6 py-2 rounded-lg"; // Rising Star
                                             buttonText = "Rising Star";
                                         }
 
@@ -157,7 +157,7 @@ const LeaderboardTable = ({ token, mode, toggleMode, toggleSidebar, isSidebarOpe
                                                 className={`shadow-md hover:shadow-sm transition-all duration-300 ease-in-out ${mode === 'dark' ? 'bg-black' : 'bg-white'} rounded-md`}
                                                 style={{transform: `translateY(${(index - 1) * 10}px)`}} // Added smooth animation
                                             >
-                                                <td className="text-gray-400 px-4 py-2 border-r flex items-center hidden md:block">
+                                                <td className="flex text-gray-400 px-4 py-2 border-r flex items-center ">
                                                     {(page - 1) * pageSize + index + 1}.
                                                     <Image
                                                         src={rankImageSrc}
