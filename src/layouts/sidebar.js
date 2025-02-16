@@ -22,7 +22,7 @@ import {
     ArrowTrendingUpIcon, ArrowDownTrayIcon, QuestionMarkCircleIcon, BanknotesIcon, UserPlusIcon,
     ArrowsPointingInIcon as FullScreenIcon, MoonIcon, SunIcon
 } from '@heroicons/react/24/outline';
-import GroupShare from "@/components/icons/groupShare";
+import { GroupShare } from "@/components/icons/GroupShare";
 import { Activity } from "@/components/icons/Activity";
 import { Quiz } from "@/components/icons/Quiz05";
 import Image from 'next/image';
