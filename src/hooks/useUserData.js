@@ -6,6 +6,8 @@ const useUserData = (token) => {
     const [userData, setUserData] = useState({
         imageUrl: '',
         userName: '',
+        profileImage: '',
+        userEmail: '',
         userPoints: 0,
         actionsCompleted: 0,
         countryCode: '',
@@ -19,7 +21,7 @@ const useUserData = (token) => {
         const fetchData = async () => {
             const { data, error } = await supabase
                 .from('users')
-                .select('id, name, points, country, actions_completed, profile_image')
+                .select('id, name, points, country, actions_completed, profile_image, email')
                 .eq('id', token)
                 .single();
 
@@ -34,6 +36,7 @@ const useUserData = (token) => {
             setUserData({
                 imageUrl: data.profile_image,
                 userName: data.name,
+                userEmail: data.email,
                 userPoints: data.points,
                 actionsCompleted: data.actions_completed,
                 countryCode,
@@ -56,14 +59,13 @@ const useUserData = (token) => {
                 const countryCode = foundCountry ? foundCountry.code : 'XX';
 
                 setUserData(prevData => ({
-                    ...prevData, // Preserve existing state
-                    // Update only the changed fields
+                    ...prevData,
                     imageUrl: payload.new.profile_image,
                     userPoints: payload.new.points,
                     actionsCompleted: payload.new.actions_completed,
                     countryCode,
                     userName: payload.new.name,
-                    // Maintain the existing rankImage
+                    userEmail: payload.new.email,
                     rankImage: prevData.rankImage
                 }));
             })
