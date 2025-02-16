@@ -1,6 +1,5 @@
-// pages/_app.js
-
 import { useState, useEffect } from 'react';
+import { UserProvider } from '../context/UserContext';  // adjust the path if necessary
 import { ToastContainer } from 'react-toastify';  // Ensure this is imported
 import 'react-toastify/dist/ReactToastify.css'; // Ensure Toastify CSS is loaded
 import '../styles/globals.css';
@@ -43,11 +42,12 @@ function MyApp({ Component, pageProps }) {
     }, [mode]);
 
     return (
-        <div className={mode === 'dark' ? 'dark' : ''}>
-            <Component {...pageProps} mode={mode} toggleMode={toggleMode} />
-            {/* Global Toast Container */}
-            <ToastContainer position="top-right" />
-        </div>
+        <UserProvider>
+            <div className={mode === 'dark' ? 'dark' : ''}>
+                <Component {...pageProps} mode={mode} toggleMode={toggleMode} />
+                <ToastContainer position="top-right" />
+            </div>
+        </UserProvider>
     );
 }
 
