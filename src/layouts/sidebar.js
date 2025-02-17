@@ -19,6 +19,7 @@ import {
     StarIcon,
     Bars3Icon,
     Bars3BottomLeftIcon,
+    TrophyIcon,
     ArrowTrendingUpIcon, ArrowDownTrayIcon, QuestionMarkCircleIcon, BanknotesIcon, UserPlusIcon,
     ArrowsPointingInIcon as FullScreenIcon, MoonIcon, SunIcon
 } from '@heroicons/react/24/outline';
@@ -131,7 +132,8 @@ const Sidebar = ({ token, isOpen, toggleSidebar, mode, onLogout }) => {
                         {href: '/referrals', icon: GroupShare, label: 'Referrals'},
                         {href: '/download-app', icon: Quiz, label: 'Download App'},
                         {href: '/quiz', icon: Quiz, label: 'Quiz'},
-                        {href: '/settings', icon: Cog6ToothIcon, label: 'Settings'},
+                        {href: '/leaderboard', icon: TrophyIcon, label: 'Leaderboard'},
+                        {href: '/profile', icon: Cog6ToothIcon, label: 'Settings'},
                     ].map(({href, icon: Icon, label}) => (
                         <li key={href} className="py-2">
                             <Link

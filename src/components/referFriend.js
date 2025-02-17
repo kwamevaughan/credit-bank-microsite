@@ -2,38 +2,14 @@ import { useEffect, useState } from 'react';
 import { supabase } from '/lib/supabase';
 import Image from 'next/image';
 import TermsAndConditionsModal from './TermsAndConditionsModal';
+import useUserData from '../hooks/useUserData';
+import { useUser } from '@/context/UserContext';
 
-const Referral = ({ token, mode, toggleMode, notify }) => {
-    const [userName, setUserName] = useState('');
-    const [userPoints, setUserPoints] = useState(0);
-    const [referralCode, setReferralCode] = useState('');
+const Referral = ({ token, userData, mode, toggleMode, notify }) => {
+    const { referralCode  } = userData || {};
     const [copied, setCopied] = useState(false); // State to track copy action
     const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
-
-    useEffect(() => {
-        if (!token) {
-            return; // Do nothing if token is not set
-        }
-
-        const fetchUserData = async () => {
-            const { data, error } = await supabase
-                .from('users')
-                .select('id, name, points, referral_code')
-                .eq('id', token)
-                .single();
-
-            if (error) {
-                console.error('Error fetching user data:', error);
-            } else {
-                setUserName(data.name);
-                setUserPoints(data.points);
-                setReferralCode(data.referral_code);
-            }
-        };
-
-        fetchUserData();
-    }, [token]);
 
     const handleCopy = async () => {
         try {
@@ -103,9 +79,10 @@ const Referral = ({ token, mode, toggleMode, notify }) => {
                 <div className="flex justify-center pb-4">
                     <span
                         className={`${mode === 'dark' ? 'bg-[#2a3b4f] text-white border-[#ff9409]' : 'bg-white text-black border-[#ff9409]'} 
-            uppercase font-bold border-2 rounded-lg py-2 w-3/5 px-4`}>
-        {referralCode}
-    </span>
+     uppercase font-bold border-2 rounded-lg py-2 w-3/5 px-4`}>
+    {referralCode || 'Loading...'} {/* Display loading text if referralCode is not available */}
+</span>
+
 
                     <button onClick={handleCopy}
                             className="bg-[#ff9409] text-white rounded-lg py-2 px-8 transition-all duration-300 ease-in-out hover:bg-[#ff7f00]">
@@ -120,7 +97,7 @@ const Referral = ({ token, mode, toggleMode, notify }) => {
                 </div>
 
                 <div className="flex justify-center pb-4 gap-x-2">
-                    <a href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer" title="Share on WhatsApp">
+                <a href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer" title="Share on WhatsApp">
                         <Image src="/assets/images/social/whatsapp.svg" alt="WhatsApp" width={50} height={50}
                                className="transition-transform transform hover:translate-y-[-5px] duration-500 ease-in-out"/>
                     </a>

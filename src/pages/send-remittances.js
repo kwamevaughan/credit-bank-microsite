@@ -15,7 +15,7 @@ import useTheme from '@/hooks/useTheme';
 import useSidebar from '@/hooks/useSidebar';
 import useSignOut from '@/hooks/useSignOut';
 
-const OpenAccount = () => {
+const SendRemittances = () => {
     const router = useRouter();
     const { token, setToken } = useUser();
     const { isSidebarOpen, toggleSidebar } = useSidebar();
@@ -67,66 +67,24 @@ const OpenAccount = () => {
                             <div
                                 className={`px-4 space-y-4 mb-8 ${mode === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                                 <h2 className={`text-teal-500 text-lg sm:text-4xl md:text-3xl font-extrabold ${mode === 'dark' ? 'text-white' : 'text-black'}`}>
-                                    Open an Account
+                                    Send Remittances
                                 </h2>
+
+                                <p className={`text-base  ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                                    The RIA remittance service at Credit Bank empowers diaspora customers to send funds directly and instantaneously to their loved ones.
+                                </p>
+
                                 <p className={`text-base pb-4 ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                                    Credit Bank offers tailored wealth management solutions to suit your needs. With
-                                    the Nyumbani Diaspora Challenge, you can earn points for opening an account or
-                                    referring a friend to open one.
+                                    Send a remittance to a Credit Bank account and enter the recipient's name and transaction details below to redeem your points.
                                 </p>
                                 <span>
-        <ul className={`list-disc text-lg font-normal ml-8 pb-4 ${mode === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-            <li>
-                <strong className={`text-black ${mode === 'dark' ? 'text-white' : 'text-black'}`}>Nyumbani Diaspora Account: </strong>
-                <span className={mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}>Operates in KES, USD, Euro, or GBP. Minimum balance: Ksh5,000.</span>
-            </li>
-            <li>
-                <strong
-                    className={`text-black ${mode === 'dark' ? 'text-white' : 'text-black'}`}>CDSC Account: </strong>
-                <span className={mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}>Trade shares on the Nairobi Securities Exchange.</span>
-            </li>
-            <li>
-                <strong
-                    className={`text-black ${mode === 'dark' ? 'text-white' : 'text-black'}`}>Fixed Deposit Account: </strong>
-                <span className={mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}>Grow your savings with a fixed interest rate until maturity.</span>
-            </li>
-        </ul>
-
-        <p className={`text-base ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-            Visit{' '}
-            <Link
-                href="https://diaspora.creditbank.co.ke/open-an-account"
-                className={`font-bold ${mode === 'dark' ? 'text-white' : 'text-black'} underline`}
-                target="_blank"
-            >
-                www.diaspora.creditbank.co.ke/open-an-account
-            </Link>{' '}
-            to open an account and enter your details below to redeem your points.
-        </p>
-    </span>
+                            </span>
                             </div>
 
 
                             <div className="flex flex-col justify-center px-4 space-y-4">
                                 {/* Form with 3/4 width */}
                                 <form className="space-y-6 w-full mx-auto">
-                                    {/* Select Account Type */}
-                                    <div>
-                                        <label htmlFor="account-type" className="block font-bold text-lg">
-                                            Select Account Type
-                                        </label>
-                                        <select
-                                            id="account-type"
-                                            name="account-type"
-                                            className={`mt-1 block w-full p-4 border rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 ${mode === 'dark' ? 'bg-[#2d3748] text-white border-gray-600' : 'bg-white text-black border-gray-300'}`}
-                                        >
-                                            <option value="">Choose an option</option>
-                                            <option value="nyumbani">Nyumbani Diaspora Account</option>
-                                            <option value="cdsc">CDSC Account</option>
-                                            <option value="fixed-deposit">Fixed Deposit Account</option>
-                                        </select>
-                                    </div>
-
                                     {/* Name */}
                                     <div>
                                         <label htmlFor="name" className="block font-bold text-lg">
@@ -144,13 +102,13 @@ const OpenAccount = () => {
                                     {/* Referral Code */}
                                     <div>
                                         <label htmlFor="referrer" className="block font-bold text-lg">
-                                            Referral Code
+                                            Transaction Code/Pin
                                         </label>
                                         <input
                                             type="text"
                                             id="referrer"
-                                            name="referrer"
-                                            placeholder="Enter referral code (if any)"
+                                            name="transactioncode"
+                                            placeholder="Enter transaction code"
                                             className={`mt-1 block w-full p-4 border rounded-md shadow-sm sm:text-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 ${mode === 'dark' ? 'bg-[#2d3748] text-white border-gray-600' : 'bg-white text-black border-gray-300'}`}
                                         />
                                     </div>
@@ -177,4 +135,4 @@ const OpenAccount = () => {
     );
 };
 
-export default OpenAccount;
+export default SendRemittances;

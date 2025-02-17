@@ -8,6 +8,7 @@ const useUserData = (token) => {
         userName: '',
         profileImage: '',
         userEmail: '',
+        referralCode: '',
         userPoints: 0,
         actionsCompleted: 0,
         countryCode: '',
@@ -22,13 +23,17 @@ const useUserData = (token) => {
             if (!token) return;
 
             try {
+                console.log('Fetching user data for token:', token); // Log the token being used for the fetch
+
                 const { data, error } = await supabase
                     .from('users')
-                    .select('id, name, points, country, actions_completed, profile_image, email')
+                    .select('id, name, email, points, country, actions_completed, profile_image, referral_code')
                     .eq('id', token)
                     .single();
 
                 if (error) throw error;
+
+                console.log('Fetched data:', data); // Log the fetched data
 
                 const foundCountry = countriesData.find(item => item.name === data.country);
                 const countryCode = foundCountry ? foundCountry.code : 'XX';
@@ -37,6 +42,7 @@ const useUserData = (token) => {
                     imageUrl: data.profile_image,
                     userName: data.name,
                     userEmail: data.email,
+                    referralCode: data.referral_code,
                     userPoints: data.points,
                     actionsCompleted: data.actions_completed,
                     countryCode,
@@ -53,6 +59,8 @@ const useUserData = (token) => {
                         table: 'users',
                         filter: `id=eq.${token}`,
                     }, (payload) => {
+                        console.log('Real-time update payload:', payload); // Log real-time updates
+
                         const foundCountry = countriesData.find(item => item.name === payload.new.country);
                         const countryCode = foundCountry ? foundCountry.code : 'XX';
 

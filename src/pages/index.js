@@ -12,39 +12,17 @@ import LeaderboardTable from "@/components/leaderboardTable"
 
 
 export default function Home() {
-    const [mode, setMode] = useState('light');
 
-
-    const notify = (message) => toast(message);
-
-    // Set mode from localStorage or system preference, only after mounting
-    useEffect(() => {
-        const savedMode = localStorage.getItem('mode');
-        if (savedMode) {
-            setMode(savedMode);
-        } else {
-            const systemMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-            setMode(systemMode);
-        }
-    }, []);  // Only run once on mount
-
-    const toggleMode = () => {
-        setMode(prevMode => {
-            const newMode = prevMode === 'dark' ? 'light' : 'dark';
-            localStorage.setItem('mode', newMode);
-            return newMode;
-        });
-    };
 
     return (
-        <div className={`flex flex-col h-screen ${mode === 'dark' ? 'dark' : ''}`}>
+        <div className={`flex flex-col h-screen `}>
             <NavHeader/>
 
             <div className="mb-4 flex flex-1 transition-all duration-300">
 
 
                 <main
-                    className={`flex-1 transition-all duration-300 ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-[#fafafa] text-black'}`}>
+                    className={`flex-1 transition-all duration-300 `}>
 
                     <div className="bg-[#f7f1eb] px-10 md:px-40 z-40 relative">
                         <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4">

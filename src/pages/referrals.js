@@ -7,15 +7,16 @@ import useUserActivities from '../hooks/useUserActivities';
 import Header from "@/layouts/header";
 import Sidebar from "@/layouts/sidebar";
 import { toast } from 'react-toastify';
-import LeaderboardTable from "@/components/leaderboardTable";
-
+import UserInfo from "@/components/userInfo";
+import DashboardOverview from "@/components/dashboardOverview";
 import { imagekit } from '../utils/imageKitService';
 import { useUser } from '@/context/UserContext';
 import useTheme from '@/hooks/useTheme';
 import useSidebar from '@/hooks/useSidebar';
 import useSignOut from '@/hooks/useSignOut';
+import Referral from "@/components/referFriend";
 
-const Leaderboard = () => {
+const Referrals = () => {
     const router = useRouter();
     const { token, setToken } = useUser();
     const { isSidebarOpen, toggleSidebar } = useSidebar();
@@ -52,23 +53,37 @@ const Leaderboard = () => {
                 <main
                     className={`flex-1 p-8 pt-14 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-20'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-[#f7f1eb] text-black'}`}
                 >
+                    <div className="space-y-8 mb-8">
+                        {/*<UserInfo*/}
+                        {/*    mode={mode}*/}
+                        {/*    toggleMode={toggleMode}*/}
+                        {/*    token={token}*/}
+                        {/*    notify={notify}*/}
+                        {/*    userData={userData}*/}
+                        {/*/>*/}
 
-                    <h2 className={`text-center text-teal-500 text-lg sm:text-4xl md:text-3xl font-extrabold ${mode === 'dark' ? 'text-white' : 'text-black'}`}>
-                        Leaderboard
-                    </h2>
+                        <div
+                            className={`${mode === 'dark' ? 'bg-[#101720] text-white' : 'bg-white text-black'} rounded-lg py-8 px-4 md:px-8 hover:shadow-md transition-all duration-300 ease-in-out`}
+                        >
+                            <div
+                                className={`px-4 space-y-4 mb-8 ${mode === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                                <h2 className={`text-teal-500 text-lg sm:text-4xl md:text-3xl font-extrabold ${mode === 'dark' ? 'text-white' : 'text-black'}`}>
+                                    Referrals
+                                </h2>
 
-                    <p className={`text-center text-base  ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                        Stay competitive! Check the live leaderboard to see who's winning.
-                    </p>
+                                <p className={`text-base  ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                                    Sharing is caring! Don’t keep the good news about Credit Bank’s wealth management solutions to yourself. Earn points for referring your loved ones.
+                                </p>
 
-                    <div className="space-y-8">
-                        <LeaderboardTable
-                            token={token}
-                            userData={userData}
-                            notify={notify}
-                            mode={mode}
-                        />
+                                <Referral
+                                    token={token}
+                                    userData={userData}
+                                    notify={notify}
+                                    mode={mode}
+                                />
+                            </div>
 
+                        </div>
                     </div>
                 </main>
             </div>
@@ -76,4 +91,4 @@ const Leaderboard = () => {
     );
 };
 
-export default Leaderboard;
+export default Referrals;
