@@ -4,7 +4,7 @@ import Modal from './Modal';
 import Image from 'next/image';
 import { toast } from 'react-toastify';
 
-const AppDownloadModal = ({ isOpen, onClose, mode }) => {
+const AppDownload = ({ isOpen, onClose, mode }) => {
     const [userId, setUserId] = useState(null);
     const [isAppDownloaded, setIsAppDownloaded] = useState(false);
 
@@ -130,7 +130,6 @@ const AppDownloadModal = ({ isOpen, onClose, mode }) => {
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose}>
             <div
                 className={`p-6 ${
                     mode === 'dark' ? 'bg-[#0f1720] text-white' : 'bg-white text-black'
@@ -199,8 +198,7 @@ const AppDownloadModal = ({ isOpen, onClose, mode }) => {
                     </div>
                 </div>
             </div>
-        </Modal>
     );
 };
 
-export default AppDownloadModal;
+export default AppDownload;
