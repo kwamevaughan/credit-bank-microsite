@@ -13,7 +13,6 @@ import MyActivity from "@/components/myActivity";
 import Referral from "@/components/referFriend";
 import { ArrowRightOnRectangleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import DeleteAccountModal from "@/components/DeleteAccountModal"; // Import your DeleteAccountModal
-import AppDownloadModal from "@/components/AppDownloadModal";
 import VerificationModal from "@/components/VerificationModal";
 import { imagekit } from '../utils/imageKitService';
 import { useUser } from '@/context/UserContext';  // Import the context
@@ -28,7 +27,6 @@ const Dashboard = () => {
     const { token, setToken } = useUser();  // Use the context to get token and setToken
     const { mode, toggleMode } = useTheme(); // Use the hook
     const { isSidebarOpen, toggleSidebar } = useSidebar(); // Use the hook
-    const { isOpen: isAppDownloadModalOpen, openModal: openAppDownloadModal, closeModal: closeAppDownloadModal } = useModal();
     const { isOpen: isVerificationModalOpen, openModal: openVerificationModal, closeModal: closeVerificationModal } = useModal();
 
     const [showDeleteModal, setShowDeleteModal] = useState(false); // Manage modal visibility
@@ -48,11 +46,9 @@ const Dashboard = () => {
     const handleDownloadApp = (message) => notify(message, 'success');
 
     const openModal = () => {
-        setIsAppDownloadModalOpen(true);
     };
 
     const closeModal = () => {
-        setIsAppDownloadModalOpen(false);
     };
 
 
@@ -175,14 +171,7 @@ const Dashboard = () => {
                             mode={mode}
                         />
                     </div>
-                    <AppDownloadModal
-                        isOpen={isAppDownloadModalOpen}
-                        onClose={closeModal}
-                        token={token}
-                        toggleMode={toggleMode}
-                        mode={mode}
-                        notify={notify}
-                    />
+
 
                     <VerificationModal
                         isOpen={isVerificationModalOpen}
