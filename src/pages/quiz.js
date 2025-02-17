@@ -5,7 +5,6 @@ import Sidebar from "@/layouts/sidebar";
 import { quizzes } from '../data/questions';
 import { toast } from 'react-toastify';
 import { useTimer } from 'react-timer-hook';
-import AppDownloadModal from "@/components/AppDownloadModal";
 import useTheme from '@/hooks/useTheme';
 import useSidebar from '@/hooks/useSidebar';
 
@@ -558,12 +557,7 @@ const Quiz = () => {
                 toggleMode={toggleMode}
             />
 
-            <AppDownloadModal
-                isOpen={isModalOpen}
-                onClose={closeModal}
-                mode={mode}
-                toggleMode={toggleMode}
-            />
+
 
             <main
                 className={`flex-1 pt-14 p-8 min-h-screen transition-all duration-300 ${isSidebarOpen ? "ml-64" : "ml-0"} ${mode === "dark" ? "bg-[#0a0c1d] text-white" : "bg-[#f7f1eb] text-black"}`}>
