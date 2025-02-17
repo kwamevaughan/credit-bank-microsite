@@ -113,6 +113,7 @@ const Dashboard = () => {
                                     <Referral
                                         mode={mode}
                                         toggleMode={toggleMode}
+                                        userData={userData}
                                         token={token}
                                         notify={notify}
                                     />
