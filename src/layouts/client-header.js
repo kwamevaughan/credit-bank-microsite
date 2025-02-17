@@ -5,42 +5,14 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { toast } from "react-toastify";
 import { supabase } from '/lib/supabase';
+import useFullScreen from '@/hooks/useFullScreen';  // Import the custom hook
+import useHeaderUserData from '@/hooks/useHeaderUserData';  // Import the new header-specific hook
 
-const ClientHeader = ({ userId, mode, toggleMode, toggleFullScreen, onLogout }) => {
-    const [user, setUser] = useState(null);
-    const [profileImage, setProfileImage] = useState(null);
+const ClientHeader = ({ userId, mode, toggleMode, onLogout }) => {
+    const { profileImage, userName } = useHeaderUserData(userId); // Use the new custom hook for header data
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
-
-    // Fetch user data from Supabase based on userId
-    const fetchUserData = async () => {
-        if (!userId) {
-            console.error('User ID is missing');
-            return;
-        }
-
-        try {
-            const { data, error } = await supabase
-                .from('client_users')
-                .select('profile_image')
-                .eq('id', userId)
-                .single();
-
-            if (error) {
-                console.error('Error fetching user data:', error);
-                return;
-            }
-
-            setUser(data);
-            setProfileImage(data.profile_image);
-        } catch (error) {
-            console.error('Error fetching user data:', error);
-        }
-    };
-
-    useEffect(() => {
-        fetchUserData();
-    }, [userId]);
+    const toggleFullScreen = useFullScreen();  // Using the custom hook
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -111,7 +83,7 @@ const ClientHeader = ({ userId, mode, toggleMode, toggleFullScreen, onLogout }) 
                                 <div className="w-10 h-10 rounded-full overflow-hidden">
                                     <Image
                                         src={profileImage}
-                                        alt="User Profile"
+                                        alt={userName || "User Profile"}
                                         width={48}
                                         height={48}
                                         className="object-cover"

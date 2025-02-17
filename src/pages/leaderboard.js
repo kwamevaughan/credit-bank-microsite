@@ -53,13 +53,12 @@ const Leaderboard = () => {
                     className={`flex-1 p-8 pt-14 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-20'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-[#f7f1eb] text-black'}`}
                 >
 
-                    <h2 className={`text-center text-teal-500 text-lg sm:text-4xl md:text-3xl font-extrabold ${mode === 'dark' ? 'text-white' : 'text-black'}`}>
-                        Leaderboard
-                    </h2>
+                    <h2 className="text-4xl font-bold text-teal-600 mb-4 text-center ">Leaderboard</h2>
+                    <h3 className="text-2xl font-bold text-[#ff9409] mb-4 text-center ">See Who's Leading the
+                        Pack!</h3>
 
-                    <p className={`text-center text-base  ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                        Stay competitive! Check the live leaderboard to see who's winning.
-                    </p>
+                    <p className="mb-4 text-center ">Stay competitive! Check the live leaderboard to see who's
+                        winning.</p>
 
                     <div className="space-y-8">
                         <LeaderboardTable

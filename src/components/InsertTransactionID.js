@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-const TransactionIDUpdater = ({ userId, mode, toggleMode, notify }) => {
+const TransactionIDUpdater = ({ token, userId, mode, toggleMode, notify }) => {
     const [name, setName] = useState("");
     const [transactionId, setTransactionId] = useState("");
     const [amountDeposited, setAmountDeposited] = useState("");

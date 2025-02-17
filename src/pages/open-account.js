@@ -3,28 +3,75 @@ import { useRouter } from 'next/router';
 import { supabase } from '/lib/supabase';
 import Link from 'next/link';
 import useUserData from '../hooks/useUserData';
-import useUserActivities from '../hooks/useUserActivities';
 import Header from "@/layouts/header";
 import Sidebar from "@/layouts/sidebar";
 import { toast } from 'react-toastify';
-import UserInfo from "@/components/userInfo";
-import DashboardOverview from "@/components/dashboardOverview";
-import { imagekit } from '../utils/imageKitService';
 import { useUser } from '@/context/UserContext';
 import useTheme from '@/hooks/useTheme';
 import useSidebar from '@/hooks/useSidebar';
 import useSignOut from '@/hooks/useSignOut';
+import useAccountOpening from '@/hooks/useAccountOpening';
+import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 const OpenAccount = () => {
     const router = useRouter();
-    const { token, setToken } = useUser();
+    const { token } = useUser();
     const { isSidebarOpen, toggleSidebar } = useSidebar();
+    const { handleSignOut } = useSignOut();
     const { mode, toggleMode } = useTheme();
     const notify = (message) => toast(message);
     const userData = useUserData(token);
-    const activities = useUserActivities(token);
-    const { userName, userEmail, imageUrl: profileImage, userPoints } = userData || {};
-    const { handleSignOut } = useSignOut();
+    const {
+        accountType,
+        setAccountType,
+        name,
+        setName,
+        referrer,
+        setReferrer,
+        handleSubmit,
+        referralCodeValid,
+        setReferralCodeValid,
+        isSelfReferral,
+        isValidating,
+        referrerName,
+        handleReferralCodeChange
+    } = useAccountOpening(token);
+
+    // Function to check if referral code is valid
+    const validateReferralCode = async (code) => {
+        if (!code) {
+            setReferralCodeValid(true); // Allow empty codes
+            return;
+        }
+
+        // Check if the referral code exists and does not belong to the logged-in user
+        try {
+            const { data, error } = await supabase
+                .from('users')
+                .select('id')
+                .eq('referral_code', code)
+                .single(); // assuming 'referral_code' is the column storing referral codes
+
+            if (error) throw error;
+
+            // Check if referral code belongs to the logged-in user
+            if (data && data.id !== userData.id) {
+                setReferralCodeValid(true); // Valid referral code
+            } else {
+                setReferralCodeValid(false); // Referral code belongs to the logged-in user
+            }
+        } catch (error) {
+            setReferralCodeValid(false); // Referral code is invalid
+            console.error('Error validating referral code:', error.message);
+        }
+    };
+
+    useEffect(() => {
+        // Only validate referral code if it's changed
+        if (referrer) {
+            validateReferralCode(referrer);
+        }
+    }, [referrer]);
 
     return (
         <div className={`flex flex-col h-screen ${mode === 'dark' ? 'bg-[#1a1a1a]' : 'bg-[#f7f1eb]'}`}>
@@ -53,14 +100,6 @@ const OpenAccount = () => {
                     className={`flex-1 p-8 pt-14 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-20'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-[#f7f1eb] text-black'}`}
                 >
                     <div className="space-y-8 mb-8">
-                        {/*<UserInfo*/}
-                        {/*    mode={mode}*/}
-                        {/*    toggleMode={toggleMode}*/}
-                        {/*    token={token}*/}
-                        {/*    notify={notify}*/}
-                        {/*    userData={userData}*/}
-                        {/*/>*/}
-
                         <div
                             className={`${mode === 'dark' ? 'bg-[#101720] text-white' : 'bg-white text-black'} rounded-lg py-8 px-4 md:px-8 hover:shadow-md transition-all duration-300 ease-in-out`}
                         >
@@ -74,42 +113,11 @@ const OpenAccount = () => {
                                     the Nyumbani Diaspora Challenge, you can earn points for opening an account or
                                     referring a friend to open one.
                                 </p>
-                                <span>
-        <ul className={`list-disc text-lg font-normal ml-8 pb-4 ${mode === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-            <li>
-                <strong className={`text-black ${mode === 'dark' ? 'text-white' : 'text-black'}`}>Nyumbani Diaspora Account: </strong>
-                <span className={mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}>Operates in KES, USD, Euro, or GBP. Minimum balance: Ksh5,000.</span>
-            </li>
-            <li>
-                <strong
-                    className={`text-black ${mode === 'dark' ? 'text-white' : 'text-black'}`}>CDSC Account: </strong>
-                <span className={mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}>Trade shares on the Nairobi Securities Exchange.</span>
-            </li>
-            <li>
-                <strong
-                    className={`text-black ${mode === 'dark' ? 'text-white' : 'text-black'}`}>Fixed Deposit Account: </strong>
-                <span className={mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}>Grow your savings with a fixed interest rate until maturity.</span>
-            </li>
-        </ul>
-
-        <p className={`text-base ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-            Visit{' '}
-            <Link
-                href="https://diaspora.creditbank.co.ke/open-an-account"
-                className={`font-bold ${mode === 'dark' ? 'text-white' : 'text-black'} underline`}
-                target="_blank"
-            >
-                www.diaspora.creditbank.co.ke/open-an-account
-            </Link>{' '}
-            to open an account and enter your details below to redeem your points.
-        </p>
-    </span>
                             </div>
-
 
                             <div className="flex flex-col justify-center px-4 space-y-4">
                                 {/* Form with 3/4 width */}
-                                <form className="space-y-6 w-full mx-auto">
+                                <form className="space-y-6 w-full mx-auto" onSubmit={handleSubmit}>
                                     {/* Select Account Type */}
                                     <div>
                                         <label htmlFor="account-type" className="block font-bold text-lg">
@@ -118,6 +126,7 @@ const OpenAccount = () => {
                                         <select
                                             id="account-type"
                                             name="account-type"
+                                            onChange={(e) => setAccountType(e.target.value)} // Bind onChange to update state
                                             className={`mt-1 block w-full p-4 border rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 ${mode === 'dark' ? 'bg-[#2d3748] text-white border-gray-600' : 'bg-white text-black border-gray-300'}`}
                                         >
                                             <option value="">Choose an option</option>
@@ -136,23 +145,67 @@ const OpenAccount = () => {
                                             type="text"
                                             id="name"
                                             name="name"
+                                            value={name}
+                                            onChange={(e) => setName(e.target.value)} // Bind onChange to update state
                                             placeholder="Enter your full name"
                                             className={`mt-1 block w-full p-4 border rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 ${mode === 'dark' ? 'bg-[#2d3748] text-white border-gray-600' : 'bg-white text-black border-gray-300'}`}
                                         />
                                     </div>
 
                                     {/* Referral Code */}
-                                    <div>
+                                    <div className="relative">
                                         <label htmlFor="referrer" className="block font-bold text-lg">
-                                            Referral Code
+                                            Referral Code (optional)
                                         </label>
-                                        <input
-                                            type="text"
-                                            id="referrer"
-                                            name="referrer"
-                                            placeholder="Enter referral code (if any)"
-                                            className={`mt-1 block w-full p-4 border rounded-md shadow-sm sm:text-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 ${mode === 'dark' ? 'bg-[#2d3748] text-white border-gray-600' : 'bg-white text-black border-gray-300'}`}
-                                        />
+                                        <div className="relative">
+                                            <input
+                                                type="text"
+                                                id="referrer"
+                                                name="referrer"
+                                                value={referrer}
+                                                onChange={handleReferralCodeChange}
+                                                placeholder="Enter referral code (if any)"
+                                                className={`mt-1 block w-full p-4 border rounded-md shadow-sm sm:text-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 ${
+                                                    mode === 'dark' ? 'bg-[#2d3748] text-white border-gray-600' : 'bg-white text-black border-gray-300'
+                                                } ${!referralCodeValid ? 'border-red-500' : referrer ? 'border-green-500' : ''}`}
+                                            />
+                                            {/* Validation icon */}
+                                            {referrer && !isValidating && (
+                                                <div
+                                                    className={`absolute right-3 top-1/2 transform -translate-y-1/2 text-sm ${
+                                                        referralCodeValid ? 'text-green-500' : 'text-red-500'
+                                                    }`}>
+                                                    {referralCodeValid ? (
+                                                        <CheckIcon className="inline h-5 w-5"/>
+                                                    ) : (
+                                                        <XMarkIcon className="inline h-5 w-5"/>
+                                                    )}
+                                                </div>
+                                            )}
+                                            {/* Loading indicator */}
+                                            {isValidating && (
+                                                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                                                    <svg className="animate-spin h-5 w-5 text-gray-500"
+                                                         xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                         viewBox="0 0 24 24">
+                                                        <circle className="opacity-25" cx="12" cy="12" r="10"
+                                                                stroke="currentColor" strokeWidth="4"></circle>
+                                                        <path className="opacity-75" fill="currentColor"
+                                                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                    </svg>
+                                                </div>
+                                            )}
+                                        </div>
+                                        {/* Validation message */}
+                                        {referrer && !isValidating && (
+                                            <p className={`mt-1 text-sm ${referralCodeValid ? 'text-green-500' : 'text-red-500'}`}>
+                                                {isSelfReferral
+                                                    ? "You cannot use your own referral code"
+                                                    : referralCodeValid && referrerName
+                                                        ? `Found a match for: ${referrerName}`
+                                                        : "Please enter a valid referral code"}
+                                            </p>
+                                        )}
                                     </div>
 
                                     {/* Submit Button */}

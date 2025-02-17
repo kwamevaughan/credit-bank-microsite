@@ -6,7 +6,7 @@ import useUserData from '../hooks/useUserData';
 import { useUser } from '@/context/UserContext';
 
 const Referral = ({ token, userData, mode, toggleMode, notify }) => {
-    const { referralCode  } = userData || {};
+    const { referralCode } = userData || {};
     const [copied, setCopied] = useState(false); // State to track copy action
     const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 

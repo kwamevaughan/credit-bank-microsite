@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '/lib/supabase';
 import { toast } from 'react-toastify';
 
-const CustomerList = ({ userId, mode, toggleMode, notify }) => {
+const CustomerTransactionList = ({ userId, mode, toggleMode, notify }) => {
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(1);
     const [sortBy, setSortBy] = useState('name'); // Default sort by 'name'
@@ -284,7 +284,7 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
             className={`max-w-4xl mx-auto p-6 rounded-xl shadow-lg hover:shadow-none transition-all duration-300 ease-in-out ${mode === 'dark' ? 'bg-gray-800 text-gray-200' : 'bg-white text-gray-900'}`}
         >
             <p className="flex gap-x-2 items-center text-2xl md:text-lg justify-center md:justify-start mb-4 px-2">
-                Customer List
+                Customer Transaction List
             </p>
             {/* Filter and Search Row */}
             <div className="mb-4 flex flex-col md:flex-row items-center gap-4">
@@ -530,4 +530,4 @@ const CustomerList = ({ userId, mode, toggleMode, notify }) => {
     );
 };
 
-export default CustomerList;
+export default CustomerTransactionList;
