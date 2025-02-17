@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '/lib/supabase';
+import useUserData from '../hooks/useUserData';
+import { useUser } from '@/context/UserContext';
+import useSignOut from '@/hooks/useSignOut';
 import Header from "@/layouts/header";
 import Sidebar from "@/layouts/sidebar";
 import { quizzes } from '../data/questions';
@@ -9,8 +12,11 @@ import useTheme from '@/hooks/useTheme';
 import useSidebar from '@/hooks/useSidebar';
 
 const Quiz = () => {
+    const { token, setToken } = useUser();
+    const userData = useUserData(token);
     const [userName, setUserName] = useState('');
     const { isSidebarOpen, toggleSidebar } = useSidebar(); // Use the hook
+    const { handleSignOut } = useSignOut();
     const { mode, toggleMode } = useTheme(); // Use the hook
     const [isModalOpen, setIsModalOpen] = useState(false); // State for Modal
     const notify = (message) => toast(message);
@@ -543,18 +549,23 @@ const Quiz = () => {
     return (
         <div className="w-full">
             <Header
+                token={token}
                 toggleSidebar={toggleSidebar}
                 isSidebarOpen={isSidebarOpen}
                 mode={mode}
                 toggleMode={toggleMode}
+                onLogout={handleSignOut}
+                userData={userData}
             />
 
             <Sidebar
+                token={token}
                 isOpen={isSidebarOpen}
                 toggleSidebar={toggleSidebar}
                 mode={mode}
-                openModal={openModal} // Pass the openModal function down to Sidebar
+                onLogout={handleSignOut}
                 toggleMode={toggleMode}
+                userData={userData}
             />
 
 
