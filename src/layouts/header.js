@@ -7,10 +7,12 @@ import { toast } from "react-toastify";
 import { supabase } from '/lib/supabase';
 import { useUser } from '@/context/UserContext';  // Import the context
 import useUserData from '@/hooks/useUserData';
+import useFullScreen from '@/hooks/useFullScreen';  // Import the custom hook
 
-const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, toggleFullScreen, onLogout }) => {
+const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, onLogout }) => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const { userName, userEmail, imageUrl: profileImage } = useUserData(token);  // Real-time updates from hook
+    const toggleFullScreen = useFullScreen();  // Using the custom hook
 
     const dropdownRef = useRef(null);
 

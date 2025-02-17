@@ -65,12 +65,11 @@ const Sidebar = ({ token, isOpen, toggleSidebar, mode, onLogout }) => {
 
     const isActive = (pathname) => {
         const isActiveLink = router.pathname === pathname;
-        if (isActiveLink) {
-            return mode === 'dark'
+        return isActiveLink
+            ? mode === 'dark'
                 ? 'bg-[#2a3a48] text-white text-center py-2 px-4'
-                : 'bg-[#f7f1eb] text-black text-center py-2 px-4';
-        }
-        return '';
+                : 'bg-[#f7f1eb] text-black text-center py-2 px-4'
+            : '';
     };
 
     return (
@@ -125,7 +124,6 @@ const Sidebar = ({ token, isOpen, toggleSidebar, mode, onLogout }) => {
                 </div>
 
                 <ul className="flex-grow">
-                    {/* Sidebar links */}
                     {[
                         {href: '/dashboard', icon: HomeIcon, label: 'Dashboard'},
                         {href: '/open-account', icon: Activity, label: 'Open an Account'},
@@ -141,14 +139,13 @@ const Sidebar = ({ token, isOpen, toggleSidebar, mode, onLogout }) => {
                                 className={`flex items-center ${isOpen ? 'justify-start px-8' : 'justify-center px-0'} py-2 transition-all duration-500 ease-out transform hover:-translate-y-[10px] hover:shadow-lg hover:py-3 group relative ${isActive(href)}`}
                             >
                                 <Icon
-                                    className={`h-8 w-8 ${isOpen ? 'mr-2' : ''} p-1 rounded-full ${mode === 'dark' ? 'text-gray-200' : 'text-gray-500'} transition`}
-                                />
+                                    className={`h-8 w-8 ${isOpen ? 'mr-2' : ''} p-1 rounded-full ${mode === 'dark' ? 'text-gray-200' : 'text-gray-500'} transition`}/>
                                 {isOpen && <span>{label}</span>}
                                 {!isOpen && (
                                     <span
                                         className="absolute left-full ml-2 text-xs text-white bg-gray-700 rounded py-1 px-2 opacity-0 group-hover:opacity-75 transition-opacity whitespace-nowrap">
-                                {label}
-                            </span>
+                                        {label}
+                                    </span>
                                 )}
                             </Link>
                         </li>

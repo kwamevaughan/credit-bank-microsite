@@ -6,11 +6,13 @@ import { quizzes } from '../data/questions';
 import { toast } from 'react-toastify';
 import { useTimer } from 'react-timer-hook';
 import AppDownloadModal from "@/components/AppDownloadModal";
+import useTheme from '@/hooks/useTheme';
+import useSidebar from '@/hooks/useSidebar';
 
 const Quiz = () => {
     const [userName, setUserName] = useState('');
-    const [isSidebarOpen, setSidebarOpen] = useState(false);
-    const [mode, setMode] = useState("light");
+    const { isSidebarOpen, toggleSidebar } = useSidebar(); // Use the hook
+    const { mode, toggleMode } = useTheme(); // Use the hook
     const [isModalOpen, setIsModalOpen] = useState(false); // State for Modal
     const notify = (message) => toast(message);
     const [loading, setLoading] = useState(false)
@@ -536,33 +538,8 @@ const Quiz = () => {
         setIsModalOpen(false); // Function to close the modal
     };
 
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            setSidebarOpen(window.innerWidth > 768);
-        }
-    }, []);
 
-    const toggleSidebar = () => {
-        setSidebarOpen(!isSidebarOpen);
-    };
 
-    useEffect(() => {
-        const savedMode = localStorage.getItem("mode");
-        if (savedMode) {
-            setMode(savedMode);
-        } else {
-            const systemMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-            setMode(systemMode);
-        }
-    }, []);
-
-    const toggleMode = () => {
-        setMode((prevMode) => {
-            const newMode = prevMode === "dark" ? "light" : "dark";
-            localStorage.setItem("mode", newMode);
-            return newMode;
-        });
-    };
 
     return (
         <div className="w-full">
