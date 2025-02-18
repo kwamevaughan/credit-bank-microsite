@@ -442,6 +442,7 @@ const Profile = () => {
                                                                     placeholder="Select your country"
                                                                     isSearchable
                                                                     isClearable
+                                                                    isDisabled
                                                                     className="mt-2 block w-full rounded-lg bg-white text-base text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 transition-all duration-200" // Add padding for icon
                                                                 />
 
