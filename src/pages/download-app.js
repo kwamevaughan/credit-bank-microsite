@@ -11,6 +11,10 @@ import { useUser } from '@/context/UserContext';
 import useTheme from '@/hooks/useTheme';
 import useSidebar from '@/hooks/useSidebar';
 import useSignOut from '@/hooks/useSignOut';
+import { Apple } from "@/components/icons/Apple";
+import { Android } from "@/components/icons/Android";
+import { CheckIcon } from '@heroicons/react/24/outline';
+import { StarIcon } from '@heroicons/react/24/solid';
 
 const DownloadApp = () => {
     const router = useRouter();
@@ -187,11 +191,7 @@ const DownloadApp = () => {
                                             'Mobile Banking'
                                         ].map((feature) => (
                                             <div key={feature} className="flex items-center space-x-2">
-                                                <svg className="w-5 h-5 text-teal-500" fill="none" stroke="currentColor"
-                                                     viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                                          d="M5 13l4 4L19 7"/>
-                                                </svg>
+                                                <CheckIcon className="w-5 h-5 text-teal-500"/>
                                                 <span className="text-sm">{feature}</span>
                                             </div>
                                         ))}
@@ -205,9 +205,10 @@ const DownloadApp = () => {
                                         alt="App Preview"
                                         width={300}
                                         height={600}
-                                        className="rounded-lg shadow-lg"
+                                        className="rounded-lg shadow-lg transform transition-transform duration-500 ease-out hover:translate-y-[-10px]"
                                     />
                                 </div>
+
                             </div>
 
                             {/* Download Section with improved table */}
@@ -217,35 +218,62 @@ const DownloadApp = () => {
                                     <table className="min-w-full divide-y divide-gray-200">
                                         <thead>
                                         <tr>
-                                            <th className="p-4 text-left text-sm font-semibold text-gray-500">Platform</th>
-                                            <th className="p-4 text-left text-sm font-semibold text-gray-500">Status</th>
-                                            <th className="p-4 text-left text-sm font-semibold text-gray-500">Reward
-                                                Points
+                                            <th
+                                                className={`p-4 text-left text-sm font-semibold ${
+                                                    mode === 'dark' ? 'text-gray-300' : 'text-gray-500'
+                                                }`}
+                                            >
+                                                Platform
                                             </th>
-                                            <th className="p-4 text-left text-sm font-semibold text-gray-500">Download</th>
+                                            <th
+                                                className={`p-4 text-left text-sm font-semibold ${
+                                                    mode === 'dark' ? 'text-gray-300' : 'text-gray-500'
+                                                }`}
+                                            >
+                                                Status
+                                            </th>
+                                            <th
+                                                className={`p-4 text-left text-sm font-semibold ${
+                                                    mode === 'dark' ? 'text-gray-300' : 'text-gray-500'
+                                                }`}
+                                            >
+                                                Reward Points
+                                            </th>
+                                            <th
+                                                className={`p-4 text-left text-sm font-semibold ${
+                                                    mode === 'dark' ? 'text-gray-300' : 'text-gray-500'
+                                                }`}
+                                            >
+                                                Download
+                                            </th>
                                         </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-200">
                                         {['Android', 'Apple'].map((platform) => (
                                             <tr
                                                 key={platform}
-                                                className={`hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors`}
+                                                className={`hover:${mode === 'dark' ? 'bg-black' : 'bg-gray-100'} transition-colors`}
                                             >
-
                                                 <td className="p-4">
                                                     <div className="flex items-center space-x-3">
                                                         <div className="flex-shrink-0">
-                                                            <Image
-                                                                src={`/assets/images/${platform.toLowerCase()}.svg`}
-                                                                alt={platform}
-                                                                width={40}
-                                                                height={40}
-                                                                className="rounded-lg"
-                                                            />
+                                                            {/* For the Apple icon, we set fill to white in dark mode */}
+                                                            {platform === 'Apple' ? (
+                                                                <Apple
+                                                                    className={`w-8 h-8 ${mode === 'dark' ? 'fill-white' : ''}`}
+                                                                />
+                                                            ) : (
+                                                                <Image
+                                                                    src={`/assets/images/${platform.toLowerCase()}.svg`}
+                                                                    alt={platform}
+                                                                    width={40}
+                                                                    height={40}
+                                                                    className="rounded-lg"
+                                                                />
+                                                            )}
                                                         </div>
                                                         <div>
                                                             <p className="font-medium">{platform} App</p>
-                                                            <p className="text-sm text-gray-500">Version 2.0</p>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -262,67 +290,57 @@ const DownloadApp = () => {
                                                                 downloadStatus[platform]
                                                                     ? 'bg-green-100 text-green-800'
                                                                     : 'bg-yellow-100 text-yellow-800'
-                                                            }`}>
-                                                {downloadStatus[platform] ? 'Downloaded' : 'Not Yet'}
-                                            </span>
+                                                            }`}
+                                                        >
+              {downloadStatus[platform] ? 'Downloaded' : 'Not Yet'}
+            </span>
                                                     )}
                                                 </td>
                                                 <td className="p-4">
                                                     <div className="flex items-center space-x-1">
-                                                        <svg className="w-5 h-5 text-yellow-400" fill="currentColor"
-                                                             viewBox="0 0 20 20">
-                                                            <path
-                                                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                                        </svg>
-                                                        <span
-                                                            className="font-medium">{downloadStatus[platform] ? '15' : '0'}</span>
+                                                        <StarIcon className="w-5 h-5 text-yellow-400"/>
+                                                        <span className="font-medium">
+              {downloadStatus[platform] ? '15' : '0'}
+            </span>
                                                     </div>
                                                 </td>
                                                 <td className="p-4">
                                                     <button
-                                                        className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-colors
-                                                ${isLoading || downloadStatus[platform]
-                                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                                            : 'bg-teal-500 text-white hover:bg-teal-600 focus:ring-2 focus:ring-offset-2 focus:ring-teal-500'
+                                                        className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                                            isLoading || downloadStatus[platform]
+                                                                ? mode === 'dark'
+                                                                    ? 'bg-gray-700 text-gray-100 cursor-not-allowed' // Dark mode styles for disabled button
+                                                                    : 'bg-gray-200 text-gray-600 cursor-not-allowed' // Light mode styles for disabled button
+                                                                : mode === 'dark'
+                                                                    ? 'bg-teal-600 text-white hover:bg-teal-700 focus:ring-2 focus:ring-offset-2 focus:ring-teal-500' // Dark mode button styles
+                                                                    : 'bg-teal-500 text-white hover:bg-teal-600 focus:ring-2 focus:ring-offset-2 focus:ring-teal-500' // Light mode button styles
                                                         }`}
-                                                        onClick={() => handleDownloadApp(platform, platform === 'Android'
-                                                            ? 'https://play.google.com/store/apps/details?id=co.ke.ekenya.creditbank'
-                                                            : 'https://apps.apple.com/us/app/credit-bank-cb-konnect/id1469515952')}
+                                                        onClick={() =>
+                                                            handleDownloadApp(
+                                                                platform,
+                                                                platform === 'Android'
+                                                                    ? 'https://play.google.com/store/apps/details?id=co.ke.ekenya.creditbank'
+                                                                    : 'https://apps.apple.com/us/app/credit-bank-cb-konnect/id1469515952'
+                                                            )
+                                                        }
                                                         disabled={isLoading || downloadStatus[platform]}
                                                     >
                                                         {isLoading ? (
                                                             <>
-                                                                <svg
-                                                                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-400"
-                                                                    fill="none" viewBox="0 0 24 24">
-                                                                    <circle className="opacity-25" cx="12" cy="12"
-                                                                            r="10" stroke="currentColor"
-                                                                            strokeWidth="4"/>
-                                                                    <path className="opacity-75" fill="currentColor"
-                                                                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
-                                                                </svg>
+                                                                <CheckIcon
+                                                                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-400"/>
                                                                 Please wait...
                                                             </>
                                                         ) : (
                                                             <>
                                                                 {downloadStatus[platform] ? (
                                                                     <>
-                                                                        <svg className="w-4 h-4 mr-2"
-                                                                             fill="currentColor" viewBox="0 0 20 20">
-                                                                            <path fillRule="evenodd"
-                                                                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                                                  clipRule="evenodd"/>
-                                                                        </svg>
+                                                                        <CheckIcon className="w-4 h-4 mr-2"/>
                                                                         Downloaded
                                                                     </>
                                                                 ) : (
                                                                     <>
-                                                                        <svg className="w-4 h-4 mr-2" fill="none"
-                                                                             stroke="currentColor" viewBox="0 0 24 24">
-                                                                            <path strokeLinecap="round"
-                                                                                  strokeLinejoin="round" strokeWidth="2"
-                                                                                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                                                        </svg>
+                                                                        <DownloadIcon className="w-4 h-4 mr-2"/>
                                                                         Download
                                                                     </>
                                                                 )}
@@ -334,6 +352,8 @@ const DownloadApp = () => {
                                         ))}
                                         </tbody>
                                     </table>
+
+
                                 </div>
                             </div>
                         </div>

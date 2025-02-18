@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { supabase } from '/lib/supabase';
 import Image from 'next/image';
 import TermsAndConditionsModal from './TermsAndConditionsModal';
-import useUserData from '../hooks/useUserData';
-import { useUser } from '@/context/UserContext';
+// import useUserData from '../hooks/useUserData';
+// import { useUser } from '@/context/UserContext';
 
 const Referral = ({ token, userData, mode, toggleMode, notify }) => {
     const { referralCode } = userData || {};

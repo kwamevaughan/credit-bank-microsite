@@ -3,13 +3,9 @@ import { useRouter } from 'next/router';
 import { supabase } from '/lib/supabase';
 import Link from 'next/link';
 import useUserData from '../hooks/useUserData';
-import useUserActivities from '../hooks/useUserActivities';
 import Header from "@/layouts/header";
 import Sidebar from "@/layouts/sidebar";
 import { toast } from 'react-toastify';
-import UserInfo from "@/components/userInfo";
-import DashboardOverview from "@/components/dashboardOverview";
-import { imagekit } from '../utils/imageKitService';
 import { useUser } from '@/context/UserContext';
 import useTheme from '@/hooks/useTheme';
 import useSidebar from '@/hooks/useSidebar';
@@ -23,7 +19,6 @@ const Referrals = () => {
     const { mode, toggleMode } = useTheme();
     const notify = (message) => toast(message);
     const userData = useUserData(token);
-    const activities = useUserActivities(token);
     const { userName, userEmail, imageUrl: profileImage, userPoints } = userData || {};
     const { handleSignOut } = useSignOut();
 
