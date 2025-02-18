@@ -13,6 +13,7 @@ const useUserData = (token) => {
         actionsCompleted: 0,
         countryCode: '',
         userId: '',
+        baseId: '', // Add this to store the original ID
         rankImage: '/assets/images/position-default.png',
     });
 
@@ -23,7 +24,7 @@ const useUserData = (token) => {
             if (!token) return;
 
             try {
-                console.log('Fetching user data for token:', token); // Log the token being used for the fetch
+                console.log('Fetching user data for token:', token);
 
                 const { data, error } = await supabase
                     .from('users')
@@ -33,7 +34,7 @@ const useUserData = (token) => {
 
                 if (error) throw error;
 
-                console.log('Fetched data:', data); // Log the fetched data
+                console.log('Fetched data:', data);
 
                 const foundCountry = countriesData.find(item => item.name === data.country);
                 const countryCode = foundCountry ? foundCountry.code : 'XX';
@@ -46,11 +47,11 @@ const useUserData = (token) => {
                     userPoints: data.points,
                     actionsCompleted: data.actions_completed,
                     countryCode,
-                    userId: `CB${data.id}${countryCode}`,
+                    userId: `CB${data.id}${countryCode}`, // Formatted ID for display
+                    baseId: data.id, // Store the original ID for database queries
                     rankImage: '/assets/images/position-default.png',
                 });
 
-                // Set up real-time subscription
                 subscription = supabase
                     .channel('users')
                     .on('postgres_changes', {
@@ -59,7 +60,7 @@ const useUserData = (token) => {
                         table: 'users',
                         filter: `id=eq.${token}`,
                     }, (payload) => {
-                        console.log('Real-time update payload:', payload); // Log real-time updates
+                        console.log('Real-time update payload:', payload);
 
                         const foundCountry = countriesData.find(item => item.name === payload.new.country);
                         const countryCode = foundCountry ? foundCountry.code : 'XX';
@@ -72,6 +73,8 @@ const useUserData = (token) => {
                             countryCode,
                             userName: payload.new.name,
                             userEmail: payload.new.email,
+                            userId: `CB${payload.new.id}${countryCode}`,
+                            baseId: payload.new.id,
                             rankImage: prevData.rankImage
                         }));
                     })
