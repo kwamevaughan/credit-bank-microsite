@@ -259,8 +259,6 @@ const useCustomerActions = ({ setCustomers, notify, refetchCustomers }) => {
     }, [setCustomers, notify, refetchCustomers]);
 
 
-
-
     const handleDelete = useCallback(async (id) => {
         setActionLoading(true);
         try {
