@@ -8,6 +8,8 @@ const useUserData = (token) => {
         userName: '',
         profileImage: '',
         userEmail: '',
+        userPhone: '',
+        userCountry: '',
         referralCode: '',
         userPoints: 0,
         actionsCompleted: 0,
@@ -15,6 +17,7 @@ const useUserData = (token) => {
         userId: '',
         baseId: '', // Add this to store the original ID
         rankImage: '/assets/images/position-default.png',
+        countriesData: [],
     });
 
     useEffect(() => {
@@ -28,7 +31,7 @@ const useUserData = (token) => {
 
                 const { data, error } = await supabase
                     .from('users')
-                    .select('id, name, email, points, country, actions_completed, profile_image, referral_code')
+                    .select('id, name, email, phone_number, points, country, actions_completed, profile_image, referral_code')
                     .eq('id', token)
                     .single();
 
@@ -43,6 +46,8 @@ const useUserData = (token) => {
                     imageUrl: data.profile_image,
                     userName: data.name,
                     userEmail: data.email,
+                    userPhone: data.phone_number,
+                    userCountry: data.country,
                     referralCode: data.referral_code,
                     userPoints: data.points,
                     actionsCompleted: data.actions_completed,
@@ -50,6 +55,7 @@ const useUserData = (token) => {
                     userId: `CB${data.id}${countryCode}`, // Formatted ID for display
                     baseId: data.id, // Store the original ID for database queries
                     rankImage: '/assets/images/position-default.png',
+                    countriesData: countriesData,
                 });
 
                 subscription = supabase
@@ -70,6 +76,8 @@ const useUserData = (token) => {
                             imageUrl: payload.new.profile_image,
                             userPoints: payload.new.points,
                             actionsCompleted: payload.new.actions_completed,
+                            userPhone: payload.new.phone_number,
+                            userCountry: payload.new.country,
                             countryCode,
                             userName: payload.new.name,
                             userEmail: payload.new.email,
