@@ -15,9 +15,10 @@ const useUserData = (token) => {
         actionsCompleted: 0,
         countryCode: '',
         userId: '',
-        baseId: '', // Add this to store the original ID
+        baseId: '',
         rankImage: '/assets/images/position-default.png',
         countriesData: [],
+        profile_image_id: null, // Add this line
     });
 
     useEffect(() => {
@@ -31,7 +32,7 @@ const useUserData = (token) => {
 
                 const { data, error } = await supabase
                     .from('users')
-                    .select('id, name, email, phone_number, points, country, actions_completed, profile_image, referral_code')
+                    .select('id, name, email, phone_number, points, country, actions_completed, profile_image, profile_image_id, referral_code') // Add profile_image_id here
                     .eq('id', token)
                     .single();
 
@@ -52,10 +53,11 @@ const useUserData = (token) => {
                     userPoints: data.points,
                     actionsCompleted: data.actions_completed,
                     countryCode,
-                    userId: `CB${data.id}${countryCode}`, // Formatted ID for display
-                    baseId: data.id, // Store the original ID for database queries
+                    userId: `CB${data.id}${countryCode}`,
+                    baseId: data.id,
                     rankImage: '/assets/images/position-default.png',
                     countriesData: countriesData,
+                    profile_image_id: data.profile_image_id, // Add this line
                 });
 
                 subscription = supabase
@@ -83,7 +85,8 @@ const useUserData = (token) => {
                             userEmail: payload.new.email,
                             userId: `CB${payload.new.id}${countryCode}`,
                             baseId: payload.new.id,
-                            rankImage: prevData.rankImage
+                            rankImage: prevData.rankImage,
+                            profile_image_id: payload.new.profile_image_id, // Add this line
                         }));
                     })
                     .subscribe();

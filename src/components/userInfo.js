@@ -80,31 +80,41 @@ const UserInfo = ({ userData, token, mode, toggleMode, notify }) => {
 
         setUploading(true);
         try {
-            const { data: userData, error: userError } = await supabase
+            // Fetch current user data to get the current image ID
+            const { data: currentUserData, error: userError } = await supabase
                 .from('users')
-                .select('profile_image, profile_image_id')
+                .select('profile_image_id')
                 .eq('id', token)
                 .single();
 
             if (userError) {
                 console.error('Error fetching user profile data:', userError.message);
-                return;
+                throw userError;
             }
 
-            let imageUrl = userData.profile_image;
-            let previousFileId = userData.profile_image_id;
+            const currentFileId = currentUserData.profile_image_id;
+            console.log('Current file ID:', currentFileId);
 
-            if (imageUrl && previousFileId && imageUrl !== '/assets/images/placeholder.png') {
+            // If there's an existing image, try to delete it
+            if (currentFileId) {
                 try {
-                    await deleteOldImageFromImageKit(previousFileId);
-                } catch (error) {
-                    console.error('Error deleting previous image:', error);
+                    console.log(`Attempting to delete old image with ID: ${currentFileId}`);
+                    await imagekit.deleteFile(currentFileId);
+                    console.log('✓ Successfully deleted old image');
+                } catch (deleteError) {
+                    console.warn(`⚠ Failed to delete old image: ${deleteError.message}`);
+                    // Continue with upload even if deletion fails
                 }
             }
 
+            // Upload new image
+            console.log(`Uploading new image for user: ${userName}`);
             const { fileUrl, fileId } = await uploadImage(file, userName, userId);
+            console.log('✓ New image uploaded successfully. New fileId:', fileId);
 
-            const { data: updatedUserData, error: updateError } = await supabase
+            // Update database with new image information
+            console.log('Updating profile_image and profile_image_id in database...');
+            const { error: updateError } = await supabase
                 .from('users')
                 .update({
                     profile_image: fileUrl,
@@ -113,15 +123,17 @@ const UserInfo = ({ userData, token, mode, toggleMode, notify }) => {
                 .eq('id', token);
 
             if (updateError) {
-                console.error('Error updating user profile with image URL:', updateError.message);
-                return;
+                throw updateError;
             }
 
+            console.log('✓ Database updated with new image information');
             notify('Profile image uploaded successfully!', { type: 'success' });
+
+            // Clear the file input
             event.target.value = '';
 
         } catch (error) {
-            console.error('Unexpected error during image upload:', error);
+            console.error('Error during image upload process:', error);
             notify('An unexpected error occurred. Please try again.', { type: 'error' });
             // Reset preview to original image on error
             setPreviewImage(imageUrl);

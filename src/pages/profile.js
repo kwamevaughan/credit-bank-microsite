@@ -1,3 +1,4 @@
+// Profile.js (Revised - Key Changes Highlighted)
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '/lib/supabase';
@@ -21,7 +22,7 @@ import {
 } from '@heroicons/react/24/outline';  // Import icons
 import DeleteAccountModal from "@/components/DeleteAccountModal";
 import VerificationModal from "@/components/VerificationModal";
-import { imagekit, uploadImage } from '../utils/imageKitService'; // Import both
+import { imagekit, uploadImage, deleteImage } from '../utils/imageKitService'; // Import both
 import { useUser } from '@/context/UserContext';
 import useSignOut from '@/hooks/useSignOut';
 import useTheme from '@/hooks/useTheme';
@@ -31,6 +32,10 @@ import useDeleteAccount from "@/hooks/useDeleteAccount";
 import Select from 'react-select'; // Import react-select
 import Image from 'next/image'; // Import the Image component
 import { CloudArrowUpIcon } from "@heroicons/react/24/outline";
+import ImageUpload from '@/components/ImageUpload';
+import GeneralInformation from '@/components/GeneralInformation';
+import HelpDesk from '@/components/HelpDesk';
+import DangerZone from '@/components/DangerZone';
 
 const Profile = () => {
     const router = useRouter();
@@ -50,12 +55,13 @@ const Profile = () => {
         userCountry: initialUserCountry,
         userPhone: initialUserPhone,
         imageUrl: profileImage,
+        profile_image_id, // This will now be available
         userPoints,
         countryCode,
         countriesData,
         baseId,
         userId
-    } = userData || {}; // Destructure userId
+    } = userData || {};
     const { handleSignOut } = useSignOut();
     const { handleDeleteAccount } = useDeleteAccount();
     const [activeTab, setActiveTab] = useState("personal-information");
@@ -70,6 +76,9 @@ const Profile = () => {
     const [imageFile, setImageFile] = useState(null); // State to hold the selected image file
     const [imagePreview, setImagePreview] = useState(profileImage || "/assets/images/placeholder.png"); // State for the image preview
     const [hovering, setHovering] = useState(false); // State to control hover effect
+    // New state to store the current fileId
+    const [currentFileId, setCurrentFileId] = useState(profile_image_id || null);
+    const [isImageChanged, setIsImageChanged] = useState(false); // Track if image has been changed
 
     const handleTabClick = (tabId) => {
         setActiveTab(tabId);
@@ -85,11 +94,20 @@ const Profile = () => {
             // Corrected country selection logic
             if (countriesData && userData.userCountry) {
                 const foundCountry = countriesData.find(c => c.name === userData.userCountry);
-                setSelectedCountry(foundCountry ? { value: foundCountry.name, label: `${foundCountry.emoji} ${foundCountry.name}` } : null);
+                setSelectedCountry(foundCountry ?
+                    { value: foundCountry.name, label: `${foundCountry.emoji} ${foundCountry.name}` } :
+                    null);
             }
-            setImagePreview(userData.imageUrl || "/assets/images/placeholder.png"); // Update image preview
+
+            // Update image preview
+            setImagePreview(userData.imageUrl || "/assets/images/placeholder.png");
+
+            // Log the fileId being set from userData - use profile_image_id instead of fileId
+            console.log('Setting currentFileId from userData:', userData.profile_image_id);
+            setCurrentFileId(userData.profile_image_id || null);
+            console.log('Updated currentFileId from userData:', userData.profile_image_id);
         }
-    }, [userData, countriesData]); // Re-run when userData or countriesData changes
+    }, [userData, countriesData]);
 
     const openModal = () => {
     };
@@ -122,6 +140,11 @@ const Profile = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
+        setIsImageLoading(true);
+
+        console.log('=== Starting profile update ===');
+        console.log('Current fileId from state:', currentFileId);
+        console.log('Current fileId from userData:', userData?.profile_image_id);
 
         toast.promise(
             new Promise(async (resolve, reject) => {
@@ -137,7 +160,7 @@ const Profile = () => {
                         name: fullName,
                         email: email,
                         phone_number: phoneNumber,
-                        country: selectedCountry?.value || '', // Use selectedCountry?.value or ''
+                        country: selectedCountry?.value || '',
                     };
 
                     const { error: userUpdateError } = await supabase
@@ -147,44 +170,58 @@ const Profile = () => {
 
                     if (userUpdateError) {
                         console.error('Error updating user data:', userUpdateError);
-                        notify('Failed to update profile.', 'error');
+                        notify('Failed to update profile information.', 'error');
                         reject();
                         return;
                     }
 
-                    // 2. Handle image upload
+                    // 2. Handle image upload if a new image is selected
                     if (imageFile) {
+                        console.log('Image file selected for upload. Proceeding with image update...');
                         try {
-                            // Construct the correct filename for image upload
-                            const countryCode = selectedCountry?.value.substring(0, 2).toUpperCase() || '';
-                            const referralCode = "CB" + userId.replace("CB", ""); // Corrected referral code
-                            const newFileName = `${fullName.replace(/\s+/g, '_')}_${referralCode}.${imageFile.name.split('.').pop()}`;
+                            // Single deletion attempt for old image
+                            if (currentFileId) {
+                                try {
+                                    console.log(`Attempting to delete old image with ID: ${currentFileId}`);
+                                    await deleteImage(currentFileId);
+                                    console.log('✓ Successfully deleted old image');
+                                } catch (deleteError) {
+                                    console.warn(`⚠ Failed to delete old image: ${deleteError.message}`);
+                                    // Continue with upload even if deletion fails
+                                }
+                            }
 
-                            const { fileUrl } = await uploadImage(imageFile, fullName.replace(/\s+/g, '_'), referralCode);
+                            const referralCode = "CB" + userId.replace("CB", "");
+                            const { fileUrl, fileId } = await uploadImage(imageFile, fullName.replace(/\s+/g, '_'), referralCode);
+                            console.log(`✓ New image uploaded successfully. New fileId: ${fileId}`);
 
+                            console.log('Updating profile_image and profile_image_id in database...');
                             const { error: imageUpdateError } = await supabase
                                 .from('users')
-                                .update({ profile_image: fileUrl })
+                                .update({
+                                    profile_image: fileUrl,
+                                    profile_image_id: fileId
+                                })
                                 .eq('id', baseId);
 
-                            if (imageUpdateError) {
-                                console.error('Error updating image URL in Supabase:', imageUpdateError);
-                                notify('Failed to update profile picture.', 'error');
-                                reject();
-                            } else {
-                                setImagePreview(fileUrl); // Immediately update the image preview
-                            }
+                            if (imageUpdateError) throw imageUpdateError;
+
+                            console.log('✓ Database updated with new image information');
+                            setImagePreview(fileUrl);
+                            setCurrentFileId(fileId);
+                            console.log(`Local state updated. New currentFileId: ${fileId}`);
+
                         } catch (error) {
-                            console.error('Error uploading image to ImageKit:', error);
-                            notify('Failed to upload profile picture.', 'error');
+                            console.error('Error during image operation:', error);
+                            notify('Failed to update profile picture.', 'error');
                             reject();
-                        } finally {
-                            document.getElementById('imageUpload').value = ''; // Clear the input field
+                            return;
                         }
                     }
 
+                    console.log('=== Profile update completed successfully ===');
                     resolve();
-                    notify('Profile updated successfully!', 'success');
+                    // notify('Profile updated successfully!', 'success');
                 } catch (error) {
                     console.error('Unexpected error:', error);
                     notify('An unexpected error occurred.', 'error');
@@ -197,18 +234,20 @@ const Profile = () => {
                 error: 'Failed to update profile 😞'
             }
         );
-        setIsLoading(false);
-    };
 
+        setIsLoading(false);
+        setIsImageLoading(false); // Ensure that the button is enabled after upload completes
+    };
 
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setImageFile(file);
+            setImageFile(file); // Update the selected file
             const reader = new FileReader();
             reader.onload = (e) => {
-                setImagePreview(e.target.result);
+                setImagePreview(e.target.result); // Update the image preview
+                setIsImageChanged(true); // Mark the image as changed
             };
             reader.readAsDataURL(file);
         }
@@ -249,41 +288,44 @@ const Profile = () => {
                             userData={userData}
                         />
 
-                        <div className={`${mode === 'dark' ? 'bg-[#101720] text-white' : 'bg-white text-black'} rounded-lg py-8 px-2 hover:shadow-md transition-all duration-300 ease-in-out`}>
-                            <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
-                                <ul className="flex flex-wrap -mb-px text-sm font-medium text-center" role="tablist">
+                        <div
+                            className={`${mode === 'dark' ? 'bg-[#101720] text-white' : 'bg-white text-black'} rounded-lg py-8 px-2 hover:shadow-md transition-all duration-300 ease-in-out`}>
+                            <div className="mb-4 dark:border-gray-700">
+                                <ul className="flex flex-wrap -mb-px text-sm font-medium text-center bg-gray-100 rounded-lg py-2 px-2"
+                                    role="tablist">
                                     <li className="me-2" role="presentation">
                                         <button
-                                            className={`inline-block p-4 border-b-2 rounded-t-lg ${activeTab === "personal-information" ? "text-teal-600" : "text-gray-500"}`}
+                                            className={`inline-block text-base p-4 rounded-lg ${activeTab === "personal-information" ? "text-teal-600 bg-white" : "text-gray-500"}`}
                                             onClick={() => handleTabClick("personal-information")}
                                             role="tab"
                                             aria-controls="personal-information"
                                             aria-selected={activeTab === "personal-information"}
                                         >
-                                            <UserIcon className="h-5 w-5 mr-2 inline-block" /> General Information
+                                            <UserIcon className="h-5 w-5 mr-2 inline-block"/> General Information
                                         </button>
                                     </li>
                                     <li className="me-2" role="presentation">
                                         <button
-                                            className={`inline-block p-4 border-b-2 rounded-t-lg font-bold  ${activeTab === "help-desk" ? "text-teal-600" : "text-gray-500"}`}
+                                            className={`inline-block text-base  p-4 rounded-lg font-bold ${activeTab === "help-desk" ? "text-teal-600 bg-white" : "text-gray-500"}`}
                                             onClick={() => handleTabClick("help-desk")}
                                             role="tab"
                                             aria-controls="help-desk"
                                             aria-selected={activeTab === "help-desk"}
                                         >
-                                            <PhoneArrowUpRightIcon className="h-5 w-5 mr-2 inline-block" /> Help Desk
+                                            <PhoneArrowUpRightIcon className="h-5 w-5 mr-2 inline-block"/> Help Desk
                                         </button>
                                     </li>
 
                                     <li role="presentation">
                                         <button
-                                            className={`inline-block p-4 border-b-2 rounded-t-lg ${activeTab === "danger" ? "text-teal-600" : "text-gray-500"}`}
+                                            className={`inline-block text-base p-4 rounded-lg ${activeTab === "danger" ? "text-teal-600 bg-white" : "text-gray-500"}`}
                                             onClick={() => handleTabClick("danger")}
                                             role="tab"
                                             aria-controls="danger"
                                             aria-selected={activeTab === "danger"}
                                         >
-                                            <ExclamationTriangleIcon className="h-5 w-5 mr-2 inline-block text-red-600" /> Danger Zone
+                                            <ExclamationTriangleIcon
+                                                className="h-5 w-5 mr-2 inline-block text-red-600"/> Danger Zone
                                         </button>
                                     </li>
                                 </ul>
@@ -291,227 +333,41 @@ const Profile = () => {
                             <div id="default-styled-tab-content">
                                 <div
                                     className={`p-4 rounded-lg ${activeTab === "personal-information" ? "" : "hidden"}`}
-                                    id="styled-personal-information" role="tabpanel"
-                                    aria-labelledby="personal-information-tab">
-                                    <form onSubmit={handleSubmit}>
-                                        <div className="space-y-8">
-                                            {/* General Information Section */}
-                                            <h3 className="text-xl font-semibold text-gray-900">General
-                                                Information</h3>
-
-                                            {/* Profile Photo Section */}
-                                            <div className="flex items-center gap-4 mb-8">
-                                                <label htmlFor="photo"
-                                                       className="block text-sm font-medium text-gray-900">Profile
-                                                    Photo</label>
-                                                <div className="flex items-center gap-3">
-                                                    <div className="flex items-center gap-x-4 px-4 space-y-4">
-                                                        <div className="block mx-auto relative">
-                                                            <input
-                                                                id="imageUpload"
-                                                                type="file"
-                                                                accept="image/*"
-                                                                onChange={handleImageChange}
-                                                                style={{ display: 'none' }}
-                                                            />
-                                                            <div
-                                                                className="cursor-pointer"
-                                                                onClick={() => document.getElementById('imageUpload').click()}
-                                                                onMouseEnter={() => setHovering(true)}
-                                                                onMouseLeave={() => setHovering(false)}
-                                                            >
-                                                                <div
-                                                                    className="w-[120px] h-[120px] rounded-full overflow-hidden relative flex justify-center items-center transition-all duration-300 ease-in-out">
-                                                                    <div
-                                                                        className={`absolute inset-0 bg-black rounded-full transition-opacity duration-500 ease-in-out z-10 ${hovering ? 'opacity-60' : 'opacity-0'}`}></div>
-
-                                                                    <Image
-                                                                        src={imagePreview || '/assets/images/placeholder.png'}
-                                                                        alt="Profile Image"
-                                                                        width={120}
-                                                                        height={120}
-                                                                        className={`object-cover transition-transform duration-300 ease-in-out ${hovering ? 'scale-110' : 'scale-100'}`}
-                                                                        style={{ zIndex: 0 }}
-                                                                    />
-
-                                                                    {hovering && (
-                                                                        <div
-                                                                            className="absolute flex justify-center items-center text-white text-lg z-10">
-                                                                            <PhotoIcon className="w-8 h-8" />
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => document.getElementById('imageUpload').click()}
-                                                            className="h-10 mt-4 rounded-full bg-teal-500 px-6 py-2 text-sm font-semibold text-white hover:bg-teal-600 focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 transition-all duration-200"
-                                                        >
-                                                            Change Photo
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {/* Form Fields */}
-                                            <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-6">
-                                                {/* Full Name */}
-                                                <div className="sm:col-span-4">
-                                                    <label htmlFor="full-name"
-                                                           className="block text-sm font-medium text-gray-900">
-                                                        Full Name
-                                                    </label>
-                                                    <div className="relative">
-                                                        <input
-                                                            id="full-name"
-                                                            name="full-name"
-                                                            type="text"
-                                                            value={fullName}
-                                                            onChange={handleInputChange}
-                                                            className="mt-2 block w-full rounded-lg bg-white px-4 py-2 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 transition-all duration-200 pl-10" // Add padding for icon
-                                                        />
-                                                        <UserIcon
-                                                            className="absolute left-3 top-3 h-5 w-5 text-gray-400"
-                                                            aria-hidden="true" />
-                                                    </div>
-                                                </div>
-
-                                                {/* Email Address */}
-                                                <div className="sm:col-span-4">
-                                                    <label htmlFor="email"
-                                                           className="block text-sm font-medium text-gray-900">
-                                                        Email Address
-                                                    </label>
-                                                    <div className="relative">
-                                                        <input
-                                                            id="email"
-                                                            name="email"
-                                                            type="email"
-                                                            value={email}
-                                                            onChange={handleInputChange}
-                                                            autoComplete="email"
-                                                            className="mt-2 block w-full rounded-lg bg-white px-4 py-2 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 transition-all duration-200 pl-10" // Add padding for icon
-                                                        />
-                                                        <EnvelopeIcon
-                                                            className="absolute left-3 top-3 h-5 w-5 text-gray-400"
-                                                            aria-hidden="true" />
-                                                    </div>
-                                                </div>
-
-                                                {/* Phone Number */}
-                                                <div className="sm:col-span-2 sm:col-start-1">
-                                                    <label htmlFor="phone-number"
-                                                           className="block text-sm font-medium text-gray-900">
-                                                        Phone Number
-                                                    </label>
-                                                    <div className="relative">
-                                                        <input
-                                                            id="phone-number"
-                                                            name="phone-number"
-                                                            type="text"
-                                                            value={phoneNumber}
-                                                            onChange={handleInputChange}
-                                                            autoComplete="phone-number"
-                                                            className="mt-2 block w-full rounded-lg bg-white px-4 py-2 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 transition-all duration-200 pl-10 border " // Add padding for icon
-                                                        />
-                                                        <PhoneArrowUpRightIcon
-                                                            className="absolute left-3 top-3 h-5 w-5 text-gray-400"
-                                                            aria-hidden="true" />
-                                                    </div>
-                                                </div>
-
-                                                {/* Country */}
-                                                <div className="sm:col-span-2">
-                                                    <label htmlFor="country"
-                                                           className="block text-sm font-medium text-gray-900">
-                                                        Country
-                                                    </label>
-                                                    <div className="relative">
-                                                        {countriesData && countriesData.length > 0 ? (
-                                                            <div className="sm:col-span-2 ">
-                                                                <Select
-                                                                    id="country"
-                                                                    name="country"
-                                                                    value={selectedCountry}
-                                                                    onChange={handleCountryChange}
-                                                                    options={countriesData.map(country => ({
-                                                                        value: country.name,
-                                                                        label: `${country.emoji} ${country.name}`
-                                                                    }))}
-                                                                    placeholder="Select your country"
-                                                                    isSearchable
-                                                                    isClearable
-                                                                    isDisabled
-                                                                    className="mt-2 block w-full rounded-lg bg-white text-base text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 transition-all duration-200" // Add padding for icon
-                                                                />
-
-                                                            </div>
-                                                        ) : (
-                                                            <p>Loading countries...</p>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {/* Buttons */}
-                                            <div className="mt-8 flex gap-x-6">
-                                                <button
-                                                    type="submit"
-                                                    disabled={isLoading || isImageLoading} // Disable while loading
-                                                    className={`rounded-lg px-6 py-3 text-sm font-semibold shadow-lg focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 transition-all duration-200 ${isLoading ? 'bg-gray-400 text-gray-50' : 'bg-teal-500 text-white hover:bg-teal-600'} ${isImageLoading ? 'bg-gray-400 text-gray-50' : ''}`}
-                                                >
-                                                    {isLoading ? 'Saving...' : isImageLoading ? 'Uploading...' : 'Save Changes'}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </form>
-
-
+                                    id="styled-personal-information"
+                                    role="tabpanel"
+                                    aria-labelledby="personal-information-tab"
+                                >
+                                    <GeneralInformation
+                                        fullName={fullName}
+                                        email={email}
+                                        phoneNumber={phoneNumber}
+                                        selectedCountry={selectedCountry}
+                                        handleInputChange={handleInputChange}
+                                        handleCountryChange={handleCountryChange}
+                                        countriesData={countriesData}
+                                        isLoading={isLoading}
+                                        ImageUpload={ImageUpload}
+                                        handleSubmit={handleSubmit}
+                                        isImageLoading={isImageLoading}
+                                        handleImageChange={handleImageChange} // Pass handleImageChange
+                                        imagePreview={imagePreview} // Pass imagePreview
+                                    />
                                 </div>
                                 <div className={`p-4 rounded-lg ${activeTab === "help-desk" ? "" : "hidden"}`}
                                      id="styled-help-desk" role="tabpanel" aria-labelledby="help-desk-tab">
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                                        Temporarily unavailable. Please check back later.
-                                    </p>
+                                    <HelpDesk/>
                                 </div>
-
                                 <div className={`p-4 rounded-lg ${activeTab === "danger" ? "" : "hidden"}`}
                                      id="styled-danger" role="tabpanel" aria-labelledby="danger-tab">
-                                    <div className="flex flex-col justify-between gap-y-2 mb-8">
-                                        <h3 className="font-normal text-lg">Delete Account</h3>
-                                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                                            Once you delete the account, there is no going back. Please be certain.
-                                        </p>
-                                    </div>
-
-                                    <button
-                                        onClick={() => setShowDeleteModal(true)}
-                                        className={`flex items-center px-4 py-2 rounded-lg transition-all duration-300 ease-in-out
-            ${mode === 'dark'
-                                            ? 'bg-[#ef4547] text-white hover:bg-[#c0392b]'
-                                            : 'bg-[#ef4547] text-white hover:bg-red-600'}`
-                                        }>
-                                        <TrashIcon className="h-5 w-5 mr-2 text-white" />
-                                        Delete Account
-                                    </button>
+                                    <DangerZone
+                                        mode={mode}
+                                        setShowDeleteModal={setShowDeleteModal}
+                                        handleDeleteAccount={handleDeleteAccount}
+                                    />
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex justify-center gap-x-4 pt-4">
-                            <button
-                                onClick={handleSignOut}
-                                className={`flex items-center px-4 py-4 rounded-lg transition-all duration-300 ease-in-out
-            ${mode === 'dark'
-                                    ? 'bg-[#2a3a48] text-[#0eb4ab] hover:bg-[#3e4b5d]'
-                                    : 'bg-white text-[#0eb4ab] hover:bg-gray-200'}`
-                                }>
-                                <ArrowRightOnRectangleIcon className="h-5 w-5 mr-2 text-[#ff9409]" />
-                                Sign out
-                            </button>
-
-                        </div>
 
                         <DeleteAccountModal
                             isOpen={showDeleteModal}

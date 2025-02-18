@@ -37,25 +37,34 @@ const useDeleteAccount = () => {
                 return;
             }
 
-            // Delete image from ImageKit
-            const { profile_image_id: imageId } = userData;
-            if (imageId) {
+            // Delete image from ImageKit if it exists
+            if (userData.profile_image_id) {
                 try {
-                    await imagekit.deleteFile(imageId);
-                    console.log(`Image with ID ${imageId} deleted successfully.`);
+                    console.log(`Attempting to delete image with ID: ${userData.profile_image_id}`);
+                    await imagekit.deleteFile(userData.profile_image_id);
+                    console.log('✓ Successfully deleted user profile image');
                 } catch (imageDeleteError) {
-                    toast.update(toastId, { render: `Error deleting image: ${imageDeleteError.message}`, type: "error", isLoading: false });
-                    setLoading(false);
-                    return;
+                    // Log the error but continue with account deletion
+                    console.warn(`⚠ Failed to delete profile image: ${imageDeleteError.message}`);
+                    // Only show toast if it's not a 404 (image already deleted)
+                    if (!imageDeleteError.message?.includes('does not exist')) {
+                        toast.warn(`Note: Could not delete profile image, but proceeding with account deletion.`);
+                    }
                 }
             }
 
             // Send email about account deletion
-            await fetch('/api/sendDeleteAccountEmail', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: userData.email, name: userData.name }),
-            });
+            try {
+                await fetch('/api/sendDeleteAccountEmail', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userData.email, name: userData.name }),
+                });
+                console.log('✓ Account deletion email sent successfully');
+            } catch (emailError) {
+                console.warn('⚠ Failed to send deletion email:', emailError);
+                // Continue with deletion even if email fails
+            }
 
             // Delete user from database
             const { error: deleteError } = await supabase
@@ -69,16 +78,39 @@ const useDeleteAccount = () => {
                 return;
             }
 
-            // Sign out user
-            await supabase.auth.signOut();
-            localStorage.removeItem('supabase_session');
-            localStorage.removeItem('token');
+            console.log('✓ User data deleted from database');
 
-            toast.update(toastId, { render: "Your account has been deleted successfully.", type: "success", isLoading: false });
-            router.push('/'); // Redirect to login page
+            // Sign out user and clear local storage
+            try {
+                await supabase.auth.signOut();
+                localStorage.removeItem('supabase_session');
+                localStorage.removeItem('token');
+                console.log('✓ User signed out and local storage cleared');
+            } catch (signOutError) {
+                console.warn('⚠ Error during sign out:', signOutError);
+                // Continue even if sign out has issues
+            }
+
+            toast.update(toastId, {
+                render: "Your account has been deleted successfully.",
+                type: "success",
+                isLoading: false,
+                autoClose: 3000
+            });
+
+            // Short delay before redirect to ensure toast is seen
+            setTimeout(() => {
+                router.push('/');
+            }, 1000);
+
         } catch (error) {
             console.error("Account deletion error:", error);
-            toast.update(toastId, { render: "There was an issue deleting your account. Please try again.", type: "error", isLoading: false });
+            toast.update(toastId, {
+                render: "There was an issue deleting your account. Please try again.",
+                type: "error",
+                isLoading: false
+            });
+        } finally {
             setLoading(false);
         }
     };
