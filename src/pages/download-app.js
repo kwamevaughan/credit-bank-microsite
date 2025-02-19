@@ -13,7 +13,7 @@ import useSidebar from '@/hooks/useSidebar';
 import useSignOut from '@/hooks/useSignOut';
 import { Apple } from "@/components/icons/Apple";
 import { Android } from "@/components/icons/Android";
-import { CheckIcon } from '@heroicons/react/24/outline';
+import { CheckIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { StarIcon } from '@heroicons/react/24/solid';
 
 const DownloadApp = () => {
@@ -340,7 +340,7 @@ const DownloadApp = () => {
                                                                     </>
                                                                 ) : (
                                                                     <>
-                                                                        <DownloadIcon className="w-4 h-4 mr-2"/>
+                                                                        <ArrowDownTrayIcon className="w-4 h-4 mr-2"/>
                                                                         Download
                                                                     </>
                                                                 )}
