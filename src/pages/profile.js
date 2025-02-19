@@ -392,7 +392,10 @@ const Profile = () => {
                                     id="styled-help-desk" role="tabpanel" aria-labelledby="help-desk-tab"
                                 >
                                     <HelpDesk
+                                        fullName={fullName}
+                                        email={email}
                                         mode={mode}
+                                        notify={notify}
                                     />
                                 </div>
                                 <div
