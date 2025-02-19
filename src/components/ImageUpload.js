@@ -3,12 +3,13 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { PhotoIcon } from '@heroicons/react/24/outline';
 
-const ImageUpload = ({ onImageChange, imagePreview }) => {
+const ImageUpload = ({ onImageChange, imagePreview, mode }) => {
     const [hovering, setHovering] = useState(false);
 
     return (
-        <div className="flex items-center gap-4 mb-8">
-            <label htmlFor="photo" className="block text-sm font-medium text-gray-900">
+        <label className="flex items-center gap-4 mb-8">
+            <label htmlFor="photo"
+                   className={`text-base font-medium ${mode === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 Profile Photo
             </label>
             <div className="flex items-center gap-3">
@@ -19,7 +20,7 @@ const ImageUpload = ({ onImageChange, imagePreview }) => {
                             type="file"
                             accept="image/*"
                             onChange={(e) => onImageChange(e)} // Trigger callback on image change
-                            style={{ display: 'none' }}
+                            style={{display: 'none'}}
                         />
                         <div
                             className="cursor-pointer"
@@ -39,11 +40,11 @@ const ImageUpload = ({ onImageChange, imagePreview }) => {
                                     width={120}
                                     height={120}
                                     className={`object-cover transition-transform duration-300 ease-in-out ${hovering ? 'scale-110' : 'scale-100'}`}
-                                    style={{ zIndex: 0 }}
+                                    style={{zIndex: 0}}
                                 />
                                 {hovering && (
                                     <div className="absolute flex justify-center items-center text-white text-lg z-10">
-                                        <PhotoIcon className="w-8 h-8" />
+                                        <PhotoIcon className="w-8 h-8"/>
                                     </div>
                                 )}
                             </div>
@@ -58,7 +59,8 @@ const ImageUpload = ({ onImageChange, imagePreview }) => {
                     </button>
                 </div>
             </div>
-        </div>
+        </label>
+
     );
 };
 

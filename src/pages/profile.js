@@ -21,7 +21,6 @@ import {
     ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';  // Import icons
 import DeleteAccountModal from "@/components/DeleteAccountModal";
-import VerificationModal from "@/components/VerificationModal";
 import { imagekit, uploadImage, deleteImage } from '../utils/imageKitService'; // Import both
 import { useUser } from '@/context/UserContext';
 import useSignOut from '@/hooks/useSignOut';
@@ -289,36 +288,62 @@ const Profile = () => {
                         />
 
                         <div
-                            className={`${mode === 'dark' ? 'bg-[#101720] text-white' : 'bg-white text-black'} rounded-lg py-8 px-2 hover:shadow-md transition-all duration-300 ease-in-out`}>
+                            className={`${mode === 'dark' ? 'bg-[#101720] text-white' : 'bg-white text-black'} rounded-lg py-8 px-2 hover:shadow-md transition-all duration-300 ease-in-out`}
+                        >
                             <div className="mb-4 dark:border-gray-700">
-                                <ul className="flex flex-wrap -mb-px text-sm font-medium text-center bg-gray-100 rounded-lg py-2 px-2"
-                                    role="tablist">
+                                <ul
+                                    className={`flex flex-wrap -mb-px text-sm font-medium text-center rounded-lg py-2 px-2 relative ${
+                                        mode === 'dark' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-900'
+                                    }`}
+                                    role="tablist"
+                                >
                                     <li className="me-2" role="presentation">
                                         <button
-                                            className={`inline-block text-base p-4 rounded-lg ${activeTab === "personal-information" ? "text-teal-600 bg-white" : "text-gray-500"}`}
+                                            className={`tab-button inline-block text-base p-4 rounded-lg relative overflow-hidden ${
+                                                activeTab === "personal-information" ? "text-teal-400" : (mode === 'dark' ? 'text-white' : 'text-gray-500')
+                                            }`}
                                             onClick={() => handleTabClick("personal-information")}
                                             role="tab"
                                             aria-controls="personal-information"
                                             aria-selected={activeTab === "personal-information"}
                                         >
                                             <UserIcon className="h-5 w-5 mr-2 inline-block"/> General Information
+                                            <span
+                                                className="absolute inset-0 bg-teal-600 opacity-10 transition-all duration-300"
+                                                style={{
+                                                    transform: `translateX(${activeTab === "personal-information" ? '0%' : activeTab === "help-desk" ? '100%' : '200%'})`,
+                                                    width: '100%',
+                                                    height: '100%',
+                                                }}
+                                            />
                                         </button>
                                     </li>
                                     <li className="me-2" role="presentation">
                                         <button
-                                            className={`inline-block text-base  p-4 rounded-lg font-bold ${activeTab === "help-desk" ? "text-teal-600 bg-white" : "text-gray-500"}`}
+                                            className={`tab-button inline-block text-base p-4 rounded-lg font-bold relative overflow-hidden ${
+                                                activeTab === "help-desk" ? "text-teal-400" : (mode === 'dark' ? 'text-white' : 'text-gray-500')
+                                            }`}
                                             onClick={() => handleTabClick("help-desk")}
                                             role="tab"
                                             aria-controls="help-desk"
                                             aria-selected={activeTab === "help-desk"}
                                         >
                                             <PhoneArrowUpRightIcon className="h-5 w-5 mr-2 inline-block"/> Help Desk
+                                            <span
+                                                className="absolute inset-0 bg-teal-600 opacity-10 transition-all duration-300"
+                                                style={{
+                                                    transform: `translateX(${activeTab === "help-desk" ? '0%' : activeTab === "personal-information" ? '-100%' : '100%'})`,
+                                                    width: '100%',
+                                                    height: '100%',
+                                                }}
+                                            />
                                         </button>
                                     </li>
-
                                     <li role="presentation">
                                         <button
-                                            className={`inline-block text-base p-4 rounded-lg ${activeTab === "danger" ? "text-teal-600 bg-white" : "text-gray-500"}`}
+                                            className={`tab-button inline-block text-base p-4 rounded-lg relative overflow-hidden ${
+                                                activeTab === "danger" ? "text-teal-400" : (mode === 'dark' ? 'text-white' : 'text-gray-500')
+                                            }`}
                                             onClick={() => handleTabClick("danger")}
                                             role="tab"
                                             aria-controls="danger"
@@ -326,15 +351,23 @@ const Profile = () => {
                                         >
                                             <ExclamationTriangleIcon
                                                 className="h-5 w-5 mr-2 inline-block text-red-600"/> Danger Zone
+                                            <span
+                                                className="absolute inset-0 bg-red-600 opacity-10 transition-all duration-300"
+                                                style={{
+                                                    transform: `translateX(${activeTab === "danger" ? '0%' : activeTab === "personal-information" ? '-200%' : '-100%'})`,
+                                                    width: '100%',
+                                                    height: '100%',
+                                                }}
+                                            />
                                         </button>
                                     </li>
                                 </ul>
                             </div>
+
                             <div id="default-styled-tab-content">
                                 <div
                                     className={`p-4 rounded-lg ${activeTab === "personal-information" ? "" : "hidden"}`}
-                                    id="styled-personal-information"
-                                    role="tabpanel"
+                                    id="styled-personal-information" role="tabpanel"
                                     aria-labelledby="personal-information-tab"
                                 >
                                     <GeneralInformation
@@ -349,16 +382,23 @@ const Profile = () => {
                                         ImageUpload={ImageUpload}
                                         handleSubmit={handleSubmit}
                                         isImageLoading={isImageLoading}
-                                        handleImageChange={handleImageChange} // Pass handleImageChange
-                                        imagePreview={imagePreview} // Pass imagePreview
+                                        handleImageChange={handleImageChange}
+                                        imagePreview={imagePreview}
+                                        mode={mode}
                                     />
                                 </div>
-                                <div className={`p-4 rounded-lg ${activeTab === "help-desk" ? "" : "hidden"}`}
-                                     id="styled-help-desk" role="tabpanel" aria-labelledby="help-desk-tab">
-                                    <HelpDesk/>
+                                <div
+                                    className={`p-4 rounded-lg ${activeTab === "help-desk" ? "" : "hidden"}`}
+                                    id="styled-help-desk" role="tabpanel" aria-labelledby="help-desk-tab"
+                                >
+                                    <HelpDesk
+                                        mode={mode}
+                                    />
                                 </div>
-                                <div className={`p-4 rounded-lg ${activeTab === "danger" ? "" : "hidden"}`}
-                                     id="styled-danger" role="tabpanel" aria-labelledby="danger-tab">
+                                <div
+                                    className={`p-4 rounded-lg ${activeTab === "danger" ? "" : "hidden"}`}
+                                    id="styled-danger" role="tabpanel" aria-labelledby="danger-tab"
+                                >
                                     <DangerZone
                                         mode={mode}
                                         setShowDeleteModal={setShowDeleteModal}
@@ -377,14 +417,6 @@ const Profile = () => {
                             mode={mode}
                         />
 
-                        <VerificationModal
-                            isOpen={isVerificationModalOpen}
-                            onClose={closeVerificationModal}
-                            token={token}
-                            toggleMode={toggleMode}
-                            mode={mode}
-                            notify={notify}
-                        />
                     </div>
                 </main>
             </div>

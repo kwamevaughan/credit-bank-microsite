@@ -1,11 +1,13 @@
-// HelpDesk.js
 import React from 'react';
 
-const HelpDesk = () => {
+const HelpDesk = ({ mode }) => {
     return (
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-            Temporarily unavailable. Please check back later.
-        </p>
+        <div className="">
+            <h3 className={`font-semibold text-xl ${mode === 'dark' ? 'text-white' : 'text-black'} mb-4`}>Need Support?</h3>
+            <p className={`${mode === 'dark' ? 'text-white' : 'text-gray-500'}`}>
+                Temporarily unavailable. Please check back later.
+            </p>
+        </div>
     );
 };
 
