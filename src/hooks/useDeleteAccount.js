@@ -2,33 +2,79 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { supabase } from '/lib/supabase';
 import { imagekit } from '../utils/imageKitService';
+import { useUser } from '@/context/UserContext';
 
 const useDeleteAccount = () => {
     const [loading, setLoading] = useState(false);
+    const { user: contextUser, token } = useUser();
 
-    const handleDeleteAccount = async (session, router) => {
+    const handleDeleteAccount = async (router) => {
         setLoading(true);
         const toastId = toast.loading("Please wait...");
 
-        if (!session) {
+        if (!contextUser) {
             toast.update(toastId, { render: "You must be logged in to delete your account.", type: "error", isLoading: false });
             setLoading(false);
             return;
         }
 
         try {
-            const { user } = session;
-            if (!user) {
-                toast.update(toastId, { render: "No user data found. Please log in again.", type: "error", isLoading: false });
+            // First, delete related records in account_opening table
+            const { error: accountOpeningError } = await supabase
+                .from('account_opening')
+                .delete()
+                .eq('user_id', contextUser.id);
+
+            if (accountOpeningError) {
+                console.error('Error deleting account opening records:', accountOpeningError);
+                toast.update(toastId, {
+                    render: `Error deleting account data: ${accountOpeningError.message}`,
+                    type: "error",
+                    isLoading: false
+                });
                 setLoading(false);
                 return;
             }
 
-            // Fetch user profile data
+            // Second, delete related records in user_activities table
+            const { error: userActivitiesError } = await supabase
+                .from('user_activities')
+                .delete()
+                .eq('user_id', contextUser.id);
+
+            if (userActivitiesError) {
+                console.error('Error deleting user activities:', userActivitiesError);
+                toast.update(toastId, {
+                    render: `Error deleting user activities: ${userActivitiesError.message}`,
+                    type: "error",
+                    isLoading: false
+                });
+                setLoading(false);
+                return;
+            }
+
+            // Third, delete related records in user_quiz_progress table
+            const { error: quizProgressError } = await supabase
+                .from('user_quiz_progress')
+                .delete()
+                .eq('user_id', contextUser.id);
+
+            if (quizProgressError) {
+                console.error('Error deleting quiz progress records:', quizProgressError);
+                toast.update(toastId, {
+                    render: `Error deleting quiz progress data: ${quizProgressError.message}`,
+                    type: "error",
+                    isLoading: false
+                });
+                setLoading(false);
+                return;
+            }
+
+            // Get user data for image and email
             const { data: userData, error: profileError } = await supabase
                 .from('users')
                 .select('profile_image_id, email, name')
-                .eq('id', user.id)
+                .eq('id', contextUser.id)
                 .single();
 
             if (profileError) {
@@ -44,9 +90,7 @@ const useDeleteAccount = () => {
                     await imagekit.deleteFile(userData.profile_image_id);
                     console.log('✓ Successfully deleted user profile image');
                 } catch (imageDeleteError) {
-                    // Log the error but continue with account deletion
                     console.warn(`⚠ Failed to delete profile image: ${imageDeleteError.message}`);
-                    // Only show toast if it's not a 404 (image already deleted)
                     if (!imageDeleteError.message?.includes('does not exist')) {
                         toast.warn(`Note: Could not delete profile image, but proceeding with account deletion.`);
                     }
@@ -63,16 +107,16 @@ const useDeleteAccount = () => {
                 console.log('✓ Account deletion email sent successfully');
             } catch (emailError) {
                 console.warn('⚠ Failed to send deletion email:', emailError);
-                // Continue with deletion even if email fails
             }
 
-            // Delete user from database
+            // Now delete the user
             const { error: deleteError } = await supabase
                 .from('users')
                 .delete()
-                .eq('id', user.id);
+                .eq('id', contextUser.id);
 
             if (deleteError) {
+                console.error('Error deleting user:', deleteError);
                 toast.update(toastId, { render: `Error deleting user data: ${deleteError.message}`, type: "error", isLoading: false });
                 setLoading(false);
                 return;
@@ -88,7 +132,6 @@ const useDeleteAccount = () => {
                 console.log('✓ User signed out and local storage cleared');
             } catch (signOutError) {
                 console.warn('⚠ Error during sign out:', signOutError);
-                // Continue even if sign out has issues
             }
 
             toast.update(toastId, {
@@ -98,7 +141,6 @@ const useDeleteAccount = () => {
                 autoClose: 3000
             });
 
-            // Short delay before redirect to ensure toast is seen
             setTimeout(() => {
                 router.push('/');
             }, 1000);
