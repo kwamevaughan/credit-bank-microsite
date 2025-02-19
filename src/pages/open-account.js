@@ -145,11 +145,12 @@ const OpenAccount = () => {
                                             type="text"
                                             id="name"
                                             name="name"
-                                            value={name}
-                                            onChange={(e) => setName(e.target.value)} // Bind onChange to update state
+                                            value={name || userData.userName}  // Use the logged-in user's name
+                                            onChange={(e) => setName(e.target.value)} // Keep the state update functionality
                                             placeholder="Enter your full name"
                                             className={`mt-1 block w-full p-4 border rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 ${mode === 'dark' ? 'bg-[#2d3748] text-white border-gray-600' : 'bg-white text-black border-gray-300'}`}
                                         />
+
                                     </div>
 
                                     {/* Referral Code */}
