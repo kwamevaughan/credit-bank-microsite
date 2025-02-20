@@ -199,28 +199,40 @@ const SendRemittances = () => {
                         <div
                             className={`${mode === 'dark' ? 'bg-[#101720] text-white' : 'bg-white text-black'} rounded-lg py-8 px-4 md:px-8 hover:shadow-md transition-all duration-300 ease-in-out`}
                         >
-                            <div className={`px-4 space-y-4 mb-8 ${mode === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                            <div
+                                className={`px-4 space-y-4 mb-8 ${mode === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                                 <h2 className={`text-teal-500 text-lg sm:text-4xl md:text-3xl font-extrabold ${mode === 'dark' ? 'text-white' : 'text-black'}`}>
                                     Send Remittances
                                 </h2>
 
                                 <p className={`text-base  ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
 
-                                    Ria Money Transfer enables Nyumbani Diaspora Account holders to send funds directly and instantly to their loved ones.
+                                    Ria Money Transfer enables Nyumbani Diaspora Account holders to send funds directly
+                                    and instantly to their loved ones.
 
-                                    Even people who don't have an account can send money to others for collection at any Credit Bank Branch.
+                                    Even people who don't have an account can send money to others for collection at any
+                                    Credit Bank Branch.
+                                </p>
+                                <p className={`text-base  ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
 
-                                   <br/> With the Nyumbani Diaspora Challenge, earn 200 points for every ksh10,000 transferred.
+                                    With the Nyumbani Diaspora Challenge, <span className="text-teal-600">earn 200 points</span> for
+                                    every <span className="text-teal-600">Ksh10,000</span> transferred.
 
-                                    Visit https://www.riamoneytransfer.com/en-us/send-money/ today.
+                                    <a href="https://www.riamoneytransfer.com/en-us/send-money/" target="_blank"
+                                       rel="noopener noreferrer" className="text-teal-600"> Visit RIA Money
+                                        Transfer </a> today.
+                                </p>
 
+                                <p className={`text-base  ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                                     Already sent or received a remittance? Fill in your details to redeem your points.
-
                                 </p>
-                                <p className={`text-base font-bold  ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                                    Disclaimer: Earn 200 points when you send or receive a minimum of Ksh10,000 to a Credit Bank account or to a Branch for collection .
 
+                                <p className=" font-bold">
+                                    <span className="underline">Disclaimer:</span> Earn 200 points when you send or receive a minimum of Ksh10,000 to a
+                                    Credit Bank account or to a Branch for collection .
                                 </p>
+
+
                             </div>
 
                             <div className="flex flex-col justify-center px-4 space-y-4">
