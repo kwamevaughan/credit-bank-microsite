@@ -11,7 +11,7 @@ import useTheme from '@/hooks/useTheme';
 import useSidebar from '@/hooks/useSidebar';
 import useSignOut from '@/hooks/useSignOut';
 import useAccountOpening from '@/hooks/useAccountOpening';
-import { ShieldCheckIcon } from '@heroicons/react/24/outline';
+import { CheckIcon, XMarkIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 
 const OpenAccount = () => {
     const router = useRouter();
@@ -35,7 +35,7 @@ const OpenAccount = () => {
         isValidating,
         referrerName,
         handleReferralCodeChange
-    } = useAccountOpening(token);
+    } = useAccountOpening(token, userData?.userName || '');
 
     // Function to check if referral code is valid
     const validateReferralCode = async (code) => {
@@ -72,6 +72,11 @@ const OpenAccount = () => {
             validateReferralCode(referrer);
         }
     }, [referrer]);
+
+    const handleFormSubmit = async (event) => {
+        event.preventDefault();
+        handleSubmit();
+    };
 
     return (
         <div className={`flex flex-col h-screen ${mode === 'dark' ? 'bg-[#1a1a1a]' : 'bg-[#f7f1eb]'}`}>
@@ -114,64 +119,13 @@ const OpenAccount = () => {
                                     referring a friend to open one.
                                 </p>
 
-                                <div className="flex flex-col md:flex-row items-stretch justify-between gap-6">
-                                    <div
-                                        className="flex flex-col border border-[#ff930a] p-4 rounded-lg hover:shadow-lg hover:translate-y-[-8px] transform transition-all duration-300 ease-in-out w-full md:w-[48%] flex-grow">
-                                        <div className="flex items-center mb-2">
-                                            <ShieldCheckIcon className="w-6 h-6 text-teal-500 mr-2"/>
-                                            <p className={`font-extrabold text-base ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                                                CDSC Account
-                                            </p>
-                                        </div>
-                                        <span
-                                            className={`text-base pb-4 ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                Open a CDSC account if you have a Nyumbani Diaspora Account and wish to buy and sell listed stocks at the Nairobi Securities Exchange.
-            </span>
-
-                                        <div className="flex-grow"></div>
-
-                                        <a href="https://creditbank.co.ke/nse-cdsc-accounts/" target="_blank"
-                                           rel="noopener noreferrer">
-                                            <button
-                                                className="bg-[#0cb4ab] hover:bg-gray-400 text-white font-bold py-2 px-4 rounded-lg">
-                                                Open a CDSC Account
-                                            </button>
-                                        </a>
-                                    </div>
-
-                                    <div
-                                        className="flex flex-col border border-[#ff930a] p-4 rounded-lg hover:shadow-lg hover:translate-y-[-8px] transform transition-all duration-300 ease-in-out w-full md:w-[48%] flex-grow">
-                                        <div className="flex items-center mb-2">
-                                            <ShieldCheckIcon className="w-6 h-6 text-teal-500 mr-2"/>
-                                            <p className={`font-extrabold text-base ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                                                Fixed Deposit Account
-                                            </p>
-                                        </div>
-                                        <span
-                                            className={`text-base pb-4 ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                This investment account gives you the opportunity to grow your wealth and meet your financial goals in an assured manner. You can enjoy a competent fixed interest rate on your deposits until a given maturity date.
-            </span>
-
-                                        <div className="flex-grow"></div>
-
-                                        <a href="https://creditbank.co.ke/fixed-call-deposit-account/" target="_blank"
-                                           rel="noopener noreferrer">
-                                            <button
-                                                className="bg-[#0cb4ab] hover:bg-gray-400 text-white font-bold py-2 px-4 rounded-lg">
-                                                Open a Fixed Account
-                                            </button>
-                                        </a>
-                                    </div>
-                                </div>
-
                                 <p className="pt-4 text-lg font-bold">Already opened an account? Fill in your details to redeem your
                                     points.</p>
                             </div>
 
-
                             <div className="flex flex-col justify-center px-4 space-y-4">
                                 {/* Form with 3/4 width */}
-                                <form className="space-y-6 w-full mx-auto" onSubmit={handleSubmit}>
+                                <form className="space-y-6 w-full mx-auto" onSubmit={handleFormSubmit}>
                                     {/* Select Account Type */}
                                     <div>
                                         <label htmlFor="account-type" className="block font-bold text-lg">
@@ -199,12 +153,12 @@ const OpenAccount = () => {
                                             type="text"
                                             id="name"
                                             name="name"
-                                            value={name || userData.userName}  // Use the logged-in user's name
-                                            onChange={(e) => setName(e.target.value)} // Keep the state update functionality
+                                            value={name}  // Just use the state value directly
+                                            onChange={(e) => setName(e.target.value)}
                                             placeholder="Enter your full name"
                                             className={`mt-1 block w-full p-4 border rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 ${mode === 'dark' ? 'bg-[#2d3748] text-white border-gray-600' : 'bg-white text-black border-gray-300'}`}
+                                            required
                                         />
-
                                     </div>
 
                                     {/* Referral Code */}
@@ -237,19 +191,6 @@ const OpenAccount = () => {
                                                     )}
                                                 </div>
                                             )}
-                                            {/* Loading indicator */}
-                                            {isValidating && (
-                                                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                                                    <svg className="animate-spin h-5 w-5 text-gray-500"
-                                                         xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                         viewBox="0 0 24 24">
-                                                        <circle className="opacity-25" cx="12" cy="12" r="10"
-                                                                stroke="currentColor" strokeWidth="4"></circle>
-                                                        <path className="opacity-75" fill="currentColor"
-                                                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                                    </svg>
-                                                </div>
-                                            )}
                                         </div>
                                         {/* Validation message */}
                                         {referrer && !isValidating && (
@@ -266,9 +207,9 @@ const OpenAccount = () => {
                                     {/* Submit Button */}
                                     <div
                                         className="flex flex-col md:flex-row pt-4 gap-6 w-full justify-between items-center">
-    <span className="flex-grow w-full md:w-3/4">
-        Your points will be updated after our 24-hour verification process.
-    </span>
+                                        <span className="flex-grow w-full md:w-3/4">
+                                            Your points will be updated after our 24-hour verification process.
+                                        </span>
                                         <button
                                             type="submit"
                                             className={`w-full md:w-1/2 py-4 px-4 rounded-lg font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 ${mode === 'dark' ? 'bg-teal-600 text-white hover:bg-teal-700' : 'bg-teal-500 text-white hover:bg-teal-600'}`}
@@ -276,7 +217,6 @@ const OpenAccount = () => {
                                             Redeem Points
                                         </button>
                                     </div>
-
                                 </form>
                             </div>
                         </div>

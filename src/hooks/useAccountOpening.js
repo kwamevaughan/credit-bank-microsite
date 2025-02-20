@@ -1,15 +1,23 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '/lib/supabase';
 import { toast } from 'react-toastify';
 
-const useAccountOpening = (token) => {
+const useAccountOpening = (token, defaultName = '') => {
     const [accountType, setAccountType] = useState('');
-    const [name, setName] = useState('');
+    const [name, setName] = useState(defaultName);
     const [referrer, setReferrer] = useState('');
     const [referralCodeValid, setReferralCodeValid] = useState(true);
     const [isSelfReferral, setIsSelfReferral] = useState(false);
     const [isValidating, setIsValidating] = useState(false);
     const [referrerName, setReferrerName] = useState(''); // Add this line
+
+    // Update name when defaultName changes
+    useEffect(() => {
+        if (defaultName) {
+            setName(defaultName);
+        }
+    }, [defaultName]);
+
 
     const notify = (message) => toast(message);
 
@@ -96,7 +104,6 @@ const useAccountOpening = (token) => {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
 
         if (isValidating) {
             notify('Please wait while we validate the referral code...');
