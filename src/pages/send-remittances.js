@@ -10,7 +10,7 @@ import { useUser } from '@/context/UserContext';
 import useTheme from '@/hooks/useTheme';
 import useSidebar from '@/hooks/useSidebar';
 import useSignOut from '@/hooks/useSignOut';
-import useCustomerData from '@/hooks/useCustomerData';
+// import useCustomerData from '@/hooks/useCustomerData';
 
 const SendRemittances = () => {
     const router = useRouter();
@@ -20,7 +20,7 @@ const SendRemittances = () => {
     const { mode, toggleMode } = useTheme();
     const notify = (message) => toast(message);
     const { handleSignOut } = useSignOut();
-    const { customers, error, refetchCustomers, setCustomers } = useCustomerData(notify);
+    // const { customers, error, refetchCustomers, setCustomers } = useCustomerData(notify);
     const [feedbackMessage, setFeedbackMessage] = useState('');
     const [transactionId, setTransactionId] = useState('');
     const [loading, setLoading] = useState(false);
@@ -199,11 +199,23 @@ const SendRemittances = () => {
                                 <h2 className={`text-teal-500 text-lg sm:text-4xl md:text-3xl font-extrabold ${mode === 'dark' ? 'text-white' : 'text-black'}`}>
                                     Send Remittances
                                 </h2>
+
                                 <p className={`text-base  ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                                    The RIA remittance service at Credit Bank empowers diaspora customers to send funds directly and instantaneously to their loved ones.
+
+                                    Ria Money Transfer enables Nyumbani Diaspora Account holders to send funds directly and instantly to their loved ones.
+
+                                    Even people who don't have an account can send money to others for collection at any Credit Bank Branch.
+
+                                   <br/> With the Nyumbani Diaspora Challenge, earn 200 points for every ksh10,000 transferred.
+
+                                    Visit https://www.riamoneytransfer.com/en-us/send-money/ today.
+
+                                    Already sent or received a remittance? Fill in your details to redeem your points.
+
                                 </p>
-                                <p className={`text-base  ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                                    Send a remittance to a Credit Bank account and enter the recipient's name and transaction details below to redeem your points.
+                                <p className={`text-base font-bold  ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                                    Disclaimer: Earn 200 points when you send or receive a minimum of Ksh10,000 to a Credit Bank account or to a Branch for collection .
+
                                 </p>
                             </div>
 
@@ -213,7 +225,7 @@ const SendRemittances = () => {
                                         {/* Name */}
                                         <div>
                                             <label htmlFor="name" className="block font-bold text-lg">
-                                                Name (as it appears on your ID)
+                                                Sender's Name (as it appears on your ID)
                                             </label>
                                             <input
                                                 type="text"
@@ -243,22 +255,25 @@ const SendRemittances = () => {
                                         </div>
 
                                         {/* Submit Button */}
-                                        <div className="flex pt-4 gap-6 w-full justify-between items-center">
-                                            <span className="flex-grow w-3/4">
-                                                Your points will be updated after our 24-hour verification process.
-                                            </span>
+                                        <div
+                                            className="flex flex-col md:flex-row pt-4 gap-6 w-full justify-between items-center">
+    <span className="flex-grow w-full md:w-3/4">
+        Your points will be updated after our 24-hour verification process.
+    </span>
                                             <button
                                                 type="submit"
                                                 disabled={loading} // Disable button while loading
-                                                className={`w-1/2 py-4 px-4 rounded-lg font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 ${mode === 'dark' ? 'bg-teal-600 text-white hover:bg-teal-700' : 'bg-teal-500 text-white hover:bg-teal-600'}`}
+                                                className={`w-full md:w-1/2 py-4 px-4 rounded-lg font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 ${mode === 'dark' ? 'bg-teal-600 text-white hover:bg-teal-700' : 'bg-teal-500 text-white hover:bg-teal-600'}`}
                                             >
                                                 {loading ? 'Processing...' : 'Redeem Points'}
                                             </button>
                                         </div>
+
                                     </form>
                                 ) : (
                                     <div className="flex justify-center items-center py-8">
-                                        <p className="text-lg">Loading user data... If this persists, please try logging in again.</p>
+                                        <p className="text-lg">Loading user data... If this persists, please try logging
+                                            in again.</p>
                                     </div>
                                 )}
 
