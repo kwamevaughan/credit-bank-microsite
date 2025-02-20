@@ -56,11 +56,14 @@ const SendRemittances = () => {
         // Use token as the ID since that's what you passed to the hook
         const userId = token;
 
+        // Normalize the transactionId to lowercase for case-insensitive comparison
+        const normalizedTransactionId = transactionId.toLowerCase();
+
         // Check if the transaction has already been redeemed
         const { data: transactionData, error: transactionError } = await supabase
             .from('transaction_verification')
             .select('status, transaction_id, redeemed')
-            .eq('transaction_id', transactionId)
+            .ilike('transaction_id', normalizedTransactionId) // Use ilike for case-insensitive match
             .single();
 
         if (transactionError || !transactionData) {
@@ -164,6 +167,7 @@ const SendRemittances = () => {
 
         setLoading(false);
     };
+
 
     return (
         <div className={`flex flex-col h-screen ${mode === 'dark' ? 'bg-[#1a1a1a]' : 'bg-[#f7f1eb]'}`}>
