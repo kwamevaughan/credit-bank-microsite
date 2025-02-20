@@ -578,7 +578,7 @@ const Quiz = () => {
                         <span className="font-orange">and</span> Earn Points!
                     </h2>
                     <p className={`text-sm sm:text-base md:text-lg text-center ${mode === 'dark' ? 'text-white' : 'text-black'}`}>
-                        Take our fun and interactive quiz to earn 20 points instantly.
+                        Take our fun and interactive quiz to earn 5 points for each correct answer.
                         <br/>
                         Test your knowledge, challenge yourself, and climb the leaderboard.
                         Every question gets you closer to exciting rewards!
