@@ -215,53 +215,159 @@ const DownloadApp = () => {
                             <div className="flex flex-col justify-center space-y-4">
                                 <div
                                     className={`p-6 ${mode === 'dark' ? 'bg-[#0f1720]' : 'bg-gray-50'} rounded-xl shadow-sm`}>
-                                    <table className="min-w-full divide-y divide-gray-200">
-                                        <thead>
-                                        <tr>
-                                            <th
-                                                className={`p-4 text-left text-sm font-semibold ${
-                                                    mode === 'dark' ? 'text-gray-300' : 'text-gray-500'
-                                                }`}
-                                            >
-                                                Platform
-                                            </th>
-                                            <th
-                                                className={`p-4 text-left text-sm font-semibold ${
-                                                    mode === 'dark' ? 'text-gray-300' : 'text-gray-500'
-                                                }`}
-                                            >
-                                                Status
-                                            </th>
-                                            <th
-                                                className={`p-4 text-left text-sm font-semibold ${
-                                                    mode === 'dark' ? 'text-gray-300' : 'text-gray-500'
-                                                }`}
-                                            >
-                                                Reward Points
-                                            </th>
-                                            <th
-                                                className={`p-4 text-left text-sm font-semibold ${
-                                                    mode === 'dark' ? 'text-gray-300' : 'text-gray-500'
-                                                }`}
-                                            >
-                                                Download
-                                            </th>
-                                        </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-gray-200">
-                                        {['Android', 'Apple'].map((platform) => (
-                                            <tr
-                                                key={platform}
-                                                className={`hover:${mode === 'dark' ? 'bg-black' : 'bg-gray-100'} transition-colors`}
-                                            >
-                                                <td className="p-4">
+
+                                    {/* Responsive Table Container */}
+                                    <div className="overflow-x-auto">
+                                        <table className="min-w-full divide-y divide-gray-200 hidden sm:table">
+                                            <thead>
+                                            <tr>
+                                                <th
+                                                    className={`p-4 text-left text-sm font-semibold ${
+                                                        mode === 'dark' ? 'text-gray-300' : 'text-gray-500'
+                                                    }`}
+                                                >
+                                                    Platform
+                                                </th>
+                                                <th
+                                                    className={`p-4 text-left text-sm font-semibold ${
+                                                        mode === 'dark' ? 'text-gray-300' : 'text-gray-500'
+                                                    }`}
+                                                >
+                                                    Status
+                                                </th>
+                                                <th
+                                                    className={`p-4 text-left text-sm font-semibold ${
+                                                        mode === 'dark' ? 'text-gray-300' : 'text-gray-500'
+                                                    }`}
+                                                >
+                                                    Reward Points
+                                                </th>
+                                                <th
+                                                    className={`p-4 text-left text-sm font-semibold ${
+                                                        mode === 'dark' ? 'text-gray-300' : 'text-gray-500'
+                                                    }`}
+                                                >
+                                                    Download
+                                                </th>
+                                            </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-200">
+                                            {['Android', 'Apple'].map((platform) => (
+                                                <tr
+                                                    key={platform}
+                                                    className={`hover:${mode === 'dark' ? 'bg-black' : 'bg-gray-100'} transition-colors`}
+                                                >
+                                                    <td className="p-4">
+                                                        <div className="flex items-center space-x-3">
+                                                            <div className="flex-shrink-0">
+                                                                {/* For the Apple icon, we set fill to white in dark mode */}
+                                                                {platform === 'Apple' ? (
+                                                                    <Apple
+                                                                        className={`w-8 h-8 ${mode === 'dark' ? 'fill-white' : ''}`}/>
+                                                                ) : (
+                                                                    <Image
+                                                                        src={`/assets/images/${platform.toLowerCase()}.svg`}
+                                                                        alt={platform}
+                                                                        width={40}
+                                                                        height={40}
+                                                                        className="rounded-lg"
+                                                                    />
+                                                                )}
+                                                            </div>
+                                                            <div>
+                                                                <p className="font-medium">{platform} App</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="p-4">
+                                                        {isLoading ? (
+                                                            <div className="flex items-center space-x-2">
+                                                                <div
+                                                                    className="animate-spin rounded-full h-4 w-4 border-2 border-teal-500 border-t-transparent"></div>
+                                                                <span className="text-sm">Checking...</span>
+                                                            </div>
+                                                        ) : (
+                                                            <span
+                                                                className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                                                                    downloadStatus[platform]
+                                                                        ? 'bg-green-100 text-green-800'
+                                                                        : 'bg-yellow-100 text-yellow-800'
+                                                                }`}
+                                                            >
+                {downloadStatus[platform] ? 'Downloaded' : 'Not Yet'}
+              </span>
+                                                        )}
+                                                    </td>
+                                                    <td className="p-4">
+                                                        <div className="flex items-center space-x-1">
+                                                            <StarIcon className="w-5 h-5 text-yellow-400"/>
+                                                            <span className="font-medium">
+                {downloadStatus[platform] ? '15' : '0'}
+              </span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="p-4">
+                                                        <button
+                                                            className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                                                isLoading || downloadStatus[platform]
+                                                                    ? mode === 'dark'
+                                                                        ? 'bg-gray-700 text-gray-100 cursor-not-allowed' // Dark mode styles for disabled button
+                                                                        : 'bg-gray-200 text-gray-600 cursor-not-allowed' // Light mode styles for disabled button
+                                                                    : mode === 'dark'
+                                                                        ? 'bg-teal-600 text-white hover:bg-teal-700 focus:ring-2 focus:ring-offset-2 focus:ring-teal-500' // Dark mode button styles
+                                                                        : 'bg-teal-500 text-white hover:bg-teal-600 focus:ring-2 focus:ring-offset-2 focus:ring-teal-500' // Light mode button styles
+                                                            }`}
+                                                            onClick={() =>
+                                                                handleDownloadApp(
+                                                                    platform,
+                                                                    platform === 'Android'
+                                                                        ? 'https://play.google.com/store/apps/details?id=co.ke.ekenya.creditbank'
+                                                                        : 'https://apps.apple.com/us/app/credit-bank-cb-konnect/id1469515952'
+                                                                )
+                                                            }
+                                                            disabled={isLoading || downloadStatus[platform]}
+                                                        >
+                                                            {isLoading ? (
+                                                                <>
+                                                                    <CheckIcon
+                                                                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-400"/>
+                                                                    Please wait...
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    {downloadStatus[platform] ? (
+                                                                        <>
+                                                                            <CheckIcon className="w-4 h-4 mr-2"/>
+                                                                            Downloaded
+                                                                        </>
+                                                                    ) : (
+                                                                        <>
+                                                                            <ArrowDownTrayIcon
+                                                                                className="w-4 h-4 mr-2"/>
+                                                                            Download
+                                                                        </>
+                                                                    )}
+                                                                </>
+                                                            )}
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                            </tbody>
+                                        </table>
+
+                                        {/* Mobile view as a stack */}
+                                        <div className="block sm:hidden">
+                                            {['Android', 'Apple'].map((platform) => (
+                                                <div
+                                                    key={platform}
+                                                    className={`border-b ${mode === 'dark' ? 'border-gray-700' : 'border-gray-300'} p-4`}
+                                                >
                                                     <div className="flex items-center space-x-3">
                                                         <div className="flex-shrink-0">
-                                                            {/* For the Apple icon, we set fill to white in dark mode */}
                                                             {platform === 'Apple' ? (
                                                                 <Apple
-                                                                    className={`w-8 h-8 ${mode === 'dark' ? 'fill-white' : ''}`}
-                                                                />
+                                                                    className={`w-8 h-8 ${mode === 'dark' ? 'fill-white' : ''}`}/>
                                                             ) : (
                                                                 <Image
                                                                     src={`/assets/images/${platform.toLowerCase()}.svg`}
@@ -276,44 +382,39 @@ const DownloadApp = () => {
                                                             <p className="font-medium">{platform} App</p>
                                                         </div>
                                                     </div>
-                                                </td>
-                                                <td className="p-4">
-                                                    {isLoading ? (
-                                                        <div className="flex items-center space-x-2">
-                                                            <div
-                                                                className="animate-spin rounded-full h-4 w-4 border-2 border-teal-500 border-t-transparent"></div>
-                                                            <span className="text-sm">Checking...</span>
-                                                        </div>
-                                                    ) : (
-                                                        <span
-                                                            className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                                                                downloadStatus[platform]
-                                                                    ? 'bg-green-100 text-green-800'
-                                                                    : 'bg-yellow-100 text-yellow-800'
-                                                            }`}
-                                                        >
+                                                    <div className="mt-2">
+                                                        {isLoading ? (
+                                                            <div className="flex items-center space-x-2">
+                                                                <div
+                                                                    className="animate-spin rounded-full h-4 w-4 border-2 border-teal-500 border-t-transparent"></div>
+                                                                <span className="text-sm">Checking...</span>
+                                                            </div>
+                                                        ) : (
+                                                            <span
+                                                                className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                                                                    downloadStatus[platform]
+                                                                        ? 'bg-green-100 text-green-800'
+                                                                        : 'bg-yellow-100 text-yellow-800'
+                                                                }`}
+                                                            >
               {downloadStatus[platform] ? 'Downloaded' : 'Not Yet'}
             </span>
-                                                    )}
-                                                </td>
-                                                <td className="p-4">
-                                                    <div className="flex items-center space-x-1">
-                                                        <StarIcon className="w-5 h-5 text-yellow-400"/>
-                                                        <span className="font-medium">
-              {downloadStatus[platform] ? '15' : '0'}
-            </span>
+                                                        )}
                                                     </div>
-                                                </td>
-                                                <td className="p-4">
+                                                    <div className="mt-2 flex items-center space-x-1">
+                                                        <StarIcon className="w-5 h-5 text-yellow-400"/>
+                                                        <span
+                                                            className="font-medium">{downloadStatus[platform] ? '15' : '0'}</span>
+                                                    </div>
                                                     <button
-                                                        className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                                        className={`mt-3 inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                                                             isLoading || downloadStatus[platform]
                                                                 ? mode === 'dark'
-                                                                    ? 'bg-gray-700 text-gray-100 cursor-not-allowed' // Dark mode styles for disabled button
-                                                                    : 'bg-gray-200 text-gray-600 cursor-not-allowed' // Light mode styles for disabled button
+                                                                    ? 'bg-gray-700 text-gray-100 cursor-not-allowed'
+                                                                    : 'bg-gray-200 text-gray-600 cursor-not-allowed'
                                                                 : mode === 'dark'
-                                                                    ? 'bg-teal-600 text-white hover:bg-teal-700 focus:ring-2 focus:ring-offset-2 focus:ring-teal-500' // Dark mode button styles
-                                                                    : 'bg-teal-500 text-white hover:bg-teal-600 focus:ring-2 focus:ring-offset-2 focus:ring-teal-500' // Light mode button styles
+                                                                    ? 'bg-teal-600 text-white hover:bg-teal-700 focus:ring-2 focus:ring-offset-2 focus:ring-teal-500'
+                                                                    : 'bg-teal-500 text-white hover:bg-teal-600 focus:ring-2 focus:ring-offset-2 focus:ring-teal-500'
                                                         }`}
                                                         onClick={() =>
                                                             handleDownloadApp(
@@ -347,18 +448,17 @@ const DownloadApp = () => {
                                                             </>
                                                         )}
                                                     </button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                        </tbody>
-                                    </table>
-
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
 
                                 </div>
                             </div>
                         </div>
                     </div>
                 </main>
+
             </div>
         </div>
     );
