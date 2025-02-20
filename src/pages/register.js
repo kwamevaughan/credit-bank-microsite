@@ -125,6 +125,25 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
                 return;
             }
 
+            // Send email to the newly registered user
+            const sendEmailResponse = await fetch('/api/sendEmail', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: newUserData.email,
+                    name: newUserData.name,
+                    uniqueCode,
+                }),
+            });
+
+            if (sendEmailResponse.ok) {
+                console.log('Welcome email sent successfully');
+            } else {
+                console.error('Failed to send welcome email');
+            }
+
             const { error: activityError } = await supabase
                 .from('user_activities')
                 .insert([{
@@ -162,7 +181,7 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
                     .update({
                         points: referredUserPoints,
                         actions_completed: referredUserActionsCompleted,
-                        referral_count: updatedReferralCount, // Increment referral_count by 1
+                        referral_count: updatedReferralCount,
                     })
                     .eq('id', referredUserId);
 
@@ -196,7 +215,6 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
                 }
             }
 
-
             const session = {
                 user: {
                     id: newUserData.id,
@@ -207,9 +225,7 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
             };
             localStorage.setItem('supabase_session', JSON.stringify(session));
 
-            // Update token in the context for immediate reactivity
             setToken(session.access_token);
-
 
             toast.update(pleaseWaitToast, {
                 render: 'User registered successfully! Your referral code: ' + uniqueCode,
@@ -236,6 +252,7 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
             });
         }
     };
+
 
     useEffect(() => {
         const fetchCountries = async () => {
