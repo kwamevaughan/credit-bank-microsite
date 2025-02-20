@@ -39,8 +39,6 @@ import DangerZone from '@/components/DangerZone';
 const Profile = () => {
     const router = useRouter();
     const { user, token, setToken } = useUser();
-    console.log('Profile component - Current user:', user); // Debug log
-    console.log('Profile component - Current token:', token); // Debug log
     const { mode, toggleMode } = useTheme();
     const { isSidebarOpen, toggleSidebar } = useSidebar();
     const { isOpen: isVerificationModalOpen, openModal: openVerificationModal, closeModal: closeVerificationModal } = useModal();
