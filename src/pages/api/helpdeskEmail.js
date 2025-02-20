@@ -16,7 +16,7 @@ export default async function handler(req, res) {
 
         const mailOptions = {
             from: process.env.EMAIL_USER, // This is the authenticated sender email
-            to: 'customerservice@creditbank.co.ke',  // Set recipient to the correct email
+            to: 'analytics.growthpad@gmail.com',  // Set recipient to the correct email
             subject: `Support Request from ${name}, Credit Bank Diaspora Challenge`,  // Email subject
             html: `
                 <p>Hello Credit Bank Support Team,</p>
