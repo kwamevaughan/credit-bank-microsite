@@ -181,7 +181,7 @@ const InfiniteSlider = () => {
                                     <div className="flex flex-col justify-between pt-10 px-8 text-center h-[15em]">
                                         <p className="text-xl text-gray-600">{slide.description}</p>
                                         <div className="mt-4">
-                                            <Link href="/participate">
+                                            <Link href="/participate" id="sign-up-button">
                                                 <button className="font-extrabold text-xl text-orange-600 cursor-pointer">
                                                     {(() => {
                                                         switch (slide.id) {
@@ -236,7 +236,7 @@ const InfiniteSlider = () => {
                                             <div className="flex flex-col justify-between pt-10 px-8 text-center h-[15em]">
                                                 <p className="text-xl text-gray-600">{slide.description}</p>
                                                 <div className="mt-4">
-                                                    <Link href="/participate">
+                                                    <Link href="/participate" id="sign-up-button">
                                                         <button className="font-extrabold text-xl text-orange-600 cursor-pointer">
                                                             {(() => {
                                                                 switch (slide.id) {
