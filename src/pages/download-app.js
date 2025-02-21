@@ -214,7 +214,7 @@ const DownloadApp = () => {
                             {/* Download Section with improved table */}
                             <div className="flex flex-col justify-center space-y-4">
                                 <div
-                                    className={`p-6 ${mode === 'dark' ? 'bg-[#0f1720]' : 'bg-gray-50'} rounded-xl shadow-sm`}>
+                                    className={`p-0 md:p-6 ${mode === 'dark' ? 'bg-[#0f1720]' : 'bg-gray-50'} rounded-xl shadow-sm`}>
 
                                     {/* Responsive Table Container */}
                                     <div className="overflow-x-auto">
@@ -255,7 +255,11 @@ const DownloadApp = () => {
                                             {['Android', 'Apple'].map((platform) => (
                                                 <tr
                                                     key={platform}
-                                                    className={`hover:${mode === 'dark' ? 'bg-black' : 'bg-gray-100'} transition-colors`}
+                                                    className={`transition-colors ${
+                                                        mode === 'dark'
+                                                            ? 'hover:bg-[#2d2d2d]' // Dark mode hover background color
+                                                            : 'hover:bg-[#f1f5f9]' // Light mode hover background color
+                                                    }`}
                                                 >
                                                     <td className="p-4">
                                                         <div className="flex items-center space-x-3">
@@ -289,21 +293,18 @@ const DownloadApp = () => {
                                                         ) : (
                                                             <span
                                                                 className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                                                                    downloadStatus[platform]
-                                                                        ? 'bg-green-100 text-green-800'
-                                                                        : 'bg-yellow-100 text-yellow-800'
+                                                                    downloadStatus[platform] ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                                                                 }`}
                                                             >
-                {downloadStatus[platform] ? 'Downloaded' : 'Not Yet'}
-              </span>
+            {downloadStatus[platform] ? 'Downloaded' : 'Not Yet'}
+          </span>
                                                         )}
                                                     </td>
                                                     <td className="p-4">
                                                         <div className="flex items-center space-x-1">
                                                             <StarIcon className="w-5 h-5 text-yellow-400"/>
-                                                            <span className="font-medium">
-                {downloadStatus[platform] ? '15' : '0'}
-              </span>
+                                                            <span
+                                                                className="font-medium">{downloadStatus[platform] ? '15' : '0'}</span>
                                                         </div>
                                                     </td>
                                                     <td className="p-4">
@@ -311,11 +312,11 @@ const DownloadApp = () => {
                                                             className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                                                                 isLoading || downloadStatus[platform]
                                                                     ? mode === 'dark'
-                                                                        ? 'bg-gray-700 text-gray-100 cursor-not-allowed' // Dark mode styles for disabled button
-                                                                        : 'bg-gray-200 text-gray-600 cursor-not-allowed' // Light mode styles for disabled button
+                                                                        ? 'bg-gray-700 text-gray-100 cursor-not-allowed'
+                                                                        : 'bg-gray-200 text-gray-600 cursor-not-allowed'
                                                                     : mode === 'dark'
-                                                                        ? 'bg-teal-600 text-white hover:bg-teal-700 focus:ring-2 focus:ring-offset-2 focus:ring-teal-500' // Dark mode button styles
-                                                                        : 'bg-teal-500 text-white hover:bg-teal-600 focus:ring-2 focus:ring-offset-2 focus:ring-teal-500' // Light mode button styles
+                                                                        ? 'bg-teal-600 text-white hover:bg-teal-700 focus:ring-2 focus:ring-offset-2 focus:ring-teal-500'
+                                                                        : 'bg-teal-500 text-white hover:bg-teal-600 focus:ring-2 focus:ring-offset-2 focus:ring-teal-500'
                                                             }`}
                                                             onClick={() =>
                                                                 handleDownloadApp(
@@ -354,6 +355,7 @@ const DownloadApp = () => {
                                                 </tr>
                                             ))}
                                             </tbody>
+
                                         </table>
 
                                         {/* Mobile view as a stack */}
