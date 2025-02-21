@@ -9,6 +9,7 @@ import {StarIcon} from "@heroicons/react/24/solid";
 import Footer from "@/layouts/footer";
 import Link from "next/link";
 import LeaderboardTable from "@/components/leaderboardTable"
+import InfiniteSlider from "@/components/InfiniteSlider";
 
 
 export default function Home() {
@@ -22,7 +23,7 @@ export default function Home() {
 
 
                 <main
-                    className={`flex-1 transition-all duration-300 `}>
+                    className={`flex-1 transition-all duration-300 w-full `}>
 
                     <div className="bg-[#f7f1eb] px-10 md:px-40 z-40 relative">
                         <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4">
@@ -192,41 +193,17 @@ export default function Home() {
 
                     </div>
 
-                    <div className="bg-white px-6 sm:px-10 md:px-20 pt-14 pb-28" id="actions">
+                    <div className="bg-white px-6 sm:px-10 md:px-20 pt-14 pb-12" id="actions">
                         <div className="flex flex-col justify-center text-center">
                             <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-teal-600 mb-4">
                                 <span className="font-orange">Actions That</span> Earn You Points
                             </h2>
-                            <p className="text-base sm:text-lg">Participate in these activities to earn points and climb the leaderboard!</p>
+                            <p className="text-base sm:text-lg">Participate in these activities to earn points and climb
+                                the leaderboard!</p>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 pt-10 gap-2">
-                            <div className="flex justify-center">
-                                <Image
-                                    src="/assets/images/open-account.png"
-                                    width={280}
-                                    height={50}
-                                    alt="open account image"
-                                    className="hover:translate-y-[-10px] transition-transform duration-300"
-                                />
-                            </div>
+                        <InfiniteSlider />
 
-                            <div className="flex justify-center relative top-0 md:top-16">
-                                <Image src="/assets/images/send-money.png" width={280} height={50} alt="send money image"
-                                       className="hover:translate-y-[-10px] transition-transform duration-300"
-                                />
-                            </div>
-                            <div className="flex justify-center">
-                                <Image src="/assets/images/download-app.png" width={280} height={50} alt="download app image"
-                                       className="hover:translate-y-[-10px] transition-transform duration-300"
-                                />
-                            </div>
-                            <div className="flex justify-center relative top:0 md:top-16">
-                                <Image src="/assets/images/quiz.png" width={280} height={50} alt="complete quiz image"
-                                       className="hover:translate-y-[-10px] transition-transform duration-300"
-                                />
-                            </div>
-                        </div>
                     </div>
 
 
@@ -238,18 +215,12 @@ export default function Home() {
                             <span className="text-2xl sm:text-2xl md:text-3xl font-extrabold font-orange mb-4">
       See Who's Leading the Pack!
     </span>
-                            <p className="text-base sm:text-lg">Stay competitive! Check the live leaderboard to see who's winning.</p>
+                            <p className="text-base sm:text-lg">Stay competitive! Check the live leaderboard to see
+                                who's winning.</p>
                         </div>
 
                         <div className="w-full pt-0 md:pt-8 ">
-                            <LeaderboardTable />
-                            {/*<Image*/}
-                            {/*    src="/assets/images/leaderboard.png"*/}
-                            {/*    alt="leaderboard image"*/}
-                            {/*    width={0} // Set width and height to 0 when using w-full*/}
-                            {/*    height={0}*/}
-                            {/*    layout="responsive" // This will help preserve the image's aspect ratio*/}
-                            {/*/>*/}
+                            <LeaderboardTable/>
                         </div>
                     </div>
 
