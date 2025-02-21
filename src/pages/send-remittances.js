@@ -216,10 +216,8 @@ const SendRemittances = () => {
                                 <p className={`text-base  ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
 
                                     With the Nyumbani Diaspora Challenge, <span className="text-teal-600">earn 200 points</span> for
-                                    every <span className="text-teal-600">Ksh10,000</span> transferred.
-
-                                    <a href="https://www.riamoneytransfer.com/en-us/send-money/" target="_blank"
-                                       rel="noopener noreferrer" className="text-teal-600"> Visit RIA Money
+                                    every <span className="text-teal-600">Ksh10,000</span> transferred. <a href="https://www.riamoneytransfer.com/en-us/send-money/" target="_blank"
+                                       rel="noopener noreferrer" className="text-teal-600 underline">Visit RIA Money
                                         Transfer </a> today.
                                 </p>
 
