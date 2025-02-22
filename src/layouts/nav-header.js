@@ -77,7 +77,6 @@ export default function NavHeader() {
                     <div className="flex md:hidden sm:ml-auto space-x-4 px-5">
                         <Link href="/participate">
                             <button
-                                id="sign-up-button"
                                 className="px-20 py-2 text-md rounded-lg font-bold text-white border-2 border-teal-400 bg-teal-400 transition-all ease-in-out duration-300 hover:bg-transparent hover:text-teal-400">
                                 Join Now
                             </button>
@@ -90,7 +89,6 @@ export default function NavHeader() {
                 <div className="hidden md:flex sm:ml-auto space-x-4">
                     <Link href="/participate">
                         <button
-                            id="sign-up-button"
                             className="px-6 py-2 text-md rounded-lg font-bold text-white border-2 border-teal-400 bg-teal-400 transition-all ease-in-out duration-300 hover:bg-transparent hover:text-teal-400">
                         Join Now
                         </button>

@@ -23,7 +23,6 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
 
     useEffect(() => {
         const storedSession = localStorage.getItem('supabase_session');
-
         if (storedSession) {
             const session = JSON.parse(storedSession);
             if (session && session.user) {
@@ -215,6 +214,7 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
                 }
             }
 
+            // Store session in localStorage and update the UserContext
             const session = {
                 user: {
                     id: newUserData.id,
@@ -223,9 +223,9 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
                 },
                 access_token: newUserData.id,
             };
-            localStorage.setItem('supabase_session', JSON.stringify(session));
 
-            setToken(session.access_token);
+            localStorage.setItem('supabase_session', JSON.stringify(session));
+            setToken(session.access_token);  // Update context
 
             toast.update(pleaseWaitToast, {
                 render: 'User registered successfully! Your referral code: ' + uniqueCode,
@@ -242,7 +242,6 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
 
             closeRegister();
             router.push('/dashboard');
-
         } catch (error) {
             toast.update(pleaseWaitToast, {
                 render: 'An unexpected error occurred. Please try again.',
@@ -366,6 +365,7 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
 
                 <div className="mt-8">
                     <button
+                        id="sign-up-button"
                         type="submit"
                         className="bg-[#0CB4AB] text-white font-bold py-4 px-4 w-full rounded-lg"
                     >

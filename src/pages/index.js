@@ -37,7 +37,6 @@ export default function Home() {
                                 <div className="inline-flex pt-6 gap-x-4">
                                     <Link href="/participate">
                                     <button
-                                        id="sign-up-button"
                                         className="bg-[#ff930a] hover:bg-gray-400 text-white font-bold py-2 px-4 rounded-lg">
                                         Get Started
                                     </button>
@@ -253,7 +252,6 @@ export default function Home() {
                                 <div className="mt-8">
                                     <Link href="/participate">
                                 <button
-                                    id="sign-up-button"
                                     className="bg-[#0cb4ab] hover:bg-gray-400 text-white font-bold py-2 px-4 rounded-lg">
                                     Start Earning Points Today!
                                 </button>
@@ -301,7 +299,6 @@ export default function Home() {
                                 <div className="">
                                     <Link href="/participate">
                                     <button
-                                        id="sign-up-button"
                                         className="bg-[#0cb4ab] hover:bg-gray-400 text-white font-bold py-2 px-10 rounded-lg">
                                         Take the Quiz Now
                                     </button>
