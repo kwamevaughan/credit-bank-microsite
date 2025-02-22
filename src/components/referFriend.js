@@ -26,7 +26,7 @@ const Referral = ({ token, userData, mode, toggleMode, notify }) => {
     const getShareLinks = (referralCode) => {
         if (typeof window !== 'undefined') {
             // Only use window if running on the client
-            const baseUrl = `https://bit.ly/credit-bank-diaspora-champions-challenge?referralCode=${referralCode}`;
+            const baseUrl = `https://credit-bank-microsite.vercel.app/participate?referralCode=${referralCode}`;
             const fullUrl = baseUrl; // The full URL will now be static
 
             const message = `Hi 👋, Join the Credit Bank Diaspora Campaign and stand a chance to win exciting prizes! Follow the link: ${fullUrl} or use my referral code *${referralCode}* when signing up.`;
@@ -48,6 +48,7 @@ const Referral = ({ token, userData, mode, toggleMode, notify }) => {
             };
         }
     };
+
 
 
 

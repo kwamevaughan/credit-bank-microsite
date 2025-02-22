@@ -10,21 +10,9 @@ import Footer from "@/layouts/footer";
 import Link from "next/link";
 import LeaderboardTable from "@/components/leaderboardTable"
 import InfiniteSlider from "@/components/InfiniteSlider";
-import { useRouter } from 'next/router'; // Assuming you're using Next.js
 
 
 export default function Home() {
-
-    const router = useRouter();
-
-    useEffect(() => {
-        // Check if 'referralCode' exists in the query
-        if (router.query.referralCode) {
-            router.push(`/participate?referralCode=${router.query.referralCode}`);
-        }
-    }, [router.query.referralCode]);
-
-
 
     return (
         <div className={`flex flex-col h-screen `}>
