@@ -76,6 +76,22 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
         const pleaseWaitToast = toast.loading("Please wait...", { autoClose: false });
 
         try {
+            // Capture the current page URL and the referrer URL
+            const currentPageUrl = window.location.href;  // URL of the registration page
+            const referrerUrl = document.referrer;  // URL the user came from
+
+            // Capture device information
+            const userAgent = navigator.userAgent;  // This gives you the browser and platform details
+            let device = "Unknown";
+
+            if (userAgent.includes("Mobile")) {
+                device = "Mobile";
+            } else if (userAgent.includes("Tablet")) {
+                device = "Tablet";
+            } else if (userAgent.includes("Windows") || userAgent.includes("Mac")) {
+                device = "Desktop";
+            }
+
             const { data: existingUser } = await supabase
                 .from('users')
                 .select('*')
@@ -160,6 +176,9 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
                     user_id: newUserData.id,
                     activity_type: 'Joined the Challenge',
                     points: 20,
+                    platform_url: currentPageUrl,
+                    device,
+                    source_url: referrerUrl || 'Direct',
                     created_at: new Date().toISOString(),
                 }]);
 
