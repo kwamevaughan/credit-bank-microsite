@@ -9,10 +9,8 @@ const SessionExpired = ({ isSessionExpired }) => {
     const router = useRouter();
 
     useEffect(() => {
-        // If already on /participate page, don't start countdown
-        if (router.pathname === '/participate' || router.pathname === '/dashboard') {
-            return; // Do nothing if on participate or dashboard
-        }
+        // If already on /participate, don't start countdown
+        if (router.pathname === '/participate') return;
 
         // Proceed with countdown only if session has expired
         if (isSessionExpired) {
@@ -21,7 +19,7 @@ const SessionExpired = ({ isSessionExpired }) => {
                     setCountdown(prev => prev - 1);
                 } else {
                     console.log('Redirecting to /participate');
-                    router.push('/participate');  // Redirect to participate page
+                    router.push('/participate');  // Redirect to participate page if session expired
                 }
             }, 1000);
 
@@ -29,7 +27,6 @@ const SessionExpired = ({ isSessionExpired }) => {
         }
     }, [countdown, router, isSessionExpired]);
 
-    // Progress calculation
     const progress = ((3 - countdown) / 3) * 100;
 
     return (
@@ -54,7 +51,6 @@ const SessionExpired = ({ isSessionExpired }) => {
                             You will be redirected shortly. Please hold on.
                         </p>
 
-                        {/* Spinner with Progress */}
                         <div className="my-6 flex flex-col items-center justify-center">
                             <div className="relative w-16 h-16 border-4 border-t-4 border-gray-400 rounded-full animate-spin" style={{borderTopColor: '#0CB4AB'}}></div>
                             <p className="mt-2 text-sm text-gray-600">Redirecting in {countdown}s</p>

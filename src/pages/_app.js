@@ -11,6 +11,7 @@ function MyApp({ Component, pageProps }) {
     const [isSessionExpired, setIsSessionExpired] = useState(false);
     const router = useRouter();
 
+    // Check session on page load or when route changes
     useEffect(() => {
         const savedMode = localStorage.getItem('mode');
         if (savedMode) {
@@ -53,6 +54,8 @@ const UserComponent = ({ mode, isSessionExpired, setIsSessionExpired, router, Co
 
     useEffect(() => {
         const session = localStorage.getItem('supabase_session');
+
+        // Check if user is logged in
         if (session) {
             const parsedSession = JSON.parse(session);
             setToken(parsedSession.access_token);  // Update context with new token
@@ -61,25 +64,25 @@ const UserComponent = ({ mode, isSessionExpired, setIsSessionExpired, router, Co
     }, [setToken, setUser]);
 
     useEffect(() => {
-        const excludedPaths = ['/', '/participate', '/client-login', '/transaction-verification'];
+        const excludedPaths = ['/', '/participate', '/client-login'];
 
-        // Only trigger session expired if not on excluded paths and session is missing
-        if (!excludedPaths.includes(router.pathname) && (!user || !token)) {
-            setIsSessionExpired(true);
-        } else {
-            setIsSessionExpired(false);
-        }
-    }, [user, token, router.pathname, setIsSessionExpired]);
+        // Only trigger session check if not on excluded paths
+        if (!excludedPaths.includes(router.pathname)) {
+            const session = localStorage.getItem('supabase_session');
 
-    useEffect(() => {
-        // Ensure session expired is reset if user is redirected to dashboard
-        if (router.pathname === '/dashboard') {
-            setIsSessionExpired(false);  // Reset session expired state on successful redirection to dashboard
+            if (!session || !JSON.parse(session).access_token) {
+                // Redirect to /participate if no session
+                setIsSessionExpired(true); // Optional: Set the session expired state to trigger the countdown
+                router.push('/participate');  // Redirect user to participate to log in
+            } else {
+                setIsSessionExpired(false); // Reset session expired state
+            }
         }
     }, [router.pathname, setIsSessionExpired]);
 
+    // Show session expired page if the session has expired and user is not on the /participate page
     if (isSessionExpired && router.pathname !== '/participate') {
-        return <SessionExpired isSessionExpired={isSessionExpired} />;  // Pass the prop here
+        return <SessionExpired isSessionExpired={isSessionExpired} />;
     }
 
     return (
@@ -88,7 +91,5 @@ const UserComponent = ({ mode, isSessionExpired, setIsSessionExpired, router, Co
         </div>
     );
 };
-
-
 
 export default MyApp;
