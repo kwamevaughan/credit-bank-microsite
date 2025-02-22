@@ -136,26 +136,29 @@ const LeaderboardTable = ({ token, mode, toggleMode, toggleSidebar, isSidebarOpe
                                             rankImageSrc = '/assets/images/position-3.png';
                                         }
 
-                                        // Define button styles based on rank
-                                        let buttonClass = "bg-gray-200 hover:bg-gray-500 text-slate-600 hover:text-white px-6 py-2 rounded-lg"; // Default for others
+                                        // Default button styles
+                                        let buttonClass = "bg-gray-200 hover:bg-gray-500 text-slate-600 hover:text-white px-6 py-2 rounded-lg";
                                         let buttonText = "Keep Going!";
 
-                                        if (index === 0) {
-                                            buttonClass = "bg-yellow-400 hover:bg-yellow-600 text-slate-600 hover:text-white px-6 py-2 rounded-lg"; // Champion in the Lead
-                                            buttonText = "Top Performer";
-                                        } else if (index === 1) {
-                                            buttonClass = "bg-green-400 hover:bg-green-600 text-slate-600 hover:text-white px-6 py-2 rounded-lg"; // Steady Climber
-                                            buttonText = "Steady Climber";
-                                        } else if (index === 2) {
-                                            buttonClass = "bg-orange-400 hover:bg-orange-600 text-slate-600 hover:text-white px-6 py-2 rounded-lg"; // Rising Star
-                                            buttonText = "Rising Star";
+                                        // Check the points for the "Keep Going!" button text
+                                        if (leader.points > 20) {
+                                            if (index === 0) {
+                                                buttonClass = "bg-yellow-400 hover:bg-yellow-600 text-slate-600 hover:text-white px-6 py-2 rounded-lg";
+                                                buttonText = "Top Performer";
+                                            } else if (index === 1) {
+                                                buttonClass = "bg-green-400 hover:bg-green-600 text-slate-600 hover:text-white px-6 py-2 rounded-lg";
+                                                buttonText = "Steady Climber";
+                                            } else if (index === 2) {
+                                                buttonClass = "bg-orange-400 hover:bg-orange-600 text-slate-600 hover:text-white px-6 py-2 rounded-lg";
+                                                buttonText = "Rising Star";
+                                            }
                                         }
 
                                         return (
                                             <tr
                                                 key={leader.id}
                                                 className={`shadow-md hover:shadow-sm transition-all duration-300 ease-in-out ${mode === 'dark' ? 'bg-black' : 'bg-white'} rounded-md`}
-                                                style={{transform: `translateY(${(index - 1) * 10}px)`}} // Added smooth animation
+                                                style={{ transform: `translateY(${(index - 1) * 10}px)` }} // Added smooth animation
                                             >
                                                 <td className="flex text-gray-400 px-4 py-2 border-r flex items-center ">
                                                     {(page - 1) * pageSize + index + 1}.
@@ -170,29 +173,28 @@ const LeaderboardTable = ({ token, mode, toggleMode, toggleSidebar, isSidebarOpe
 
                                                 <td className="px-4 py-2 border-r">
                                                     <div className="sm:block flex flex-col md:flex md:flex-row items-center justify-between">
-                                                    <span className="flex items-center gap-4 ">
-                                                        <Image
-                                                            src={leader.profile_image ? leader.profile_image : '/assets/images/placeholder.png'}
-                                                            alt={leader.profile_image ? 'Leader Image' : 'Placeholder Image'}
-                                                            width={50}
-                                                            height={50}
-                                                            className="w-12 h-12 rounded-full object-cover"
-                                                        />
-                                                        <span className="text-teal-600 font-bold text-lg">
-                                                            {leader.name}
-                                                        </span>
-                                                    </span>
-                                                        <span
-                                                            className="text-[#ff9409] text-2xl md:text-base mt-2 md:ml-4 md:mt-0">
-                                                            {leader.points} Points
-                                                        </span>
+                        <span className="flex items-center gap-4 ">
+                            <Image
+                                src={leader.profile_image ? leader.profile_image : '/assets/images/placeholder.png'}
+                                alt={leader.profile_image ? 'Leader Image' : 'Placeholder Image'}
+                                width={50}
+                                height={50}
+                                className="w-12 h-12 rounded-full object-cover"
+                            />
+                            <span className="text-teal-600 font-bold text-lg">
+                                {leader.name}
+                            </span>
+                        </span>
+                                                        <span className="text-[#ff9409] text-2xl md:text-base mt-2 md:ml-4 md:mt-0">
+                            {leader.points} Points
+                        </span>
                                                     </div>
                                                 </td>
                                                 <td className="px-4 py-2">
                                                     <div className="flex justify-between items-center">
-                                                    <span className="text-[#ff9409] text-lg md:text-base">
-                                                        {leader.actions_completed ? leader.actions_completed : 0} Actions Completed
-                                                    </span>
+                        <span className="text-[#ff9409] text-lg md:text-base">
+                            {leader.actions_completed ? leader.actions_completed : 0} Actions Completed
+                        </span>
                                                         <button className={buttonClass}>
                                                             {buttonText}
                                                         </button>
@@ -208,6 +210,7 @@ const LeaderboardTable = ({ token, mode, toggleMode, toggleSidebar, isSidebarOpe
                                         </td>
                                     </tr>
                                 )}
+
                                 </tbody>
                             </table>
                         </div>
