@@ -102,8 +102,9 @@ const OpenAccount = () => {
                 />
 
                 <main
-                    className={`flex-1 p-8 pt-14 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-20'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-[#f7f1eb] text-black'}`}
+                    className={`flex-1 p-8 pt-14 transition-all duration-300 ${isSidebarOpen ? 'lg:ml-64' : 'ml-10 lg:ml-20'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-[#f7f1eb] text-black'} w-full`}
                 >
+
                     <div className="space-y-8 mb-8">
                         <div
                             className={`${mode === 'dark' ? 'bg-[#101720] text-white' : 'bg-white text-black'} rounded-lg py-8 px-4 md:px-8 hover:shadow-md transition-all duration-300 ease-in-out`}
@@ -169,7 +170,8 @@ const OpenAccount = () => {
                                     </div>
                                 </div>
 
-                                <p className="pt-4 text-lg font-bold">Already opened an account? Fill in your details to redeem your
+                                <p className="pt-4 text-lg font-bold">Already opened an account? Fill in your details to
+                                    redeem your
                                     points.</p>
                             </div>
 

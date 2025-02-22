@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from '/lib/supabase';
 
 import {
@@ -28,13 +28,33 @@ import { Activity } from "@/components/icons/Activity";
 import { Quiz } from "@/components/icons/Quiz05";
 import Image from 'next/image';
 import Link from "next/link";
-import { useState } from "react";
 import { useRouter } from 'next/router';
 
 const Sidebar = ({ token, isOpen, toggleSidebar, mode, onLogout }) => {
-    const router = useRouter();
+    const [windowWidth, setWindowWidth] = useState(null);
     const [user, setUser] = useState(null);
     const [profileImage, setProfileImage] = useState(null);
+
+    const router = useRouter();
+
+    // Window Resize Listener for Client Side
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowWidth(window.innerWidth);
+        };
+
+        if (typeof window !== "undefined") {
+            // Initialize windowWidth on the client side after the first render
+            handleResize();
+            window.addEventListener("resize", handleResize);
+        }
+
+        return () => {
+            if (typeof window !== "undefined") {
+                window.removeEventListener("resize", handleResize);
+            }
+        };
+    }, []);
 
     // Fetch user data from Supabase
     const fetchUserData = async () => {
@@ -68,15 +88,22 @@ const Sidebar = ({ token, isOpen, toggleSidebar, mode, onLogout }) => {
         const isActiveLink = router.pathname === pathname;
         return isActiveLink
             ? mode === 'dark'
-                ? 'bg-[#2a3a48] text-white text-center py-2 px-4'
-                : 'bg-[#f7f1eb] text-black text-center py-2 px-4'
+                ? 'bg-[#2a3a48] text-white text-center py-2 px-0'
+                : 'bg-[#f7f1eb] text-black text-center py-2 px-0'
             : '';
     };
 
+    // Early return if windowWidth is not available yet
+    if (windowWidth === null) {
+        return null; // Or some fallback content
+    }
+
     return (
         <div
-            className={`fixed left-0 top-0 h-full transition-all duration-300 ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-white text-black'}`}
-            style={{width: isOpen ? '256px' : '80px'}}
+            className={`fixed left-0 top-0 z-50 bg-opacity-95 h-full transition-all duration-300 ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-white text-black'} sm:w-[50px]`}
+            style={{
+                width: isOpen ? '256px' : (windowWidth < 640 ? '50px' : '80px'),
+            }}
         >
             <div className="flex flex-col h-full">
                 <div className={`flex flex-col items-center justify-between ${isOpen ? 'px-4' : 'px-2'} py-10`}>
@@ -119,8 +146,8 @@ const Sidebar = ({ token, isOpen, toggleSidebar, mode, onLogout }) => {
                         )}
                         <span
                             className="absolute left-full ml-2 mt-2 text-xs text-white bg-gray-700 rounded py-1 px-2 opacity-0 group-hover:opacity-75 transition-opacity whitespace-nowrap">
-                    {isOpen ? 'Hide Sidebar' : 'Show Sidebar'}
-                </span>
+                            {isOpen ? 'Hide Sidebar' : 'Show Sidebar'}
+                        </span>
                     </button>
                 </div>
 
@@ -172,8 +199,8 @@ const Sidebar = ({ token, isOpen, toggleSidebar, mode, onLogout }) => {
                                     />
                                 </div>
                                 <span className={`text-md ${mode === 'dark' ? 'text-white' : 'text-black'}`}>
-                            {user?.name}
-                        </span>
+                                    {user?.name}
+                                </span>
                             </div>
 
                             {/* Sign out button */}
@@ -185,7 +212,6 @@ const Sidebar = ({ token, isOpen, toggleSidebar, mode, onLogout }) => {
                             </button>
                         </div>
                     ) : (
-                        // Sidebar is closed, make the entire container clickable and show the sign-out icon with tooltip
                         <div className="flex items-center justify-center w-full relative group cursor-pointer">
                             <Link
                                 href="#"
@@ -194,17 +220,15 @@ const Sidebar = ({ token, isOpen, toggleSidebar, mode, onLogout }) => {
                             >
                                 <ArrowRightStartOnRectangleIcon className="h-6 w-6"/>
                             </Link>
-                            {/* Tooltip */}
                             <span
                                 className="absolute left-full ml-2 text-xs text-white bg-gray-700 rounded py-1 px-2 opacity-0 group-hover:opacity-75 transition-opacity whitespace-nowrap">
-                        Sign Out
-                    </span>
+                                Sign Out
+                            </span>
                         </div>
                     )}
                 </div>
             </div>
         </div>
-
     );
 };
 

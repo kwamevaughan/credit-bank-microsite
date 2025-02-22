@@ -46,8 +46,9 @@ const Referrals = () => {
                 />
 
                 <main
-                    className={`flex-1 p-8 pt-14 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-20'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-[#f7f1eb] text-black'}`}
+                    className={`flex-1 p-8 pt-14 transition-all duration-300 ${isSidebarOpen ? 'lg:ml-64' : 'ml-10 lg:ml-20'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-[#f7f1eb] text-black'} w-full`}
                 >
+
                     <div className="space-y-8 mb-8">
 
                         <div
@@ -60,7 +61,8 @@ const Referrals = () => {
                                 </h2>
 
                                 <p className={`text-base  ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                                    Sharing is caring! Don’t keep the good news about Credit Bank’s wealth management solutions to yourself. Earn points for referring your loved ones.
+                                    Sharing is caring! Don’t keep the good news about Credit Bank’s wealth management
+                                    solutions to yourself. Earn points for referring your loved ones.
                                 </p>
 
                                 <Referral

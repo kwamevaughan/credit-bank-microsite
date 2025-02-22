@@ -193,8 +193,9 @@ const SendRemittances = () => {
                 />
 
                 <main
-                    className={`flex-1 p-8 pt-14 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-20'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-[#f7f1eb] text-black'}`}
+                    className={`flex-1 p-8 pt-14 transition-all duration-300 ${isSidebarOpen ? 'lg:ml-64' : 'ml-10 lg:ml-20'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-[#f7f1eb] text-black'} w-full`}
                 >
+
                     <div className="space-y-8 mb-8">
                         <div
                             className={`${mode === 'dark' ? 'bg-[#101720] text-white' : 'bg-white text-black'} rounded-lg py-8 px-4 md:px-8 hover:shadow-md transition-all duration-300 ease-in-out`}
@@ -216,9 +217,10 @@ const SendRemittances = () => {
                                 <p className={`text-base  ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
 
                                     With the Nyumbani Diaspora Challenge, <span className="text-teal-600">earn 200 points</span> for
-                                    every <span className="text-teal-600">Ksh10,000</span> transferred. <a href="https://www.riamoneytransfer.com/en-us/send-money/" target="_blank"
-                                       rel="noopener noreferrer" className="text-teal-600 underline">Visit RIA Money
-                                        Transfer </a> today.
+                                    every <span className="text-teal-600">Ksh10,000</span> transferred. <a
+                                    href="https://www.riamoneytransfer.com/en-us/send-money/" target="_blank"
+                                    rel="noopener noreferrer" className="text-teal-600 underline">Visit RIA Money
+                                    Transfer </a> today.
                                 </p>
 
                                 <p className={`text-base  ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
@@ -226,7 +228,8 @@ const SendRemittances = () => {
                                 </p>
 
                                 <p className=" font-bold">
-                                    <span className="underline">Disclaimer:</span> Earn 200 points when you send or receive a minimum of Ksh10,000 to a
+                                    <span className="underline">Disclaimer:</span> Earn 200 points when you send or
+                                    receive a minimum of Ksh10,000 to a
                                     Credit Bank account or to a Branch for collection .
                                 </p>
 

@@ -19,7 +19,7 @@ const TermsAndConditionsModal = ({ isOpen, onClose, mode }) => {
                 </h2>
 
                 <p>
-                    This is a dummy content for the Terms and Conditions. By using this service, you agree to adhere to the policies set forth herein.
+                    By using this service, you agree to adhere to the policies set forth herein.
                 </p>
             </div>
         </Modal>

@@ -154,7 +154,7 @@ const UserInfo = ({ userData, token, mode, toggleMode, notify }) => {
 
     return (
         <div
-            className={`${mode === 'dark' ? 'bg-[#101720] text-white' : 'bg-white text-black'} rounded-lg py-8 px-2 hover:shadow-md transition-all duration-300 ease-in-out`}>
+            className={`${mode === 'dark' ? 'bg-[#101720] text-white' : 'bg-white text-black'} rounded-lg py-8 px-2 hover:shadow-md transition-all duration-300 ease-in-out z-10 relative`}>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[2fr_1fr]">
                 <div className="flex flex-col md:flex-row items-center gap-y-6 md:gap-y-0 pb-6 md:pb-0">
                     <div className="px-4 space-y-4">

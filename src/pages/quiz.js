@@ -571,7 +571,7 @@ const Quiz = () => {
 
 
             <main
-                className={`flex-1 pt-14 p-8 min-h-screen transition-all duration-300 ${isSidebarOpen ? "ml-64" : "ml-0"} ${mode === "dark" ? "bg-[#0a0c1d] text-white" : "bg-[#f7f1eb] text-black"}`}>
+                className={`flex-1 pt-14 p-8 min-h-screen transition-all duration-300 ${isSidebarOpen ? "ml-64" : "ml-10"} ${mode === "dark" ? "bg-[#0a0c1d] text-white" : "bg-[#f7f1eb] text-black"}`}>
                 <div className="mb-12">
                     <h2 className={`text-3xl sm:text-4xl md:text-5xl font-extrabold ${mode === 'dark' ? 'text-teal-300' : 'text-teal-600'} mb-4 text-center`}>
                         <span className="font-orange">Take Our</span> Fun Quiz{" "}

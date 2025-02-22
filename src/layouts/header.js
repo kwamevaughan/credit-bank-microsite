@@ -30,8 +30,8 @@ const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, onLogou
     }, []);
 
     return (
-        <header className={`rounded-lg transition-all duration-300 shadow-sm border-b ${mode === 'dark' ? 'border-[#ff9409]' : 'border-gray-300'} ${isSidebarOpen ? 'ml-72' : 'ml-28'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white shadow-lg' : 'bg-white text-black'}`}>
-            <div className="flex flex-col md:flex-row items-center justify-between p-4">
+        <header className={`rounded-lg transition-all duration-300 shadow-sm border-b ${mode === 'dark' ? 'border-[#ff9409]' : 'border-gray-300'} ${isSidebarOpen ? 'ml-72' : 'lg:ml-28'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white shadow-lg' : 'bg-white text-black'}`}>
+            <div className="flex flex-col md:flex-row items-center justify-between p-4 ml-10 md:ml-0">
                 {!isSidebarOpen && (
                     <div className="md:hidden mb-2">
                         <Image
@@ -104,7 +104,7 @@ const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, onLogou
 
                         {dropdownOpen && (
                             <div
-                                className={`absolute top-full mt-2 right-0 w-80 rounded-2xl shadow-lg z-10 ${mode === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}
+                                className={`absolute top-full mt-2 right-0 w-80 rounded-2xl shadow-lg z-10 ${mode === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-black'} z-50`}
                                 onClick={(e) => e.stopPropagation()}>
                                 <div className="p-8">
                                     <p className="text-lg mb-6">User Profile</p>

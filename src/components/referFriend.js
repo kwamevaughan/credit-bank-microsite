@@ -66,7 +66,7 @@ const Referral = ({ token, userData, mode, toggleMode, notify }) => {
             <div className="flex flex-col space-y-2">
                 <div className="px-8 py-2">
                     <div className="flex pb-4 justify-center">
-                        <h2 className="text-3xl sm:text-3xl md:text-3xl font-extrabold text-white text-center">
+                        <h2 className="text-2xl md:text-3xl font-extrabold text-white text-center">
                             Refer a Friend & Earn <br/> Bonus Points!
                         </h2>
                     </div>

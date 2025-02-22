@@ -79,7 +79,9 @@ const Dashboard = () => {
 
                 />
 
-                <main className={`flex-1 p-8 pt-14 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-20'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-[#f7f1eb] text-black'} w-full`}>
+                <main
+                    className={`flex-1 p-8 pt-14 transition-all duration-300 ${isSidebarOpen ? 'lg:ml-64' : 'ml-10 lg:ml-20'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-[#f7f1eb] text-black'} w-full`}
+                >
                     <div className="space-y-6">
                         <UserInfo
                             mode={mode}
@@ -128,39 +130,39 @@ const Dashboard = () => {
 
                             <p className="mb-4 text-center ">Stay competitive! Check the live leaderboard to see who's
                                 winning.</p>
-                        <LeaderboardTable
-                            mode={mode}
-                            toggleMode={toggleMode}
-                            token={token}
-                            notify={notify}
-                            toggleSidebar={toggleSidebar}
-                            isSidebarOpen={isSidebarOpen}
-                        />
+                            <LeaderboardTable
+                                mode={mode}
+                                toggleMode={toggleMode}
+                                token={token}
+                                notify={notify}
+                                toggleSidebar={toggleSidebar}
+                                isSidebarOpen={isSidebarOpen}
+                            />
                         </div>
 
 
-            {/*            <div className="flex justify-center gap-x-4 pt-4">*/}
-            {/*                <button*/}
-            {/*                    onClick={handleSignOut} // Attach sign out handler*/}
-            {/*                    className={`flex items-center px-4 py-4 rounded-lg transition-all duration-300 ease-in-out */}
-            {/*${mode === 'dark'*/}
-            {/*                        ? 'bg-[#2a3a48] text-[#0eb4ab] hover:bg-[#3e4b5d]'*/}
-            {/*                        : 'bg-white text-[#0eb4ab] hover:bg-gray-200'}`*/}
-            {/*                    }>*/}
-            {/*                    <ArrowRightOnRectangleIcon className="h-5 w-5 mr-2 text-[#ff9409]"/>*/}
-            {/*                    Sign out*/}
-            {/*                </button>*/}
-            {/*                <button*/}
-            {/*                    onClick={() => setShowDeleteModal(true)} // Trigger modal*/}
-            {/*                    className={`flex items-center px-4 py-4 rounded-lg transition-all duration-300 ease-in-out */}
-            {/*${mode === 'dark'*/}
-            {/*                        ? 'bg-[#ef4547] text-white hover:bg-[#c0392b]'*/}
-            {/*                        : 'bg-[#ef4547] text-white hover:bg-red-600'}`*/}
-            {/*                    }>*/}
-            {/*                    <TrashIcon className="h-5 w-5 mr-2 text-white"/>*/}
-            {/*                    Delete Account*/}
-            {/*                </button>*/}
-            {/*            </div>*/}
+                        {/*            <div className="flex justify-center gap-x-4 pt-4">*/}
+                        {/*                <button*/}
+                        {/*                    onClick={handleSignOut} // Attach sign out handler*/}
+                        {/*                    className={`flex items-center px-4 py-4 rounded-lg transition-all duration-300 ease-in-out */}
+                        {/*${mode === 'dark'*/}
+                        {/*                        ? 'bg-[#2a3a48] text-[#0eb4ab] hover:bg-[#3e4b5d]'*/}
+                        {/*                        : 'bg-white text-[#0eb4ab] hover:bg-gray-200'}`*/}
+                        {/*                    }>*/}
+                        {/*                    <ArrowRightOnRectangleIcon className="h-5 w-5 mr-2 text-[#ff9409]"/>*/}
+                        {/*                    Sign out*/}
+                        {/*                </button>*/}
+                        {/*                <button*/}
+                        {/*                    onClick={() => setShowDeleteModal(true)} // Trigger modal*/}
+                        {/*                    className={`flex items-center px-4 py-4 rounded-lg transition-all duration-300 ease-in-out */}
+                        {/*${mode === 'dark'*/}
+                        {/*                        ? 'bg-[#ef4547] text-white hover:bg-[#c0392b]'*/}
+                        {/*                        : 'bg-[#ef4547] text-white hover:bg-red-600'}`*/}
+                        {/*                    }>*/}
+                        {/*                    <TrashIcon className="h-5 w-5 mr-2 text-white"/>*/}
+                        {/*                    Delete Account*/}
+                        {/*                </button>*/}
+                        {/*            </div>*/}
 
 
                         {/* Use DeleteAccountModal */}

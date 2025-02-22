@@ -277,7 +277,9 @@ const Profile = () => {
                     userData={userData}
                 />
 
-                <main className={`flex-1 p-8 pt-14 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-20'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-[#f7f1eb] text-black'} w-full`}>
+                <main
+                    className={`flex-1 p-8 pt-14 transition-all duration-300 ${isSidebarOpen ? 'lg:ml-64' : 'ml-10 lg:ml-20'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-[#f7f1eb] text-black'} w-full`}
+                >
                     <div className="space-y-6">
                         <UserInfo
                             mode={mode}
@@ -291,80 +293,80 @@ const Profile = () => {
                             className={`${mode === 'dark' ? 'bg-[#101720] text-white' : 'bg-white text-black'} rounded-lg py-8 px-2 hover:shadow-md transition-all duration-300 ease-in-out`}
                         >
                             <div className="mb-4 dark:border-gray-700">
-                                <ul
-                                    className={`flex flex-wrap -mb-px text-sm font-medium text-center rounded-lg py-2 px-2 relative ${
-                                        mode === 'dark' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-900'
-                                    }`}
-                                    role="tablist"
-                                >
-                                    <li className="me-2" role="presentation">
-                                        <button
-                                            className={`tab-button inline-block text-base p-4 rounded-lg relative overflow-hidden ${
-                                                activeTab === "personal-information" ? "text-teal-400" : (mode === 'dark' ? 'text-white' : 'text-gray-500')
-                                            }`}
-                                            onClick={() => handleTabClick("personal-information")}
-                                            role="tab"
-                                            aria-controls="personal-information"
-                                            aria-selected={activeTab === "personal-information"}
-                                        >
-                                            <UserIcon className="h-5 w-5 mr-2 inline-block"/> General Information
-                                            <span
-                                                className="absolute inset-0 bg-teal-600 opacity-10 transition-all duration-300"
-                                                style={{
-                                                    transform: `translateX(${activeTab === "personal-information" ? '0%' : activeTab === "help-desk" ? '100%' : '200%'})`,
-                                                    width: '100%',
-                                                    height: '100%',
-                                                }}
-                                            />
-                                        </button>
-                                    </li>
-                                    <li className="me-2" role="presentation">
-                                        <button
-                                            className={`tab-button inline-block text-base p-4 rounded-lg font-bold relative overflow-hidden ${
-                                                activeTab === "help-desk" ? "text-teal-400" : (mode === 'dark' ? 'text-white' : 'text-gray-500')
-                                            }`}
-                                            onClick={() => handleTabClick("help-desk")}
-                                            role="tab"
-                                            aria-controls="help-desk"
-                                            aria-selected={activeTab === "help-desk"}
-                                        >
-                                            <PhoneArrowUpRightIcon className="h-5 w-5 mr-2 inline-block"/> Help Desk
-                                            <span
-                                                className="absolute inset-0 bg-teal-600 opacity-10 transition-all duration-300"
-                                                style={{
-                                                    transform: `translateX(${activeTab === "help-desk" ? '0%' : activeTab === "personal-information" ? '-100%' : '100%'})`,
-                                                    width: '100%',
-                                                    height: '100%',
-                                                }}
-                                            />
-                                        </button>
-                                    </li>
-                                    <li role="presentation">
-                                        <button
-                                            className={`tab-button inline-block text-base p-4 rounded-lg relative overflow-hidden ${
-                                                activeTab === "danger" ? "text-teal-400" : (mode === 'dark' ? 'text-white' : 'text-gray-500')
-                                            }`}
-                                            onClick={() => handleTabClick("danger")}
-                                            role="tab"
-                                            aria-controls="danger"
-                                            aria-selected={activeTab === "danger"}
-                                        >
-                                            <ExclamationTriangleIcon
-                                                className="h-5 w-5 mr-2 inline-block text-red-600"/> Danger Zone
-                                            <span
-                                                className="absolute inset-0 bg-red-600 opacity-10 transition-all duration-300"
-                                                style={{
-                                                    transform: `translateX(${activeTab === "danger" ? '0%' : activeTab === "personal-information" ? '-200%' : '-100%'})`,
-                                                    width: '100%',
-                                                    height: '100%',
-                                                }}
-                                            />
-                                        </button>
-                                    </li>
-                                </ul>
+                                <div className="overflow-x-auto">
+                                    <ul
+                                        className={`flex flex-col sm:flex-row sm:flex-nowrap text-sm font-medium rounded-lg py-2 px-2 relative ${mode === 'dark' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-900'}`}
+                                        role="tablist"
+                                    >
+                                        <li className="me-2 w-full sm:w-auto" role="presentation">
+                                            <button
+                                                className={`w-full text-left tab-button inline-block text-base p-4 rounded-lg relative overflow-hidden ${
+                                                    activeTab === "personal-information" ? "text-teal-400" : (mode === 'dark' ? 'text-white' : 'text-gray-500')
+                                                }`}
+                                                onClick={() => handleTabClick("personal-information")}
+                                                role="tab"
+                                                aria-controls="personal-information"
+                                                aria-selected={activeTab === "personal-information"}
+                                            >
+                                                <UserIcon className="h-5 w-5 mr-2 inline-block"/> General Information
+                                                <span
+                                                    className="absolute inset-0 bg-teal-600 opacity-10 transition-all duration-300"
+                                                    style={{
+                                                        transform: `translateX(${activeTab === "personal-information" ? '0%' : activeTab === "help-desk" ? '100%' : '200%'})`,
+                                                        width: '100%',
+                                                        height: '100%',
+                                                    }}
+                                                />
+                                            </button>
+                                        </li>
+                                        <li className="me-2 w-full sm:w-auto" role="presentation">
+                                            <button
+                                                className={`w-full text-left tab-button inline-block text-base p-4 rounded-lg font-bold relative overflow-hidden ${
+                                                    activeTab === "help-desk" ? "text-teal-400" : (mode === 'dark' ? 'text-white' : 'text-gray-500')
+                                                }`}
+                                                onClick={() => handleTabClick("help-desk")}
+                                                role="tab"
+                                                aria-controls="help-desk"
+                                                aria-selected={activeTab === "help-desk"}
+                                            >
+                                                <PhoneArrowUpRightIcon className="h-5 w-5 mr-2 inline-block"/> Help Desk
+                                                <span
+                                                    className="absolute inset-0 bg-teal-600 opacity-10 transition-all duration-300"
+                                                    style={{
+                                                        transform: `translateX(${activeTab === "help-desk" ? '0%' : activeTab === "personal-information" ? '-100%' : '100%'})`,
+                                                        width: '100%',
+                                                        height: '100%',
+                                                    }}
+                                                />
+                                            </button>
+                                        </li>
+                                        <li className="w-full sm:w-auto" role="presentation">
+                                            <button
+                                                className={`w-full text-left tab-button inline-block text-base p-4 rounded-lg relative overflow-hidden ${
+                                                    activeTab === "danger" ? "text-teal-400" : (mode === 'dark' ? 'text-white' : 'text-gray-500')
+                                                }`}
+                                                onClick={() => handleTabClick("danger")}
+                                                role="tab"
+                                                aria-controls="danger"
+                                                aria-selected={activeTab === "danger"}
+                                            >
+                                                <ExclamationTriangleIcon
+                                                    className="h-5 w-5 mr-2 inline-block text-red-600"/> Danger Zone
+                                                <span
+                                                    className="absolute inset-0 bg-red-600 opacity-10 transition-all duration-300"
+                                                    style={{
+                                                        transform: `translateX(${activeTab === "danger" ? '0%' : activeTab === "personal-information" ? '-200%' : '-100%'})`,
+                                                        width: '100%',
+                                                        height: '100%',
+                                                    }}
+                                                />
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
 
-                            <div id="default-styled-tab-content">
+                            <div id="default-styled-tab-content" className="w-full">
                                 <div
                                     className={`p-4 rounded-lg ${activeTab === "personal-information" ? "" : "hidden"}`}
                                     id="styled-personal-information" role="tabpanel"
@@ -419,7 +421,6 @@ const Profile = () => {
                             toggleMode={toggleMode}
                             mode={mode}
                         />
-
 
                     </div>
                 </main>
