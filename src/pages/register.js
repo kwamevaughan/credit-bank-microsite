@@ -368,6 +368,22 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
                         id="sign-up-button"
                         type="submit"
                         className="bg-[#0CB4AB] text-white font-bold py-4 px-4 w-full rounded-lg"
+                        onClick={(e) => {
+                            e.preventDefault(); // Prevent the default form submission for now to trigger tracking first
+
+                            // LinkedIn Conversion Tracking
+                            if (window.lintrk) {
+                                window.lintrk('track', {conversion_id: 19172116});
+                            }
+
+                            // Google Ads Conversion Tracking
+                            if (window.gtag_report_conversion) {
+                                window.gtag_report_conversion();
+                            }
+
+                            // Proceed with form submission after tracking
+                            handleSubmit();
+                        }}
                     >
                         Register
                     </button>
