@@ -14,24 +14,21 @@ export const useUser = () => {
 export const UserProvider = ({ children }) => {
     const [token, setToken] = useState(null);
     const [user, setUser] = useState(null);
-    const [userFullName, setUserFullName] = useState('Guest');  // Add this state
+    const [userFullName, setUserFullName] = useState('Guest');
 
     useEffect(() => {
         const storedSession = localStorage.getItem('supabase_session');
         if (storedSession) {
             const session = JSON.parse(storedSession);
-            setToken(session.access_token);  // Set token to context state
-
-            const { user: userData } = session;
-            setUser(userData);
-
-            // Fetch additional user data (like name)
-            if (userData?.id) {
+            setToken(session.access_token);
+            setUser(session.user);
+            // Optionally fetch user data like name if needed
+            if (session.user?.id) {
                 const fetchUserData = async () => {
                     const { data, error } = await supabase
                         .from('client_users')
                         .select('name')
-                        .eq('id', userData.id)
+                        .eq('id', session.user.id)
                         .single();
 
                     if (error) {
@@ -40,7 +37,6 @@ export const UserProvider = ({ children }) => {
                         setUserFullName(data?.name || 'Guest');
                     }
                 };
-
                 fetchUserData();
             }
         }

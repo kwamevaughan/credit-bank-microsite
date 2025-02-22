@@ -1,19 +1,15 @@
 import { useState, useEffect } from 'react';
-import { UserProvider } from '../context/UserContext';  // adjust the path if necessary
-import { ToastContainer } from 'react-toastify';  // Ensure this is imported
-import 'react-toastify/dist/ReactToastify.css'; // Ensure Toastify CSS is loaded
+import { useRouter } from 'next/router';
+import { UserProvider, useUser } from '../context/UserContext';
+import SessionExpired from '../components/SessionExpired';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import '../styles/globals.css';
 
 function MyApp({ Component, pageProps }) {
     const [mode, setMode] = useState('light');
-
-    const toggleMode = () => {
-        setMode((prevMode) => {
-            const newMode = prevMode === 'light' ? 'dark' : 'light';
-            console.log('Toggling mode to:', newMode);
-            return newMode;
-        });
-    };
+    const [isSessionExpired, setIsSessionExpired] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         const savedMode = localStorage.getItem('mode');
@@ -37,18 +33,52 @@ function MyApp({ Component, pageProps }) {
         };
     }, []);
 
-    useEffect(() => {
-        localStorage.setItem('mode', mode);
-    }, [mode]);
-
     return (
         <UserProvider>
-            <div className={mode === 'dark' ? 'dark' : ''}>
-                <Component {...pageProps} mode={mode} toggleMode={toggleMode} />
-                <ToastContainer position="top-right" />
-            </div>
+            <UserComponent
+                mode={mode}
+                isSessionExpired={isSessionExpired}  // Pass isSessionExpired here
+                setIsSessionExpired={setIsSessionExpired}
+                router={router}
+                Component={Component}
+                pageProps={pageProps}
+            />
+            <ToastContainer position="top-right" />
         </UserProvider>
     );
 }
+
+const UserComponent = ({ mode, isSessionExpired, setIsSessionExpired, router, Component, pageProps }) => {
+    const { user, token, setToken } = useUser();
+
+    useEffect(() => {
+        const session = localStorage.getItem('supabase_session');
+        if (session) {
+            const parsedSession = JSON.parse(session);
+            setToken(parsedSession.access_token); // Now setToken is accessible from context
+            // Other session-related logic
+        }
+    }, [setToken]);
+
+    useEffect(() => {
+        const excludedPaths = ['/', '/participate', '/client-login', '/transaction-verification'];
+
+        if (!excludedPaths.includes(router.pathname) && (!user || !token)) {
+            setIsSessionExpired(true);
+        } else {
+            setIsSessionExpired(false);
+        }
+    }, [user, token, router.pathname, setIsSessionExpired]);
+
+    if (isSessionExpired && router.pathname !== '/participate') {
+        return <SessionExpired isSessionExpired={isSessionExpired} />;  // Pass the prop here
+    }
+
+    return (
+        <div className={mode === 'dark' ? 'dark' : ''}>
+            <Component {...pageProps} mode={mode} />
+        </div>
+    );
+};
 
 export default MyApp;
