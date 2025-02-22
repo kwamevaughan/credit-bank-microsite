@@ -126,21 +126,25 @@ const LeaderboardTable = ({ token, mode, toggleMode, toggleSidebar, isSidebarOpe
                                 <tbody>
                                 {leaders.length > 0 ? (
                                     leaders.map((leader, index) => {
-                                        // Determine rank image based on the index
-                                        let rankImageSrc = '/assets/images/position-default.png'; // Default for others
-                                        if (index === 0) {
-                                            rankImageSrc = '/assets/images/position-1.png';
-                                        } else if (index === 1) {
-                                            rankImageSrc = '/assets/images/position-2.png';
-                                        } else if (index === 2) {
-                                            rankImageSrc = '/assets/images/position-3.png';
+                                        // Default rank image (for points <= 20)
+                                        let rankImageSrc = '/assets/images/position-default.png';
+
+                                        // Only change rank image if points are greater than 20 and it's the top 3
+                                        if (leader.points > 20) {
+                                            if (index === 0) {
+                                                rankImageSrc = '/assets/images/position-1.png';
+                                            } else if (index === 1) {
+                                                rankImageSrc = '/assets/images/position-2.png';
+                                            } else if (index === 2) {
+                                                rankImageSrc = '/assets/images/position-3.png';
+                                            }
                                         }
 
-                                        // Default button styles
+                                        // Default button styles and text
                                         let buttonClass = "bg-gray-200 hover:bg-gray-500 text-slate-600 hover:text-white px-6 py-2 rounded-lg";
                                         let buttonText = "Keep Going!";
 
-                                        // Check the points for the "Keep Going!" button text
+                                        // Update button styles for points greater than 20
                                         if (leader.points > 20) {
                                             if (index === 0) {
                                                 buttonClass = "bg-yellow-400 hover:bg-yellow-600 text-slate-600 hover:text-white px-6 py-2 rounded-lg";
@@ -210,7 +214,6 @@ const LeaderboardTable = ({ token, mode, toggleMode, toggleSidebar, isSidebarOpe
                                         </td>
                                     </tr>
                                 )}
-
                                 </tbody>
                             </table>
                         </div>
