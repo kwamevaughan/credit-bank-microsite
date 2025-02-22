@@ -75,10 +75,13 @@ const SessionExpired = ({ isSessionExpired }) => {  // Accept isSessionExpired a
                                 </div>
                             </div>
                         </div>
+                        <p className="text-center text-sm text-gray-500 mt-6">
+                            Not redirected? Click <Link href="/participate" className="text-[#0CB4AB] hover:underline">here</Link> to continue.
+                        </p>
                     </div>
                 </div>
             </div>
-            <Footer />
+            <Footer/>
         </div>
     );
 };
