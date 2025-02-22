@@ -20,8 +20,8 @@ export const UserProvider = ({ children }) => {
         const storedSession = localStorage.getItem('supabase_session');
         if (storedSession) {
             const session = JSON.parse(storedSession);
-            setToken(session.access_token);
-            setUser(session.user);
+            setToken(session.access_token); // Set the token
+            setUser(session.user); // Set user
             // Optionally fetch user data like name if needed
             if (session.user?.id) {
                 const fetchUserData = async () => {

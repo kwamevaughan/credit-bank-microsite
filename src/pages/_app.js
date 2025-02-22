@@ -55,14 +55,15 @@ const UserComponent = ({ mode, isSessionExpired, setIsSessionExpired, router, Co
         const session = localStorage.getItem('supabase_session');
         if (session) {
             const parsedSession = JSON.parse(session);
-            setToken(parsedSession.access_token); // Now setToken is accessible from context
-            // Other session-related logic
+            setToken(parsedSession.access_token);  // Update context with new token
+            setUser(parsedSession.user);  // Set user in context
         }
-    }, [setToken]);
+    }, [setToken, setUser]);
 
     useEffect(() => {
         const excludedPaths = ['/', '/participate', '/client-login', '/transaction-verification'];
 
+        // Only trigger session expired if not on excluded paths and session is missing
         if (!excludedPaths.includes(router.pathname) && (!user || !token)) {
             setIsSessionExpired(true);
         } else {
@@ -80,5 +81,6 @@ const UserComponent = ({ mode, isSessionExpired, setIsSessionExpired, router, Co
         </div>
     );
 };
+
 
 export default MyApp;

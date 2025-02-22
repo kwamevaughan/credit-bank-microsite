@@ -235,8 +235,11 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
                 access_token: newUserData.id,
             };
 
+            // Store session in localStorage
             localStorage.setItem('supabase_session', JSON.stringify(session));
-            setToken(session.access_token);  // Update context
+
+            // Force a re-render of the context
+            setToken(session.access_token);  // This should trigger re-render for user context
 
             toast.update(pleaseWaitToast, {
                 render: 'User registered successfully! Your referral code: ' + uniqueCode,
@@ -252,7 +255,11 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
             setReferralCode('');
 
             closeRegister();
-            router.push('/dashboard');
+
+            // Wait for session to update, then redirect
+            setTimeout(() => {
+                router.push('/dashboard');
+            }, 500); // Add a small delay
         } catch (error) {
             toast.update(pleaseWaitToast, {
                 render: 'An unexpected error occurred. Please try again.',
@@ -262,6 +269,7 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
             });
         }
     };
+
 
 
     useEffect(() => {
