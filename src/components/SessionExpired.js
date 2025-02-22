@@ -4,13 +4,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Footer from "@/layouts/footer";
 
-const SessionExpired = ({ isSessionExpired }) => {  // Accept isSessionExpired as a prop
+const SessionExpired = ({ isSessionExpired }) => {
     const [countdown, setCountdown] = useState(3);  // Countdown set to 3 seconds
     const router = useRouter();
 
     useEffect(() => {
         // If already on /participate page, don't start countdown
-        if (router.pathname === '/participate') return;
+        if (router.pathname === '/participate' || router.pathname === '/dashboard') {
+            return; // Do nothing if on participate or dashboard
+        }
 
         // Proceed with countdown only if session has expired
         if (isSessionExpired) {
@@ -19,7 +21,7 @@ const SessionExpired = ({ isSessionExpired }) => {  // Accept isSessionExpired a
                     setCountdown(prev => prev - 1);
                 } else {
                     console.log('Redirecting to /participate');
-                    router.push('/participate');
+                    router.push('/participate');  // Redirect to participate page
                 }
             }, 1000);
 
@@ -33,14 +35,8 @@ const SessionExpired = ({ isSessionExpired }) => {  // Accept isSessionExpired a
     return (
         <div className="w-full bg-[#f7f1eb]">
             <div className="flex flex-col items-center justify-center w-full py-20">
-                <div
-                    className="flex flex-col md:flex-row rounded-xl shadow-xl overflow-hidden max-w-sm lg:max-w-full w-full lg:w-3/4"
-                >
-                    <div
-                        className="hidden md:block lg:w-1/2 bg-cover bg-center transition-all duration-700 ease-in-out"
-                        style={{backgroundImage: `url('/assets/images/form-bg.png')`}}
-                    ></div>
-
+                <div className="flex flex-col md:flex-row rounded-xl shadow-xl overflow-hidden max-w-sm lg:max-w-full w-full lg:w-3/4">
+                    <div className="hidden md:block lg:w-1/2 bg-cover bg-center transition-all duration-700 ease-in-out" style={{backgroundImage: `url('/assets/images/form-bg.png')`}}></div>
                     <div className="w-full md:w-1/2 p-8 px-10 bg-white rounded-xl shadow-lg">
                         <div className="flex justify-center pb-8">
                             <Link href="/">
@@ -52,8 +48,7 @@ const SessionExpired = ({ isSessionExpired }) => {  // Accept isSessionExpired a
                             Your session has expired!
                         </p>
                         <p className="text-center text-base text-gray-600 mt-4">
-                            Log in to track your progress, earn points, and stand a chance to win the
-                            Diaspora Champions Challenge.
+                            Log in to track your progress, earn points, and stand a chance to win the Diaspora Champions Challenge.
                         </p>
                         <p className="text-center text-md text-gray-500 mt-6">
                             You will be redirected shortly. Please hold on.
@@ -61,17 +56,11 @@ const SessionExpired = ({ isSessionExpired }) => {  // Accept isSessionExpired a
 
                         {/* Spinner with Progress */}
                         <div className="my-6 flex flex-col items-center justify-center">
-                            <div
-                                className="relative w-16 h-16 border-4 border-t-4 border-gray-400 rounded-full animate-spin"
-                                style={{borderTopColor: '#0CB4AB'}}
-                            ></div>
+                            <div className="relative w-16 h-16 border-4 border-t-4 border-gray-400 rounded-full animate-spin" style={{borderTopColor: '#0CB4AB'}}></div>
                             <p className="mt-2 text-sm text-gray-600">Redirecting in {countdown}s</p>
                             <div className="w-full mt-4">
                                 <div className="bg-gray-200 h-2 rounded-full">
-                                    <div
-                                        className="bg-[#0CB4AB] h-2 rounded-full transition-all duration-1000"
-                                        style={{width: `${progress}%`}}
-                                    ></div>
+                                    <div className="bg-[#0CB4AB] h-2 rounded-full transition-all duration-1000" style={{width: `${progress}%`}}></div>
                                 </div>
                             </div>
                         </div>
@@ -81,7 +70,7 @@ const SessionExpired = ({ isSessionExpired }) => {  // Accept isSessionExpired a
                     </div>
                 </div>
             </div>
-            <Footer/>
+            <Footer />
         </div>
     );
 };

@@ -19,25 +19,30 @@ export const UserProvider = ({ children }) => {
     useEffect(() => {
         const storedSession = localStorage.getItem('supabase_session');
         if (storedSession) {
-            const session = JSON.parse(storedSession);
-            setToken(session.access_token); // Set the token
-            setUser(session.user); // Set user
-            // Optionally fetch user data like name if needed
-            if (session.user?.id) {
-                const fetchUserData = async () => {
-                    const { data, error } = await supabase
-                        .from('client_users')
-                        .select('name')
-                        .eq('id', session.user.id)
-                        .single();
+            try {
+                const session = JSON.parse(storedSession);
+                setToken(session.access_token); // Set the token
+                setUser(session.user); // Set user
 
-                    if (error) {
-                        console.error('Error fetching user data:', error);
-                    } else {
-                        setUserFullName(data?.name || 'Guest');
-                    }
-                };
-                fetchUserData();
+                // Optionally fetch user data like name if needed
+                if (session.user?.id) {
+                    const fetchUserData = async () => {
+                        const { data, error } = await supabase
+                            .from('client_users')
+                            .select('name')
+                            .eq('id', session.user.id)
+                            .single();
+
+                        if (error) {
+                            console.error('Error fetching user data:', error);
+                        } else {
+                            setUserFullName(data?.name || 'Guest');
+                        }
+                    };
+                    fetchUserData();
+                }
+            } catch (error) {
+                console.error('Error parsing session:', error);
             }
         }
     }, []);

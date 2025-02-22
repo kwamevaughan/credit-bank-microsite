@@ -49,7 +49,7 @@ function MyApp({ Component, pageProps }) {
 }
 
 const UserComponent = ({ mode, isSessionExpired, setIsSessionExpired, router, Component, pageProps }) => {
-    const { user, token, setToken } = useUser();
+    const { user, token, setToken, setUser } = useUser(); // Destructure setUser here
 
     useEffect(() => {
         const session = localStorage.getItem('supabase_session');
@@ -71,6 +71,13 @@ const UserComponent = ({ mode, isSessionExpired, setIsSessionExpired, router, Co
         }
     }, [user, token, router.pathname, setIsSessionExpired]);
 
+    useEffect(() => {
+        // Ensure session expired is reset if user is redirected to dashboard
+        if (router.pathname === '/dashboard') {
+            setIsSessionExpired(false);  // Reset session expired state on successful redirection to dashboard
+        }
+    }, [router.pathname, setIsSessionExpired]);
+
     if (isSessionExpired && router.pathname !== '/participate') {
         return <SessionExpired isSessionExpired={isSessionExpired} />;  // Pass the prop here
     }
@@ -81,6 +88,7 @@ const UserComponent = ({ mode, isSessionExpired, setIsSessionExpired, router, Co
         </div>
     );
 };
+
 
 
 export default MyApp;
