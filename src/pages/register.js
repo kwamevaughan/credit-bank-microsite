@@ -382,7 +382,7 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
                             }
 
                             // Proceed with form submission after tracking
-                            handleSubmit();
+                            handleSubmit(e);  // Pass the event to the handleSubmit function
                         }}
                     >
                         Register
