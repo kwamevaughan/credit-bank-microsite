@@ -26,8 +26,8 @@ const Referral = ({ token, userData, mode, toggleMode, notify }) => {
     const getShareLinks = (referralCode) => {
         if (typeof window !== 'undefined') {
             // Only use window if running on the client
-            const baseUrl = `https://credit-bank-microsite.vercel.app/participate?referralCode=${referralCode}`;
-            const fullUrl = baseUrl; // The full URL will now be static
+            const baseUrl = `/participate?referralCode=${referralCode}`;
+            const fullUrl = `${window.location.origin}${baseUrl}`; // Get the full URL dynamically
 
             const message = `Hi 👋, Join the Credit Bank Diaspora Campaign and stand a chance to win exciting prizes! Follow the link: ${fullUrl} or use my referral code *${referralCode}* when signing up.`;
             return {
@@ -48,8 +48,6 @@ const Referral = ({ token, userData, mode, toggleMode, notify }) => {
             };
         }
     };
-
-
 
 
     const shareLinks = getShareLinks(referralCode);
