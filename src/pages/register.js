@@ -60,8 +60,19 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
         }
     };
 
+    const validateEmail = (email) => {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailRegex.test(email);
+    };
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!validateEmail(email)) {
+            alert("Please enter a valid email address.");
+            return; // Stop submission if email is invalid
+        }
         const pleaseWaitToast = toast.loading("Please wait...", { autoClose: false });
 
         try {
@@ -312,6 +323,9 @@ const Register = ({ closeRegister, referralCode: initialReferralCode }) => {
                         required
                         className="bg-transparent text-gray-700 border border-[#FF930A] rounded py-2 px-4 block w-full"
                     />
+                    {email && !validateEmail(email) && (
+                        <p className="text-red-500 text-sm">Please enter a valid email address.</p>
+                    )}
                 </div>
 
                 <div className="mt-4">
