@@ -83,12 +83,13 @@ html {
         display: flex;
         flex-direction: column;
         border: 0;
+        margin-bottom: 15px;
     }
 
-    .media-table tbody tr td {
-        border: 0;
-        padding: 15px;
-    }
+    /*.media-table tbody tr td {*/
+    /*    border: 0;*/
+    /*    padding: 15px;*/
+    /*}*/
 
 }
 .points-slider .swiper-slide {

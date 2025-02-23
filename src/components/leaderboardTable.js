@@ -137,9 +137,11 @@ const LeaderboardTable = ({ token, mode, toggleMode, toggleSidebar, isSidebarOpe
                                         className={`shadow-md hover:shadow-sm ${mode === 'dark' ? 'bg-black' : 'bg-white'} rounded-md`}
                                     >
                                         <td className="flex text-gray-400 px-4 py-2 border-r items-center">
-                                            <motion.span layout>
+                                            <motion.span layout
+                                                         className="text-gray-600 md:text-gray-400 text-lg font-extrabold">
                                                 {(page - 1) * pageSize + index + 1}.
                                             </motion.span>
+
                                             <Image
                                                 src={rankImageSrc}
                                                 alt={`Rank ${index + 1}`}
@@ -149,7 +151,8 @@ const LeaderboardTable = ({ token, mode, toggleMode, toggleSidebar, isSidebarOpe
                                             />
                                         </td>
                                         <td className="px-4 py-2 border-r">
-                                            <div className="sm:block flex flex-col md:flex md:flex-row items-center justify-between">
+                                            <div
+                                                className=" flex flex-row  md:flex md:flex-row items-center justify-between">
                                                     <span className="flex items-center gap-4">
                                                         <Image
                                                             src={leader.profile_image || '/assets/images/placeholder.png'}
