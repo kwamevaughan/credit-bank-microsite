@@ -50,7 +50,7 @@ const Leaderboard = () => {
                 />
 
                 <main
-                    className={`flex-1 p-8 pt-14 transition-all duration-300 ${isSidebarOpen ? 'lg:ml-64' : 'ml-10 lg:ml-20'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-[#f7f1eb] text-black'} w-full`}
+                    className={`flex-1 p-2 md:p-8 pt-14 transition-all duration-300 ${isSidebarOpen ? 'lg:ml-64' : 'ml-10 lg:ml-20'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white' : 'bg-[#f7f1eb] text-black'} w-full`}
                 >
 
                     <h2 className="text-4xl font-bold text-teal-600 mb-4 text-center ">Leaderboard</h2>

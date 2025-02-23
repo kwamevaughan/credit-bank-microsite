@@ -53,7 +53,7 @@ const ImageUpload = ({ onImageChange, imagePreview, mode }) => {
                     <button
                         type="button"
                         onClick={() => document.getElementById('imageUpload').click()}
-                        className="h-10 mt-4 rounded-full bg-teal-500 px-6 py-2 text-sm font-semibold text-white hover:bg-teal-600 focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 transition-all duration-200"
+                        className="h-full mt-4 rounded-full bg-teal-500 px-6 py-2 text-sm font-semibold text-white hover:bg-teal-600 focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 transition-all duration-200"
                     >
                         Change Photo
                     </button>

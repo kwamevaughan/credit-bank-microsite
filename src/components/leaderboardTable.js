@@ -75,7 +75,7 @@ const LeaderboardTable = ({ token, mode, toggleMode, toggleSidebar, isSidebarOpe
     const totalPages = Math.ceil(totalCount / pageSize);
 
     return (
-        <main className={`${mode === 'dark' ? 'text-white' : 'bg-transparent text-black'} rounded-lg px-4 md:px-0 transition-all duration-300 ease-in-out px-8`}>
+        <main className={`${mode === 'dark' ? 'text-white' : 'bg-transparent text-black'} rounded-lg px-4 md:px-0 transition-all duration-300 ease-in-out  `}>
             <div className={`block w-full pb-10 pt-6 rounded-lg ${mode === 'dark' ? 'bg-[#0a0c1d] text-white border-gray-600' : 'bg-transparent text-black border-gray-300'} transition-all duration-300 ease-in-out`}>
                 <div className="max-w-4xl mx-auto">
                     <div className="mb-4">

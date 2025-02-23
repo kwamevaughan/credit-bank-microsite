@@ -62,7 +62,7 @@ const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, onLogou
                 </div>
 
                 <div className="relative flex items-center space-x-2 pt-4 md:pt-0">
-                    <div className="group relative">
+                    <div className="group relative hidden md:block">
                         <button onClick={toggleFullScreen}
                                 className={`flex items-center justify-center h-10 w-10 rounded-full ${mode === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-500'} transition`}>
                             <FullScreenIcon
