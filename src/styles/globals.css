@@ -14,7 +14,7 @@ html {
 }
 
 .font-orange{
-    color: #ff930a;
+    color: #FF930A;
 }
 
 .font-teal{
@@ -90,4 +90,35 @@ html {
         padding: 15px;
     }
 
+}
+.points-slider .swiper-slide {
+    padding-top: 50px;
+}
+
+.points-slider .swiper-button-next,
+.points-slider .swiper-button-prev {
+    width: 40px;
+    height: 40px;
+    background: white;
+    border-radius: 50%;
+    color: #ff930a;
+}
+
+.points-slider .swiper-button-next:after,
+.points-slider .swiper-button-prev:after {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* Optional: Add shadow and hover effect */
+.points-slider .swiper-button-next,
+.points-slider .swiper-button-prev {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.points-slider .swiper-button-next:hover,
+.points-slider .swiper-button-prev:hover {
+    background: #ff930a;
+    color: #fff;
 }
