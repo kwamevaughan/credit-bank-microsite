@@ -27,6 +27,7 @@
     "react-select": "^5.9.0",
     "react-timer-hook": "^3.0.8",
     "react-toastify": "^11.0.3",
+    "swiper": "^11.2.4",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
