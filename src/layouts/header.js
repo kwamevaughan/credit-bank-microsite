@@ -32,6 +32,8 @@ const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, onLogou
     return (
         <header className={`rounded-lg transition-all duration-300 shadow-sm border-b ${mode === 'dark' ? 'border-[#ff9409]' : 'border-gray-300'} ${isSidebarOpen ? 'ml-72' : 'lg:ml-28'} ${mode === 'dark' ? 'bg-[#0a0c1d] text-white shadow-lg' : 'bg-white text-black'}`}>
             <div className="flex flex-col md:flex-row items-center justify-between p-4 ml-10 md:ml-0">
+
+
                 {!isSidebarOpen && (
                     <div className="md:hidden mb-2">
                         <Image
@@ -45,6 +47,14 @@ const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, onLogou
                 )}
 
                 <div className="flex items-center space-x-4">
+
+                    <button
+                        onClick={toggleSidebar}
+                        className="p-2 focus:outline-none"
+                    >
+                        <Bars3Icon className="h-6 w-6"/>
+                    </button>
+
                     {!isSidebarOpen && (
                         <>
                             <div className="hidden md:flex items-center">
@@ -108,7 +118,8 @@ const Header = ({ token, toggleSidebar, isSidebarOpen, mode, toggleMode, onLogou
                                 onClick={(e) => e.stopPropagation()}>
                                 <div className="p-8">
                                     <p className="text-lg mb-6">User Profile</p>
-                                    <div className="flex items-center gap-2 border-b pb-6 w-full transition-all duration-500 ease-out transform hover:-translate-y-[10px]">
+                                    <div
+                                        className="flex items-center gap-2 border-b pb-6 w-full transition-all duration-500 ease-out transform hover:-translate-y-[10px]">
                                         <div
                                             className="rounded-full overflow-hidden flex-shrink-0">  {/* Prevent shrinking */}
                                             <Image

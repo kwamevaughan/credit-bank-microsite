@@ -30,7 +30,7 @@ import Image from 'next/image';
 import Link from "next/link";
 import { useRouter } from 'next/router';
 
-const Sidebar = ({ token, isOpen, toggleSidebar, mode, onLogout }) => {
+const Sidebar = ({ token, isOpen, mode, onLogout }) => {
     const [windowWidth, setWindowWidth] = useState(null);
     const [user, setUser] = useState(null);
     const [profileImage, setProfileImage] = useState(null);
@@ -126,29 +126,7 @@ const Sidebar = ({ token, isOpen, toggleSidebar, mode, onLogout }) => {
                             />
                         </Link>
                     )}
-                    <button
-                        onClick={toggleSidebar}
-                        className={`flex justify-center ${isOpen ? "-ml-0" : "ml-0"} group relative mt-4`}
-                    >
-                        {isOpen ? (
-                            <>
-                                <Bars3Icon
-                                    className={`h-6 w-6 ${mode === 'dark' ? 'text-white' : 'text-gray-950'} font-bold`}
-                                />
-                                <span>Hide Sidebar</span>
-                            </>
-                        ) : (
-                            <>
-                                <Bars3BottomLeftIcon
-                                    className={`h-6 w-6 ${mode === 'dark' ? 'text-white' : 'text-gray-950'}`}
-                                />
-                            </>
-                        )}
-                        <span
-                            className="absolute left-full ml-2 mt-2 text-xs text-white bg-gray-700 rounded py-1 px-2 opacity-0 group-hover:opacity-75 transition-opacity whitespace-nowrap">
-                            {isOpen ? 'Hide Sidebar' : 'Show Sidebar'}
-                        </span>
-                    </button>
+
                 </div>
 
                 <ul className="flex-grow">
