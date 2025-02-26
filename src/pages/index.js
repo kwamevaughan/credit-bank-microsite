@@ -354,7 +354,7 @@ export default function Home() {
 
                             <div className="flex flex-col">
                                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-teal-600 mb-6">
-                                    <span className="font-orange">Quality Policy </span> Policy
+                                    <span className="font-orange">Quality Policy </span> Statement
                                 </h2>
                                 <div className="text-sm sm:text-base md:text-lg">
                                     <p className="pb-4">As an innovative Commercial Bank regulated by the Central Bank of Kenya and that is responsive to its
