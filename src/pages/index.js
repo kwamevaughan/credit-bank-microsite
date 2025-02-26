@@ -245,7 +245,7 @@ export default function Home() {
                                         <div className="flex-shrink-0 w-6 h-6 bg-[#ff930a] rounded-full flex items-center justify-center">
                                             <CheckIcon className="w-4 h-4" />
                                         </div>
-                                        <p className="md:text-lg text-sm sm:text-base text-white">Rewards include shopping vouchers, travel discounts, and exclusive Credit Bank perks.</p>
+                                        <p className="md:text-lg text-sm sm:text-base text-white">Rewards include Cashbacks and Credit Bank Merchandise.</p>
                                     </li>
                                 </ul>
                                 <div className="mt-8">
