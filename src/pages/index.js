@@ -18,7 +18,7 @@ export default function Home() {
         <div className={`flex flex-col h-screen `}>
             <NavHeader/>
 
-            <div className="mb-4 flex flex-1 transition-all duration-300">
+            <div className="flex flex-1 transition-all duration-300">
 
 
                 <main
@@ -35,16 +35,17 @@ export default function Home() {
 
                                 <div className="inline-flex pt-6 gap-x-4">
                                     <Link href="/participate">
-                                    <button
-                                        className="bg-[#ff930a] hover:bg-gray-400 text-white font-bold py-2 px-4 rounded-lg">
-                                        Get Started
-                                    </button>
+                                        <button
+                                            className="bg-[#ff930a] hover:bg-gray-400 text-white font-bold py-2 px-4 rounded-lg">
+                                            Get Started
+                                        </button>
                                     </Link>
 
-                                    <Link href="#about-the-campaign">                                    <button
-                                        className="bg-[#212529] hover:bg-gray-400 text-white font-bold py-2 px-4 rounded-lg">
-                                        Learn More
-                                    </button>
+                                    <Link href="#about-the-campaign">
+                                        <button
+                                            className="bg-[#212529] hover:bg-gray-400 text-white font-bold py-2 px-4 rounded-lg">
+                                            Learn More
+                                        </button>
                                     </Link>
                                 </div>
                             </div>
@@ -59,7 +60,7 @@ export default function Home() {
                         <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr] gap-4">
                             <div className="flex flex-col justify-center">
                                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-teal-600 mb-4">
-                                    <span className="font-orange">What’s the</span> Challenge<br />All About?
+                                    <span className="font-orange">What’s the</span> Challenge<br/>All About?
                                 </h2>
                             </div>
 
@@ -87,34 +88,44 @@ export default function Home() {
 
                             <div className="flex flex-col justify-center pb-8">
                                 <p className="text-sm sm:text-base md:text-lg">
-                                    This challenge is your chance to engage in rewarding actions, from opening accounts to taking quizzes, and earn points that push you closer to exciting prizes. It's simple, fun, and rewarding—just like banking with Credit Bank!
+                                    This challenge is your chance to engage in rewarding actions, from opening accounts
+                                    to taking quizzes, and earn points that push you closer to exciting prizes. It's
+                                    simple, fun, and rewarding—just like banking with Credit Bank!
                                 </p>
 
                                 <span className="p-4"></span>
                                 <ul className="space-y-4 ml-8">
                                     <li className="flex items-start space-x-4">
-                                        <div className="flex-shrink-0 w-6 h-6 bg-[#0cb4ab] text-white rounded-full flex items-center justify-center">
-                                            <CheckIcon className="w-4 h-4" />
+                                        <div
+                                            className="flex-shrink-0 w-6 h-6 bg-[#0cb4ab] text-white rounded-full flex items-center justify-center">
+                                            <CheckIcon className="w-4 h-4"/>
                                         </div>
-                                        <p className="md:text-lg text-sm sm:text-base">Easy-to-join activities for everyone.</p>
+                                        <p className="md:text-lg text-sm sm:text-base">Easy-to-join activities for
+                                            everyone.</p>
                                     </li>
                                     <li className="flex items-start space-x-4">
-                                        <div className="flex-shrink-0 w-6 h-6 bg-[#0cb4ab] text-white rounded-full flex items-center justify-center">
-                                            <CheckIcon className="w-4 h-4" />
+                                        <div
+                                            className="flex-shrink-0 w-6 h-6 bg-[#0cb4ab] text-white rounded-full flex items-center justify-center">
+                                            <CheckIcon className="w-4 h-4"/>
                                         </div>
-                                        <p className="md:text-lg text-sm sm:text-base">A competitive leaderboard updated in real-time.</p>
+                                        <p className="md:text-lg text-sm sm:text-base">A competitive leaderboard updated
+                                            in real-time.</p>
                                     </li>
                                     <li className="flex items-start space-x-4">
-                                        <div className="flex-shrink-0 w-6 h-6 bg-[#0cb4ab] text-white rounded-full flex items-center justify-center">
-                                            <CheckIcon className="w-4 h-4" />
+                                        <div
+                                            className="flex-shrink-0 w-6 h-6 bg-[#0cb4ab] text-white rounded-full flex items-center justify-center">
+                                            <CheckIcon className="w-4 h-4"/>
                                         </div>
-                                        <p className="md:text-lg text-sm sm:text-base">Earn points by completing actions.</p>
+                                        <p className="md:text-lg text-sm sm:text-base">Earn points by completing
+                                            actions.</p>
                                     </li>
                                     <li className="flex items-start space-x-4">
-                                        <div className="flex-shrink-0 w-6 h-6 bg-[#0cb4ab] text-white rounded-full flex items-center justify-center">
-                                            <CheckIcon className="w-4 h-4" />
+                                        <div
+                                            className="flex-shrink-0 w-6 h-6 bg-[#0cb4ab] text-white rounded-full flex items-center justify-center">
+                                            <CheckIcon className="w-4 h-4"/>
                                         </div>
-                                        <p className="md:text-lg text-sm sm:text-base">Amazing prizes for top performers!</p>
+                                        <p className="md:text-lg text-sm sm:text-base">Amazing prizes for top
+                                            performers!</p>
                                     </li>
                                 </ul>
                             </div>
@@ -143,8 +154,9 @@ export default function Home() {
                                 <div className="flex flex-col md:flex-row relative space-y-8 md:space-y-0 md:space-x-8">
                                     <ul className="flex flex-col space-y-8 w-full md:w-[35em] z-20">
                                         <li className="flex items-start space-x-4 md:space-x-6 hover:translate-y-[-10px] transition-transform duration-300 ">
-                                            <div className="flex-shrink-0 w-12 h-12 bg-[#ff930a] text-white rounded-full flex items-center justify-center">
-                                                <PencilSquareIcon className="w-6 h-6" />
+                                            <div
+                                                className="flex-shrink-0 w-12 h-12 bg-[#ff930a] text-white rounded-full flex items-center justify-center">
+                                                <PencilSquareIcon className="w-6 h-6"/>
                                             </div>
                                             <div>
                                                 <p className="text-lg sm:text-xl md:text-2xl font-bold">Sign Up</p>
@@ -152,8 +164,9 @@ export default function Home() {
                                             </div>
                                         </li>
                                         <li className="flex items-start space-x-4 md:space-x-6 hover:translate-y-[-10px] transition-transform duration-300 ">
-                                            <div className="flex-shrink-0 w-12 h-12 bg-[#ff930a] text-white rounded-full flex items-center justify-center">
-                                                <ListBulletIcon className="w-6 h-6" />
+                                            <div
+                                                className="flex-shrink-0 w-12 h-12 bg-[#ff930a] text-white rounded-full flex items-center justify-center">
+                                                <ListBulletIcon className="w-6 h-6"/>
                                             </div>
                                             <div>
                                                 <p className="text-lg sm:text-xl md:text-2xl font-bold">Take Actions</p>
@@ -161,8 +174,10 @@ export default function Home() {
                                             </div>
                                         </li>
                                         <li className="flex items-start space-x-4 md:space-x-6 hover:translate-y-[-10px] transition-transform duration-300 hover:cursor-pointer group">
-                                            <div className="flex-shrink-0 w-12 h-12 bg-[#ff930a] text-white rounded-full flex items-center justify-center">
-                                                <StarIcon className="w-6 h-6 transition-transform duration-500 ease-in-out group-hover:rotate-[360deg]" />
+                                            <div
+                                                className="flex-shrink-0 w-12 h-12 bg-[#ff930a] text-white rounded-full flex items-center justify-center">
+                                                <StarIcon
+                                                    className="w-6 h-6 transition-transform duration-500 ease-in-out group-hover:rotate-[360deg]"/>
                                             </div>
                                             <div>
                                                 <p className="text-lg sm:text-xl md:text-2xl font-bold">Earn Points</p>
@@ -172,8 +187,9 @@ export default function Home() {
 
 
                                         <li className="flex items-start space-x-4 md:space-x-6 hover:translate-y-[-10px] transition-transform duration-300 ">
-                                            <div className="flex-shrink-0 w-12 h-12 bg-[#ff930a] text-white rounded-full flex items-center justify-center">
-                                                <GiftIcon className="w-6 h-6" />
+                                            <div
+                                                className="flex-shrink-0 w-12 h-12 bg-[#ff930a] text-white rounded-full flex items-center justify-center">
+                                                <GiftIcon className="w-6 h-6"/>
                                             </div>
                                             <div>
                                                 <p className="text-lg sm:text-xl md:text-2xl font-bold">Win Rewards</p>
@@ -183,7 +199,8 @@ export default function Home() {
                                     </ul>
 
                                     {/* Vertical line through the icons */}
-                                    <div className="w-[2px] bg-[#ff930a] absolute top-0 bottom-0 left-[1.5em] md:left-[-0.6em] z-10"></div>
+                                    <div
+                                        className="w-[2px] bg-[#ff930a] absolute top-0 bottom-0 left-[1.5em] md:left-[-0.6em] z-10"></div>
                                 </div>
                             </div>
 
@@ -201,7 +218,7 @@ export default function Home() {
                                 the leaderboard!</p>
                         </div>
 
-                        <InfiniteSlider />
+                        <InfiniteSlider/>
 
                     </div>
 
@@ -236,24 +253,28 @@ export default function Home() {
                                 <span className="p-4"></span>
                                 <ul className="space-y-4 ">
                                     <li className="flex items-start space-x-4">
-                                        <div className="flex-shrink-0 w-6 h-6 bg-[#ff930a] rounded-full flex items-center justify-center">
-                                            <CheckIcon className="w-4 h-4" />
+                                        <div
+                                            className="flex-shrink-0 w-6 h-6 bg-[#ff930a] rounded-full flex items-center justify-center">
+                                            <CheckIcon className="w-4 h-4"/>
                                         </div>
-                                        <p className="md:text-lg text-sm sm:text-base text-white">Earn points, stay ahead on the leaderboard, and claim amazing prizes!</p>
+                                        <p className="md:text-lg text-sm sm:text-base text-white">Earn points, stay
+                                            ahead on the leaderboard, and claim amazing prizes!</p>
                                     </li>
                                     <li className="flex items-start space-x-4">
-                                        <div className="flex-shrink-0 w-6 h-6 bg-[#ff930a] rounded-full flex items-center justify-center">
-                                            <CheckIcon className="w-4 h-4" />
+                                        <div
+                                            className="flex-shrink-0 w-6 h-6 bg-[#ff930a] rounded-full flex items-center justify-center">
+                                            <CheckIcon className="w-4 h-4"/>
                                         </div>
-                                        <p className="md:text-lg text-sm sm:text-base text-white">Rewards include Cashbacks and Credit Bank Merchandise.</p>
+                                        <p className="md:text-lg text-sm sm:text-base text-white">Rewards include
+                                            Cashbacks and Credit Bank Merchandise.</p>
                                     </li>
                                 </ul>
                                 <div className="mt-8">
                                     <Link href="/participate">
-                                <button
-                                    className="bg-[#0cb4ab] hover:bg-gray-400 text-white font-bold py-2 px-4 rounded-lg">
-                                    Start Earning Points Today!
-                                </button>
+                                        <button
+                                            className="bg-[#0cb4ab] hover:bg-gray-400 text-white font-bold py-2 px-4 rounded-lg">
+                                            Start Earning Points Today!
+                                        </button>
                                     </Link>
                                 </div>
                             </div>
@@ -271,7 +292,7 @@ export default function Home() {
                         </div>
                     </div>
 
-                    <div className="bg-white px-6 sm:px-10 md:px-40 pt-10">
+                    <div className="bg-white px-6 sm:px-10 md:px-40 pt-10 pb-20">
                         <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr] gap-4">
                             <div className="flex flex-col justify-center">
 
@@ -285,7 +306,8 @@ export default function Home() {
 
                             <div className="flex flex-col mt-10">
                                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-teal-600 mb-4">
-                                    <span className="font-orange">Take Our</span> Fun Quiz<br /><span className="font-orange">and</span> Earn Points!
+                                    <span className="font-orange">Take Our</span> Fun Quiz<br/><span
+                                    className="font-orange">and</span> Earn Points!
                                 </h2>
                                 <p className="text-sm sm:text-base md:text-lg">
                                     Take our fun and interactive quiz to earn 20 points instantly.
@@ -297,16 +319,16 @@ export default function Home() {
 
                                 <div className="">
                                     <Link href="/participate">
-                                    <button
-                                        className="bg-[#0cb4ab] hover:bg-gray-400 text-white font-bold py-2 px-10 rounded-lg">
-                                        Take the Quiz Now
-                                    </button>
+                                        <button
+                                            className="bg-[#0cb4ab] hover:bg-gray-400 text-white font-bold py-2 px-10 rounded-lg">
+                                            Take the Quiz Now
+                                        </button>
                                     </Link>
 
                                 </div>
                             </div>
 
-                            <div className="flex flex-col justify-center">
+                            <div className="flex flex-col justify-center w-3/4">
                                 <Image
                                     src="/assets/images/quiz-teaser.png"
                                     width={400}
@@ -319,18 +341,64 @@ export default function Home() {
                         </div>
                     </div>
 
+                    <div className="bg-[#f7f1eb] px-6 sm:px-10 md:px-40 pt-10 pb-20">
+                        <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr] gap-4">
+                            <div className="flex flex-col justify-center">
+
+                            </div>
+
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10" id="quality-policy">
 
 
-                    <div className="bg-white p-10">
+                            <div className="flex flex-col">
+                                <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-teal-600 mb-6">
+                                    <span className="font-orange">Quality Policy </span> Policy
+                                </h2>
+                                <div className="text-sm sm:text-base md:text-lg">
+                                    <p className="pb-4">As an innovative Commercial Bank regulated by the Central Bank of Kenya and that is responsive to its
+                                    customers’ expectations, we commit to: </p>
+                                    <div className="flex flex-col justify-center space-y-4">
+                                    <span className="text-gray-600">1. Provide innovative financial solutions to all our customers in a responsible and friendly manner. </span>
+                                    <span className="text-gray-600">2. Provide innovative financial solutions to all our customers in a responsible and friendly manner. </span>
+                                    <span className="text-gray-600">3. Provide innovative financial solutions to all our customers in a responsible and friendly manner. </span>
+                                        </div>
 
+                                </div>
 
+                                <span className="p-4"></span>
+
+                                <div className="transition-transform duration-300 hover:-translate-y-1">
+                                    <a target="blank" href="https://creditbank.co.ke/wp-content/uploads/2023/11/Quality-Policy-1.pdf">
+                                        <button
+                                            className="bg-[#0cb4ab] hover:bg-gray-400 text-white font-bold py-2 px-10 rounded-lg">
+                                            View Policy
+                                        </button>
+                                    </a>
+
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col justify-center w-3/4 transition-transform duration-300 hover:-translate-y-1">
+                                <a target="blank" href="https://creditbank.co.ke/wp-content/uploads/2023/11/Quality-Policy-1.pdf">
+                                <Image
+                                    src="/assets/images/quality-policy.webp"
+                                    width={400}
+                                    height={300}
+                                    alt="challenge-img"
+                                    className="w-full md:w-auto rounded-lg"
+                                />
+                                </a>
+                            </div>
+
+                        </div>
                     </div>
-
                 </main>
 
 
             </div>
-            <Footer />
+            <Footer/>
         </div>
     );
 };
