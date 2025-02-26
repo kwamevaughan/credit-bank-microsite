@@ -69,7 +69,7 @@ const Footer = ({ mode }) => {
                 </div>
             </div>
             <div className="bg-[#121419] py-4 text-center text-white">
-                <p className="text-base">
+                <p className="text-small">
                     Copyright © {currentYear} Credit Bank PLC. ISO 9001:2015 Certified. Regulated and licensed by the Central Bank of Kenya.
                 </p>
             </div>
