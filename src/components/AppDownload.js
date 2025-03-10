@@ -100,7 +100,7 @@ const AppDownload = ({ mode }) => {
     };
 
     return (
-
+        <div></div>
     );
 };
 
