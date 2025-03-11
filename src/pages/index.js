@@ -344,7 +344,7 @@ export default function Home() {
                     {/* Account features section */}
                     <div className="bg-gradient-to-r from-orange-500 to-orange-400 text-white py-12 px-6 md:px-16">
                         <div className="text-center mb-8">
-                            <h2 className="text-3xl md:text-4xl font-bold">Account Features & Charges</h2>
+                            <h2 className="text-3xl md:text-4xl font-bold">Account & Transaction Fees</h2>
                             <p className="mt-2 text-lg md:text-xl">
                                 Discover transparent and customer-friendly account features and charges, ensuring you have full visibility and control over your banking experience.
                             </p>
@@ -358,7 +358,7 @@ export default function Home() {
                                             rowSpan="5"
                                             className="text-white font-bold text-lg px-6 py-12 border border-[rgba(255,255,255,0.3)] text-center align-middle"
                                         >
-                                            Account Rates Per Annum
+                                            Nyumbani Diaspora Account Rates per Annum
                                         </td>
                                         <th className="text-left px-4 py-2 border border-[rgba(255,255,255,0.3)] text-white">
                                             Features
@@ -390,6 +390,8 @@ export default function Home() {
                                 </tbody>
                             </table>
                         </div>
+
+                        <a href="https://creditbank.co.ke/wp-content/uploads/2025/02/Tariff-Guide-Updated-Feb-2025-1.pdf" className="bg-orange-350 mr-8 text-white hover:text-gray-200 text-lg">Full Tarriff Guide</a>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10" id="quality-policy">
 
