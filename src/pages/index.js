@@ -342,100 +342,101 @@ export default function Home() {
                     </div>
 
                     {/* Account features section */}
-                    <div className="bg-gradient-to-r from-orange-500 to-orange-400 text-white py-12 px-6 md:px-16">
-                        <div className="text-center mb-8">
+                    <div className="bg-[#212529] text-white py-12 px-6 md:px-16">
+                        <div className="text-left mb-8">
                             <h2 className="text-3xl md:text-4xl font-bold">Account & Transaction Fees</h2>
                             <p className="mt-2 text-lg md:text-xl">
                                 Discover transparent and customer-friendly account features and charges, ensuring you have full visibility and control over your banking experience.
                             </p>
                         </div>
 
-                        <div className="flex justify-center items-center p-6">
-                            <table className="w-full max-w-4xl border-collapse border border-[rgba(255,255,255,0.3)]">
+                        <div className="flex justify-left items-center p-6 pl-0">
+                            <div className="w-full max-w-4xl" 
+                                style={{
+                                    boxShadow: '5px 12px 0 rgba(251, 146, 60, 0.6)',
+                                    marginBottom: '20px'
+                                }}>
+                                <table className="w-full border-collapse overflow-hidden">
                                 <tbody>
-                                    <tr>
-                                        <td
-                                            rowSpan="5"
-                                            className="text-white font-bold text-lg px-6 py-12 border border-[rgba(255,255,255,0.3)] text-center align-middle"
-                                        >
-                                            Nyumbani Diaspora Account Rates per Annum
-                                        </td>
-                                        <th className="text-left px-4 py-2 border border-[rgba(255,255,255,0.3)] text-white">
-                                            Features
-                                        </th>
-                                        <th className="text-left px-4 py-2 border border-[rgba(255,255,255,0.3)] text-white">
-                                            Rate
-                                        </th>
+                                    <tr className="bg-orange-600">
+                                    <td
+                                        rowSpan="5"
+                                        className="text-white font-bold text-lg px-6 py-12 text-center align-middle">
+                                        Nyumbani Diaspora Account Rates per Annum
+                                    </td>
+                                    <th className="text-left px-4 py-2 text-white">
+                                        Features
+                                    </th>
+                                    <th className="text-left px-4 py-2 text-white">
+                                        Rate
+                                    </th>
                                     </tr>
-                                    <tr>
-                                        <td className="px-4 py-2 text-white">Opening balance</td>
-                                        <td className="px-4 py-2 text-white border-l border-[rgba(255,255,255,0.3)]">
-                                            Kshs. 5,000 | USD 50 | GBP 50 | Euro 50
-                                        </td>
+                                    <tr className="bg-orange-500 hover:bg-orange-400 transition-colors duration-200">
+                                    <td className="px-4 py-2 text-white">Opening balance</td>
+                                    <td className="px-4 py-2 text-white">
+                                        Kshs. 5,000 | USD 50 | GBP 50 | Euro 50
+                                    </td>
                                     </tr>
-                                    <tr>
-                                        <td className="px-4 py-2 text-white">Ledger fees</td>
-                                        <td className="px-4 py-2 text-white border-l border-[rgba(255,255,255,0.3)]">Nil</td>
+                                    <tr className="bg-orange-500 hover:bg-orange-400 transition-colors duration-200">
+                                    <td className="px-4 py-2 text-white">Ledger fees</td>
+                                    <td className="px-4 py-2 text-white">Nil</td>
                                     </tr>
-                                    <tr>
-                                        <td className="px-4 py-2 text-white">Minimum operating balance</td>
-                                        <td className="px-4 py-2 text-white border-l border-[rgba(255,255,255,0.3)]">Nil</td>
+                                    <tr className="bg-orange-500 hover:bg-orange-400 transition-colors duration-200">
+                                    <td className="px-4 py-2 text-white">Minimum operating balance</td>
+                                    <td className="px-4 py-2 text-white">Nil</td>
                                     </tr>
-                                    <tr>
-                                        <td className="px-4 py-2 text-white">Interest rate</td>
-                                        <td colSpan={2} className="px-4 py-2 text-white border-l border-[rgba(255,255,255,0.3)]">
-                                            Earns interest on balances above KES 2 million
-                                        </td>
+                                    <tr className="bg-orange-500 hover:bg-orange-400 transition-colors duration-200">
+                                    <td className="px-4 py-2 text-white">Interest rate</td>
+                                    <td className="px-4 py-2 text-white">
+                                        Earns interest on balances above KES 2 million
+                                    </td>
                                     </tr>
                                 </tbody>
-                            </table>
+                                </table>
+                            </div>
                         </div>
 
-                        <a href="https://creditbank.co.ke/wp-content/uploads/2025/02/Tariff-Guide-Updated-Feb-2025-1.pdf" className="bg-orange-350 mr-8 text-white hover:text-gray-200 text-lg">Full Tarriff Guide</a>
+                        <a href="https://creditbank.co.ke/wp-content/uploads/2025/02/Tariff-Guide-Updated-Feb-2025-1.pdf" className="mr-8 text-white hover:text-orange-500 text-md italic">Full Tarriff Guide</a>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10" id="quality-policy">
-
-
-                            <div className="flex flex-col">
-                                <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-teal-600 mb-6">
-                                    <span className="font-orange">Quality Policy </span> Statement
-                                </h2>
-                                <div className="text-sm sm:text-base md:text-lg">
-                                    <p className="pb-4">As an innovative Commercial Bank regulated by the Central Bank of Kenya and that is responsive to its
-                                        customers’ expectations, we commit to: </p>
-                                    <div className="flex flex-col justify-center space-y-4">
-                                        <span className="text-gray-600">1. Provide innovative financial solutions to all our customers in a responsible and friendly manner. </span>
-                                        <span className="text-gray-600">2. Provide innovative financial solutions to all our customers in a responsible and friendly manner. </span>
-                                        <span className="text-gray-600">3. Provide innovative financial solutions to all our customers in a responsible and friendly manner. </span>
-                                    </div>
-
-                                </div>
-
-                                <span className="p-4"></span>
-
-                                <div className="transition-transform duration-300 hover:-translate-y-1">
-                                    <a target="blank" href="https://creditbank.co.ke/wp-content/uploads/2023/11/Quality-Policy-1.pdf">
-                                        <button
-                                            className="bg-[#0cb4ab] hover:bg-gray-400 text-white font-bold py-2 px-10 rounded-lg">
-                                            View Policy
-                                        </button>
-                                    </a>
-
+                        
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10 mb-10 bg-white p-8 mx-4 md:mx-8 lg:mx-12 rounded-xl shadow-md"  id="quality-policy">
+                        <div className="flex flex-col p-4">
+                            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-teal-600 mb-6">
+                                <span className="font-orange">Quality Policy </span> Statement
+                            </h2>
+                            <div className="text-sm sm:text-base md:text-lg text-black">
+                                <p className="pb-6">As an innovative Commercial Bank regulated by the Central Bank of Kenya and that is responsive to its
+                                    customers' expectations, we commit to: </p>
+                                <div className="flex flex-col justify-center space-y-6 pl-4">
+                                    <span className="text-black">1. Provide innovative financial solutions to all our customers in a responsible and friendly manner. </span>
+                                    <span className="text-black">2. Provide innovative financial solutions to all our customers in a responsible and friendly manner. </span>
+                                    <span className="text-black">3. Provide innovative financial solutions to all our customers in a responsible and friendly manner. </span>
                                 </div>
                             </div>
 
-                            <div className="flex flex-col justify-center w-3/4 transition-transform duration-300 hover:-translate-y-1">
+                            <span className="p-6"></span>
+
+                            <div className="transition-transform duration-300 hover:-translate-y-1 mt-4">
                                 <a target="blank" href="https://creditbank.co.ke/wp-content/uploads/2023/11/Quality-Policy-1.pdf">
-                                    <Image
-                                        src="/assets/images/quality-policy.webp"
-                                        width={400}
-                                        height={300}
-                                        alt="challenge-img"
-                                        className="w-full md:w-auto rounded-lg"
-                                    />
+                                    <button
+                                        className="bg-[#0cb4ab] hover:bg-gray-400 text-white font-bold py-3 px-10 rounded-lg">
+                                        View Policy
+                                    </button>
                                 </a>
                             </div>
+                        </div>
 
+                        <div className="flex flex-col justify-center items-center w-full md:w-3/4 transition-transform duration-300 hover:-translate-y-1 p-4">
+                            <a target="blank" href="https://creditbank.co.ke/wp-content/uploads/2023/11/Quality-Policy-1.pdf">
+                                <Image
+                                    src="/assets/images/quality-policy.webp"
+                                    width={400}
+                                    height={300}
+                                    alt="challenge-img"
+                                    className="w-full md:w-auto rounded-lg shadow-sm"
+                                />
+                            </a>
                         </div>
                     </div>
                 </main>
