@@ -10,6 +10,7 @@ import Footer from "@/layouts/footer";
 import Link from "next/link";
 import LeaderboardTable from "@/components/leaderboardTable"
 import InfiniteSlider from "@/components/InfiniteSlider";
+import CountdownTimer from "@/components/CountdownTimer"; // Import Countdown Timer Component
 
 
 export default function Home() {
@@ -28,10 +29,10 @@ export default function Home() {
                         <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4">
                             <div className="flex flex-col justify-center">
                                 <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-teal-600 mb-4">
-                                    Earn Points<br />Win Big<br />Join the Challenge!
+                                    Join the Diaspora<br />Champions Challenge<br />
                                 </h2>
-                                <p className="text-xl sm:text-2xl">Welcome to the Credit Bank Challenge – where every
-                                    action brings you closer to amazing rewards!</p>
+                                <p className="text-xl sm:text-2xl">Welcome to the Diaspora Champions Challenge, where you win twice. Enjoy fast and easy dispora banking 
+                                   banking services and win big in the month of love.</p>
 
                                 <div className="inline-flex pt-6 gap-x-4">
                                     <Link href="/participate">
@@ -48,10 +49,12 @@ export default function Home() {
                                         </button>
                                     </Link>
                                 </div>
+                                {/* Count down */}
+                                <CountdownTimer />
                             </div>
 
                             <div className="flex justify-center">
-                                <Image src="/assets/images/hero.png" width={400} height={100} alt="hero-img" />
+                                <Image src="/assets/images/hero.webp" width={400} height={100} alt="hero-img" />
                             </div>
                         </div>
                     </div>
