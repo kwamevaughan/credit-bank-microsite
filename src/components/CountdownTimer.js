@@ -43,25 +43,25 @@ const CountdownTimer = ({ className = "" }) => {
   return (
     <div className={`mt-6 mb-2 ${className}`}>
       <div className="flex space-x-4">
-        <div className="bg-[#FFAB4D] text-[#212529] rounded-lg w-20 h-20 flex flex-col items-center justify-center">
+        <div className="bg-[#FADEBD] text-[#212529] rounded-lg w-20 h-20 flex flex-col items-center justify-center">
           <div className="text-2xl font-bold">
             {formatNumber(timeLeft.days)}
           </div>
           <span className="text-xs font-bold">Days</span>
         </div>
-        <div className="bg-[#FFAB4D] text-[#212529] rounded-lg w-20 h-20 flex flex-col items-center justify-center">
+        <div className="bg-[#FADEBD] text-[#212529] rounded-lg w-20 h-20 flex flex-col items-center justify-center">
           <div className="text-2xl font-bold">
             {formatNumber(timeLeft.hours)}
           </div>
           <span className="text-xs font-bold">Hours</span>
         </div>
-        <div className="bg-[#FFAB4D] text-[#212529] rounded-lg w-20 h-20 flex flex-col items-center justify-center">
+        <div className="bg-[#FADEBD] text-[#212529] rounded-lg w-20 h-20 flex flex-col items-center justify-center">
           <div className="text-2xl font-bold">
             {formatNumber(timeLeft.minutes)}
           </div>
           <span className="text-xs font-bold">Minutes</span>
         </div>
-        <div className="bg-[#FFAB4D] text-[#212529] rounded-lg w-20 h-20 flex flex-col items-center justify-center">
+        <div className="bg-[#FADEBD] text-[#212529] rounded-lg w-20 h-20 flex flex-col items-center justify-center">
           <div className="text-2xl font-bold">
             {formatNumber(timeLeft.seconds)}
           </div>

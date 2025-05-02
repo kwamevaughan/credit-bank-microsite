@@ -10,7 +10,8 @@ import Footer from "@/layouts/footer";
 import Link from "next/link";
 import LeaderboardTable from "@/components/leaderboardTable"
 import InfiniteSlider from "@/components/InfiniteSlider";
-import CountdownTimer from "@/components/CountdownTimer"; // Import Countdown Timer Component
+import TransactionsFeesTable from '@/components/TransactionsFeesTable';
+import CountdownTimer from "@/components/CountdownTimer";
 
 
 export default function Home() {
@@ -345,64 +346,7 @@ export default function Home() {
                     </div>
 
                     {/* Account features section */}
-                    <div className="bg-[#212529] text-white py-12 px-6 md:px-16">
-                        <div className="text-left mb-8">
-                            <h2 className="text-3xl md:text-4xl font-bold">Account & Transaction Fees</h2>
-                            <p className="mt-2 text-lg md:text-xl">
-                                Discover transparent and customer-friendly account features and charges, ensuring you have full visibility and control over your banking experience.
-                            </p>
-                        </div>
-
-                        <div className="flex justify-left items-center p-6 pl-0">
-                            <div className="w-full max-w-4xl" 
-                                style={{
-                                    boxShadow: '5px 12px 0 rgba(251, 146, 60, 0.6)',
-                                    marginBottom: '20px'
-                                }}>
-                                <table className="w-full border-collapse overflow-hidden">
-                                <tbody>
-                                    <tr className="bg-orange-600">
-                                    <td
-                                        rowSpan="5"
-                                        className="text-white font-bold text-lg px-6 py-12 text-center align-middle">
-                                        Nyumbani Diaspora Account Rates per Annum
-                                    </td>
-                                    <th className="text-left px-4 py-2 text-white">
-                                        Features
-                                    </th>
-                                    <th className="text-left px-4 py-2 text-white">
-                                        Rate
-                                    </th>
-                                    </tr>
-                                    <tr className="bg-orange-500 hover:bg-orange-400 transition-colors duration-200">
-                                    <td className="px-4 py-2 text-white">Opening balance</td>
-                                    <td className="px-4 py-2 text-white">
-                                        Kshs. 5,000 | USD 50 | GBP 50 | Euro 50
-                                    </td>
-                                    </tr>
-                                    <tr className="bg-orange-500 hover:bg-orange-400 transition-colors duration-200">
-                                    <td className="px-4 py-2 text-white">Ledger fees</td>
-                                    <td className="px-4 py-2 text-white">Nil</td>
-                                    </tr>
-                                    <tr className="bg-orange-500 hover:bg-orange-400 transition-colors duration-200">
-                                    <td className="px-4 py-2 text-white">Minimum operating balance</td>
-                                    <td className="px-4 py-2 text-white">Nil</td>
-                                    </tr>
-                                    <tr className="bg-orange-500 hover:bg-orange-400 transition-colors duration-200">
-                                    <td className="px-4 py-2 text-white">Interest rate</td>
-                                    <td className="px-4 py-2 text-white">
-                                        Earns interest on balances above KES 2 million
-                                    </td>
-                                    </tr>
-                                </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <a href="https://creditbank.co.ke/wp-content/uploads/2025/02/Tariff-Guide-Updated-Feb-2025-1.pdf" className="mr-8 text-white hover:text-orange-500 text-md italic">Full Tarriff Guide</a>
-
-                        
-                    </div>
+                    <TransactionsFeesTable />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10 mb-10 bg-white p-8 mx-4 md:mx-8 lg:mx-12 rounded-xl shadow-md"  id="quality-policy">
                         <div className="flex flex-col p-4">
                             <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-teal-600 mb-6">
