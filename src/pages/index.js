@@ -409,7 +409,7 @@ export default function Home() {
                       target="blank"
                       href="https://creditbank.co.ke/wp-content/uploads/2023/11/Quality-Policy-1.pdf"
                     >
-                      <button className="bg-[#0cb4ab] hover:bg-gray-400 text-white font-bold py-3 px-10 rounded-lg">
+                      <button className="bg-[#0cb4ab] hover:bg-gray-400 text-white font-bold py-3 px-10 rounded-lg cursor-pointer">
                         View Policy
                       </button>
                     </a>
