@@ -6,8 +6,8 @@ const Footer = ({ mode }) => {
 
     return (
         <>
-            <div className="bg-[#1a1c23] px-6 sm:px-10 md:px-20 pt-8 pb-12">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 pt-10 gap-2">
+            <div className="bg-[#1a1c23] px-6 sm:px-10 md:px-40 pt-8 pb-12">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 pt-10 gap-2 justify-stretch">
                     <div className="flex flex-col justify-center pb-8 md:pb-0">
                         <Link href="/">
                             <Image
@@ -41,7 +41,7 @@ const Footer = ({ mode }) => {
                             <span className="text-gray-400">Customer service Email</span>
                         </div>
                     </div>
-                    <div className="flex flex-col justify-center gap-6">
+                    <div className="flex flex-col justify-center gap-6 items-end">
                         <div className="flex flex-col gap-2 text-white">
                             <Link href="https://apps.apple.com/us/app/credit-bank-cb-konnect/id1469515952">
                                 <Image
